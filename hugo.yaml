@@ -34,10 +34,18 @@ languages:
           name: 노트
           url: /ko/notes/
           weight: 30
+        - identifier: tags
+          name: 태그
+          url: /ko/tags/
+          weight: 40
+        - identifier: search
+          name: 검색
+          url: /ko/search/
+          weight: 50
         - identifier: about
           name: About
           url: /ko/about/
-          weight: 40
+          weight: 100
 
   en:
     languageName: "English"
@@ -66,10 +74,18 @@ languages:
           name: Notes
           url: /en/notes/
           weight: 30
+        - identifier: tags
+          name: Tags
+          url: /en/tags/
+          weight: 40
+        - identifier: search
+          name: Search
+          url: /en/search/
+          weight: 50
         - identifier: about
           name: About
           url: /en/about/
-          weight: 40
+          weight: 100
 
 taxonomies:
   tag: tags
@@ -83,6 +99,12 @@ sitemap:
   changefreq: "weekly"
   priority: 0.5
   filename: "sitemap.xml"
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
 
 params:
   comments: true
