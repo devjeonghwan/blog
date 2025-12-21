@@ -5,6 +5,7 @@ slug: "about"
 translationKey: "about"
 ShowToc: false
 ---
+
 ![Profile](photo.png?max-width=200px&width=100%)
 
 저는 시스템과 저수준 소프트웨어를 중심으로 개발을 하고 있는 엔지니어입니다.

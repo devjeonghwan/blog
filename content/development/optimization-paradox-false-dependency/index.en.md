@@ -4,7 +4,9 @@ date: 2025-12-22T00:00:00+09:00
 draft: false
 slug: "optimization-paradox-false-dependency"
 translationKey: "optimization-paradox-false-dependency"
+tags: ["C++", "Optimization", "SIMD", "CPU"]
 ---
+
 ## Background
 
 Since my work for 2025 has ended, I was enjoying very relaxed early morning.  I found some interesting post by Yeong-Cheon You.

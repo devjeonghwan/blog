@@ -4,7 +4,9 @@ date: 2025-12-22T00:00:00+09:00
 draft: false
 slug: "optimization-paradox-false-dependency"
 translationKey: "optimization-paradox-false-dependency"
+tags: ["C++", "Optimization", "SIMD", "CPU"]
 ---
+
 ## 발단
 
 요즘 2025년 업무가 마무리 되어서 매우 한가한 새벽을 보내고 있는 와중, 페이스북에서 유영천님의 글을 보게 되었습니다.
