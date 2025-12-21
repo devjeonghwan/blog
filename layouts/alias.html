@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ .Permalink }}</title>
+    <link rel="canonical" href="{{ .Permalink }}" />
+    <meta name="robots" content="noindex">
+    <meta charset="utf-8" />
+    <noscript>
+        <meta http-equiv="refresh" content="0; url={{ .Permalink }}" />
+    </noscript>
+    <script>
+        ; (function () {
+            if (window.location.pathname !== '/') {
+                window.location.replace('{{ .Permalink }}')
+                return
+            }
+
+            var getFirstBrowserLanguage = function () {
+                var navigator = window.navigator
+                var browserLanguagePropertyKeys = ['language', 'browserLanguage', 'systemLanguage', 'userLanguage']
+                var language = 'en'
+
+                if (Array.isArray(navigator.languages)) {
+                    for (var index = 0; index < navigator.languages.length; index++) {
+                        language = navigator.languages[index]
+                        if (language && language.length) {
+                            return language
+                        }
+                    }
+                }
+
+                for (var index = 0; index < browserLanguagePropertyKeys.length; index++) {
+                    language = navigator[browserLanguagePropertyKeys[index]]
+                    if (language && language.length) {
+                        return language
+                    }
+                }
+
+                return language
+            }
+
+            var preferenceLanguage = getFirstBrowserLanguage()
+
+            if (preferenceLanguage.indexOf('ko') !== -1) {
+                window.location.replace('/ko/')
+            } else {
+                window.location.replace('/en/')
+            }
+        })()
+    </script>
+</head>
+
+<body>
+    <h1>Redirecting...</h1>
+    <p>If you are not redirected automatically, <a href="{{ .Permalink }}">click here</a>.</p>
+</body>
+
+</html>
