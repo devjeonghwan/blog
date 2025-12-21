@@ -14,6 +14,13 @@ languages:
       homeInfoParams:
         Title: "👋 안녕하세요!"
         Content: "개발자 박정환 입니다."
+      socialIcons:
+        - name: "github"
+          url: "https://github.com/devjeonghwan"
+        - name: "facebook"
+          url: "https://www.facebook.com/dev.parkjeonghwan"
+        - name: "linkedin"
+          url: "https://www.linkedin.com/in/devjeonghwan"
     menu:
       main:
         - identifier: development
@@ -40,6 +47,13 @@ languages:
       homeInfoParams:
         Title: "👋 Hi there!"
         Content: "I'm the developer, Jeonghwan Park."
+      socialIcons:
+        - name: "github"
+          url: "https://github.com/devjeonghwan"
+        - name: "facebook"
+          url: "https://www.facebook.com/dev.parkjeonghwan"
+        - name: "linkedin"
+          url: "https://www.linkedin.com/in/devjeonghwan"
     menu:
       main:
         - identifier: development
@@ -69,6 +83,7 @@ markup:
 
 params:
   comments: true
+  mainSections: ["development", "travel", "notes"]
 
   ShowToc: true
   TocOpen: false
