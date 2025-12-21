@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Page not found</title>
+    <style>
+        :root {
+            --gap: 24px;
+            --content-gap: 20px;
+            --nav-width: 1024px;
+            --main-width: 720px;
+            --header-height: 60px;
+            --footer-height: 60px;
+            --radius: 8px;
+            --theme: #fff;
+            --entry: #fff;
+            --primary: #212121;
+            --secondary: #757575;
+            --tertiary: #e0e0e0;
+            --border: #eee;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: #1d1e20;
+                --entry: #2e2e33;
+                --primary: #eee;
+                --secondary: #b0b0b0;
+                --tertiary: #4f4f4f;
+                --border: #333;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+            background-color: var(--theme);
+            color: var(--primary);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .main {
+            text-align: center;
+            padding: var(--gap);
+            max-width: 600px;
+            position: relative;
+        }
+
+        .faded-404 {
+            font-size: 150px;
+            font-weight: 800;
+            color: var(--tertiary);
+            opacity: 0.15;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            user-select: none;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            color: var(--secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .button {
+            display: inline-block;
+            background: var(--tertiary);
+            color: var(--primary);
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            background: var(--secondary);
+            color: var(--theme);
+            transform: translateY(-2px);
+        }
+
+        #redirect-message {
+            display: none;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+    </style>
+    <script>
+        (function () {
+            var path = window.location.pathname;
+            if (path.startsWith('/ko/') || path.startsWith('/en/')) {
+                return;
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                document.getElementById('default-message').style.display = 'none';
+                document.getElementById('redirect-message').style.display = 'block';
+            });
+
+            var targetUrl = '/en' + path + window.location.search + window.location.hash;
+            window.location.replace(targetUrl);
+        })();
+    </script>
+</head>
+
+<body>
+    <main class="main">
+        <div class="faded-404">404</div>
+        <h1>Page not found</h1>
+
+        <div id="default-message">
+            <p>The page you are looking for doesn't exist or has been moved.</p>
+            <a href="/en/" class="button">Go to Home</a>
+        </div>
+
+        <p id="redirect-message">Redirecting to the correct page...</p>
+    </main>
+</body>
+
+</html>
