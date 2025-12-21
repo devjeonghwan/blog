@@ -1,36 +1,86 @@
 baseURL: https://blog.developer-park.net/
 languageCode: en-us
-title: Park Jeonghwan DEVLOG
+title: Jeonghwan Park's Dev Log
 theme: "PaperMod"
-defaultContentLanguage: "ko"
+enableRobotsTXT: true
+defaultContentLanguage: "en"
 defaultContentLanguageInSubdir: true
 
 languages:
   ko:
     languageName: "한국어"
     weight: 1
-    contentDir: "content/ko"
     params:
       homeInfoParams:
-        Title: "안녕하세요"
-        Content: "한국어 홈입니다."
+        Title: "👋 안녕하세요!"
+        Content: "개발자 박정환 입니다."
+    menu:
+      main:
+        - identifier: development
+          name: 개발
+          url: /ko/development/
+          weight: 10
+        - identifier: travel
+          name: 여행
+          url: /ko/travel/
+          weight: 20
+        - identifier: notes
+          name: 노트
+          url: /ko/notes/
+          weight: 30
+        - identifier: about
+          name: About
+          url: /ko/about/
+          weight: 40
+
   en:
     languageName: "English"
     weight: 2
-    contentDir: "content/en"
     params:
       homeInfoParams:
-        Title: "Hello"
-        Content: "This is the English home."
+        Title: "👋 Hi there!"
+        Content: "I'm the developer, Jeonghwan Park."
+    menu:
+      main:
+        - identifier: development
+          name: Development
+          url: /en/development/
+          weight: 10
+        - identifier: travel
+          name: Travel
+          url: /en/travel/
+          weight: 20
+        - identifier: notes
+          name: Notes
+          url: /en/notes/
+          weight: 30
+        - identifier: about
+          name: About
+          url: /en/about/
+          weight: 40
+
+taxonomies:
+  tag: tags
+  
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
 
 params:
-  ShowLanguageSwitcher: true
+  comments: true
+
+  ShowToc: true
+  TocOpen: false
+
+  ShowPostNavLinks: true
+  ShowCodeCopyButtons: true
   ShowReadingTime: true
   ShowShareButtons: true
+  ShowLanguageSwitcher: true
   
-menu:
-  main:
-    - identifier: posts
-      name: Posts
-      url: /ko/posts/
-      weight: 10
+  defaultTheme: auto
+  disableThemeToggle: false
+  disableScrollToTop: false
+  disableAnchoredHeadings: false
+  

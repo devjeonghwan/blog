@@ -1,0 +1,5 @@
+{{- $script := resources.Get "js/extended/giscus-color-mode.js" | minify | fingerprint -}}
+<script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+
+{{- $script := resources.Get "js/extended/markdown-image-parameters.js" | minify | fingerprint -}}
+<script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>

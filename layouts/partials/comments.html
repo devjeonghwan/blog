@@ -1,0 +1,18 @@
+{{- if .Params.comments | default true -}}
+    <script src="https://giscus.app/client.js"
+            data-repo="devjeonghwan/blog"
+            data-repo-id="R_kgDOQstadg"
+            data-category="Comments"
+            data-category-id="DIC_kwDOQstads4C0FHh"
+            data-mapping="specific"
+            data-strict="1"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="bottom"
+            data-theme=""
+            data-term="{{ .TranslationKey }}"
+            data-lang="{{ .Site.Language.Lang }}"
+            crossorigin="anonymous"
+            async>
+    </script>
+{{- end -}}
