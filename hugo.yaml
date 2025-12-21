@@ -13,7 +13,6 @@ languages:
     params:
       homeInfoParams:
         Title: "👋 안녕하세요!"
-        Content: "개발자 박정환 입니다."
       socialIcons:
         - name: "github"
           url: "https://github.com/devjeonghwan"
@@ -46,7 +45,6 @@ languages:
     params:
       homeInfoParams:
         Title: "👋 Hi there!"
-        Content: "I'm the developer, Jeonghwan Park."
       socialIcons:
         - name: "github"
           url: "https://github.com/devjeonghwan"
