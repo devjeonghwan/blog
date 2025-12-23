@@ -9,7 +9,7 @@ tags: ["C++", "Optimization", "SIMD", "CPU"]
 
 ## Background
 
-Since my work for 2025 has ended, I was enjoying very relaxed early morning.  I found some interesting post by Yeong-Cheon You.
+Since my work for 2025 has ended, I was enjoying very relaxed early morning. I found some interesting post by Yeong-Cheon You.
 
 ```
 Today's Digging

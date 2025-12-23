@@ -286,8 +286,8 @@ static void DOT_SSE_SHUFFLE(const float* a, const float* b, float* c, size_t n)
 ### 벤치마크 결과
 
 ```
-DOT_C_SCALAR         : 2.046 cycles/vec (total=68649165)
-DOT_SSE_DPPS         : 3.042 cycles/vec (total=102065815)
+DOT_C_SCALAR         : 1.789 cycles/vec (total=60043980)
+DOT_SSE_DPPS         : 2.918 cycles/vec (total=97899934)
 DOT_SSE_HADD         : 2.253 cycles/vec (total=75604884)
 DOT_SSE_SHUFFLE      : 1.240 cycles/vec (total=41596493)
 ```
