@@ -89,10 +89,10 @@ movss dword ptr [rdx-4], xmm1         ; XMM1을 결과 배열에 저장
 ; XMM3 = 0 (루프 밖에서 미리 초기화)
 ; ... Loop
 
-movss  xmm0, dword ptr [rcx+rdx]        ; 필요한 값 로드
+movss  xmm0, dword ptr [rcx+rdx]         ; 필요한 값 로드
 
 ; RCPSS 연산
-movaps xmm2, xmm3                        ; XMM2을 0으로 덮어씀 (!! 의존성 제거 !!)
+movaps xmm2, xmm3                        ; XMM2을 0으로 덮어씀 (!! 의존성 제거 !!, zero-idiom)
 lea    rdx, [rdx+4]                      ; 포인터 이동
 movss  xmm2, xmm0                        ; XMM2에 필요한 값 로드
 rcpss  xmm2, xmm2                        ; XMM2에 결과를 저장

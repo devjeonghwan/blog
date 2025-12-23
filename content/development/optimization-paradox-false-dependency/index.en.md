@@ -95,13 +95,13 @@ Similarly, to avoid writing raw assembly, I worked using compiler intrinsics `_m
 
 movss  xmm0, dword ptr [rcx+rdx]        ; Load values
 
-; RCPSS 연산
-movaps xmm2, xmm3                        ; Overwrite XMM2 with 0 (!! Remove Dependency !!)
+; RCPSS Operation
+movaps xmm2, xmm3                        ; Overwrite XMM2 with 0 (!! Remove Dependency !!, zero-idiom)
 lea    rdx, [rdx+4]                      ; Move pointer
 movss  xmm2, xmm0                        ; Load necessary value to XMM2
 rcpss  xmm2, xmm2                        ; Store result to XMM2
 
-; 결과 Store
+; Store Result
 movss dword ptr [rdx-4], xmm2            ; Store XMM2 to result array
 
 ; ... Loop
