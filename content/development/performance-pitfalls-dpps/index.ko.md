@@ -4,7 +4,7 @@ date: 2025-12-24T00:00:00+09:00
 draft: false
 slug: "performance-pitfalls-dpps"
 translationKey: "performance-pitfalls-dpps"
-tags: ["C++", "Optimization", "SIMD", "CPU"]
+tags: ["C++", "Optimization", "SIMD", "CPU", "x86-64"]
 ---
 
 크리스마스이브인 오늘, 제가 겪었던 일들을 가볍게 기록하고자 이 글을 작성합니다.

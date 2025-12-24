@@ -4,7 +4,7 @@ date: 2025-12-24T00:00:00+09:00
 draft: false
 slug: "performance-pitfalls-dpps"
 translationKey: "performance-pitfalls-dpps"
-tags: ["C++", "Optimization", "SIMD", "CPU"]
+tags: ["C++", "Optimization", "SIMD", "CPU", "x86-64"]
 ---
 
 On this Christmas Eve, I am writing this post just to simply record some of the things I experienced
