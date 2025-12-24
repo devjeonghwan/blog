@@ -1,7 +1,9 @@
 User-agent: *
 Disallow:
 Content-Signal: ai-train=no, ai-input=no, search=yes
-Sitemap: http://localhost:1313/sitemap.xml
+Sitemap: https://blog.developer-park.net/sitemap.xml
+Sitemap: https://blog.developer-park.net/ko/sitemap.xml
+Sitemap: https://blog.developer-park.net/en/sitemap.xml
 
 User-agent: AnthropicBot
 User-agent: AddSearchBot
