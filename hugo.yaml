@@ -109,6 +109,8 @@ outputs:
 params:
   comments: true
   mainSections: ["development", "travel", "notes"]
+  
+  displayFullLangName: true
 
   ShowToc: true
   TocOpen: false
