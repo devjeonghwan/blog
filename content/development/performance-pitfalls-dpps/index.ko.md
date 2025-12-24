@@ -1,13 +1,11 @@
 ---
-title: "DPPS is slower than I thought"
+title: "DPPS의 성능 함정"
 date: 2025-12-24T00:00:00+09:00
 draft: false
-slug: "dpps-slower-than-i-thought"
-translationKey: "dpps-slower-than-i-thought"
+slug: "performance-pitfalls-dpps"
+translationKey: "performance-pitfalls-dpps"
 tags: ["C++", "Optimization", "SIMD", "CPU"]
 ---
-
-# This article is still in translation.
 
 크리스마스이브인 오늘, 제가 겪었던 일들을 가볍게 기록하고자 이 글을 작성합니다.
 
@@ -182,7 +180,9 @@ Scalar C 코드 기준으로는 `17.14` 에서 `13.97` 로 개선되었습니다
 
 * ***DPPS:** Dot Product of Packed Single Precision Floating-Point Values
 
-이 녀석들은 명령어 이름 자체에 Dot Product가 있듯이 하나의 벡터에 대한 Dot Product 연산을 구현하는 데에 표준적으로 많이 사용되고 있기 때문에, 구글 검색을 해봐도 이 명령어를 이용하는 코드를 어렵지 않게 볼 수 있습니다.
+이 녀석들은 명령어 이름 자체에 Dot Product가 있듯이 하나의 벡터에 대한 Dot Product 연산을 하드웨어 수준에서 구현하고 있습니다.
+
+또한 아주 오래전부터 존재했었고, 교과서적으로 많이 사용되고 있기 때문에, 구글 검색을 해봐도 이 명령어를 이용하는 코드를 어렵지 않게 볼 수 있습니다.
 
 저도 자주 사용하지는 않지만, 익히 알고 있는 명령어이기에 사용을 한 것이었는데, 이상하다고 생각되어 별도의 벤치마크를 작성해서 테스트를 해보기로 했습니다.
 
