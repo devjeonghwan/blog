@@ -1,12 +1,14 @@
 ---
 title: "C 스칼라 코드 vs 컴파일러 내장함수 코드 vs 어셈블리 코드"
 date: 2025-12-26T00:00:00+09:00
-draft: true
+draft: false
 slug: "c-scalar-vs-intrinsics-vs-assembly"
 translationKey: "c-scalar-vs-intrinsics-vs-assembly"
 tags: ["경험담", "잡담", "C", "Intrinsics", "Assembly", "x86-64"]
 ---
 
+> **이 글은 [유영천(Yeong-Cheon You)](https://megayuchi.com/about/) 님의 [방송](https://www.youtube.com/live/1sqV3F0hI0g?si=iS-6-t7V6V2ZGw0M&t=1193) 그리고 [페이스북](https://www.facebook.com/share/p/1KyKJAbmVY/), [네이버 카페](https://cafe.naver.com/megayuchi/937)를 통해서 전개되었습니다.  
+> 더 많은 흥미로운 주제와 내용을 원하신다면 토요일 방송에 참여해주세요. 저도 있답니다 :D**
 
 [지난번 글](/development/performance-pitfalls-dpps)에서 잠깐 언급했는데, 요즘 유영천 님이 올려주신 **삼각형 교차 검사(Triangle Intersection Test)** 코드를 최적화해 보고 있습니다.
 
