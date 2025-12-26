@@ -237,7 +237,7 @@ DOT_SSE_DPPS         : 2.918 cycles/vec (total=97899934)
 
 혹시 `DPPS`가 모종의 이유로 최신 아키텍처에서는 느려진 건가 싶어, 다른 명령어들을 이용해 구현해 보았습니다.
 
-### A안: `MULPS` + `HADDPS`를 이용한 구현
+### A안, `MULPS` + `HADDPS`를 이용한 구현
 
 ```cpp
 static void DOT_SSE_HADD(const float* a, const float* b, float* c, size_t n)
@@ -259,7 +259,7 @@ static void DOT_SSE_HADD(const float* a, const float* b, float* c, size_t n)
 
 먼저, 이 구현은 두 벡터의 모든 성분을 `_mm_mul_ps(MULPS)`를 통해 서로 곱한 뒤 그 결과를 `_mm_hadd_ps(HADDPS)`를 통해 수평적으로 더하여 합치는 코드입니다.
 
-### B안: `MULPS` + `ADDPS` + `SHUFPS`를 이용한 구현
+### B안, `MULPS` + `ADDPS` + `SHUFPS`를 이용한 구현
 
 ```cpp
 static void DOT_SSE_SHUFFLE(const float* a, const float* b, float* c, size_t n)
