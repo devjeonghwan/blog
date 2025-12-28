@@ -10,7 +10,7 @@ tags: ["Experience", "Chat", "C", "Intrinsics", "Assembly", "x86-64"]
 > **This post is based on [Yeong-Cheon You](https://megayuchi.com/about/)'s [Stream](https://www.youtube.com/live/1sqV3F0hI0g?si=iS-6-t7V6V2ZGw0M&t=1193), [Facebook](https://www.facebook.com/share/p/1KyKJAbmVY/), and [Naver Cafe](https://cafe.naver.com/megayuchi/937).
 > If you want more interesting topics, please join the Saturday stream. I am there too :D**
 
-I mentioned this in [my last post](/development/performance-pitfalls-dpps). Recently, I am trying to optimize the **Triangle Intersection Test** code from Yeong-Cheon You.
+I mentioned this in [my last post](/development/performance-pitfalls-dpps). Recently, I am trying to optimize the **triangle intersection test** code from Yeong-Cheon You.
 
 I started with Naive code. Now I finished almost everything I can do. So I post the result to record it.
 
@@ -23,21 +23,21 @@ IntersectResult_AVX_ASM_OPT : 15.4750 clks elapsed.
 ```
 
 The list below shows the order of implementations.
-* Scalar version in C language
-* SIMD version with Compiler Intrinsics
-* x86-64 Assembly version
-* **Improved** SIMD version with Compiler Intrinsics (★)
-* **Improved** x86-64 Assembly version (★)
+- Scalar version in C language
+- SIMD version with compiler intrinsics
+- x86-64 assembly version
+- **Improved** SIMD version with compiler intrinsics (★)
+- **Improved** x86-64 assembly version (★)
 
-## **Improved** SIMD version with Compiler Intrinsics
+## **Improved** SIMD Version with Compiler Intrinsics
 
 For the **Improved SIMD version**, I applied these optimizations
 
-- Changed `VECTOR3` Register loading. I used `_mm_load_sd` + `_mm_castpd_ps` instead of `_mm_loadl_pi`.
-- Changed Dot Product. `_mm_dp_ps` was slow for [unknown reasons](https://www.google.com/search?q=/development/performance-pitfalls-dpps). So I used `_mm_shuffle_ps` + `_mm_add_ps` instead.
-- Made Dot Product return a Scalar value. This reduces Register Pressure** and helps Compiler Optimization.
-_(However, the compiler just did Inlining** and kept `XMM` Registers...)_
-- Changed Cross Product. I used `_mm_permute_ps` instead of `_mm_shuffle_ps`. Also, I used `_mm_fmsub_ps(FMA)`.
+- Changed `VECTOR3` register loading. I used `_mm_load_sd` + `_mm_castpd_ps` instead of `_mm_loadl_pi`.
+- Changed dot product. `_mm_dp_ps` was slow for [unknown reasons](https://www.google.com/search?q=/development/performance-pitfalls-dpps). So I used `_mm_shuffle_ps` + `_mm_add_ps` instead.
+- Made dot product return a scalar value. This reduces register pressure and helps compiler optimization.
+_(However, the compiler just did inlining and kept `XMM` registers...)_
+- Changed cross product. I used `_mm_permute_ps` instead of `_mm_shuffle_ps`. Also, I used `_mm_fmsub_ps(FMA)`.
 - Used `FMA` for `P = v0 + u * edge1 + v * edge2` calculation.
 
 With these optimizations, it is **1.5x faster than the old SIMD** version and **1.23x faster than C Scalar**. It has the **best performance** among all versions.
@@ -47,17 +47,17 @@ With these optimizations, it is **1.5x faster than the old SIMD** version and **
 For the **Improved Assembly version**, I applied these optimizations
 
 - Applied all techniques from the **Improved SIMD version**.
-- Removed Callee-saved Registers (`XMM10`, `XMM11`, `R12`, `R13`, `R14`). I don't use them anymore.
-- Applied simple Latency Hiding.
+- Removed callee-saved registers (`XMM10`, `XMM11`, `R12`, `R13`, `R14`). I don't use them anymore.
+- Applied simple latency hiding.
 
 This version is **2.4x faster than the old Assembly** version and **1.15x faster than C Scalar**. But it could not beat the **Improved SIMD** version.
 
 ## Today's Conclusion
 
-The Compiler is good at **Latency Hiding** and **I-Cache Optimization**. It is hard for humans to do these things. But if I use Assembly manually, I cannot get these benefits. This seems to be the problem.
+The compiler is good at **latency hiding** and **I-cache optimization**. It is hard for humans to do these things. But if I use Assembly manually, I cannot get these benefits. This seems to be the problem.
 _(If I spend a really long time, maybe I can do it...)_
 
-So my realistic conclusion is... **Just write good code with Compiler Intrinsics.**
+So my realistic conclusion is... **Just write good code with compiler intrinsics.**
 
 <details>
 <summary>View Source Code</summary>
