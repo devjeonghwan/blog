@@ -14,7 +14,7 @@ I am interested in performance-sensitive code and system internals. I like to de
 
 Recently, my main interests are performance optimization, hardware-friendly architecture, and compilers.
 
-Currently, I work at [RealtimeTech Co., Ltd.](https://realtimetech.com) as a Principal Researcher. I am also the Team Lead of the Solution Division.
+Currently, I work at [RealtimeTech Co., Ltd.](https://realtimetech.com) as a Senior Researcher.
 
 If you have any questions, please feel free to contact me.
 
