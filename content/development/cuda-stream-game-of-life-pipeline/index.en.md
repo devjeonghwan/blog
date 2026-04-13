@@ -8,7 +8,7 @@ tags: ["CUDA", "GPU", "Nsight Systems", "Win32", "Optimization"]
 ---
 
 {{< youtube NFx8BwnqQWM >}}
-　    
+　  
 `Conway's Game of Life` has simple rules, but it is still a good example for showing sync and async pipelines with `CUDA Stream`.
 
 This code is an educational demo, not a build for the best possible performance. The goal is to show how **kernel execution**, **memory copies**, **CPU-side post-processing**, and **screen updates** can overlap when using `CUDA Stream`.
