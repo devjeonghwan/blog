@@ -11,16 +11,9 @@ tags: ["CUDA", "GPU", "Nsight Systems", "Win32", "Optimization"]
 　    
 `Conway's Game of Life` works with simple rules, but it is still a good example for explaining a synchronous and asynchronous pipeline with `CUDA Stream`.
 
-This code is only a small **learning example**. Instead of a complex renderer or a large engine, I focused on showing this flow clearly.
+This example is closer to an educational demo than an implementation designed for absolute peak performance. Its purpose is to show how `CUDA Stream` can hide the latency of **kernel execution**, **memory copies**, **CPU-side post-processing**, and **screen updates**.
 
-- GPU compute
-- Device to host copy
-- CPU post-processing
-- Screen update
-
-In this example, I used `CUDA Runtime API`, `NVTX` for profiling hints, and `Win32 API` with `GDI` for UI rendering.
-
-You can switch between `Sync` mode and `Stream` mode with the `M` key.
+For that reason, simulation steps and frame rendering are intentionally kept in a 1:1 relationship, prioritizing a structure that makes the difference between Sync and Stream more apparent over one that keeps the GPU busy for as long as possible.
 
 ## Sync Mode
 
