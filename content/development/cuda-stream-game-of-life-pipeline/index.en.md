@@ -17,6 +17,13 @@ So, instead of fully separating simulation and rendering to keep the GPU busy fo
 
 ## Sync Mode
 
+{{< figure
+    src="sync.png"
+    alt="Sync Mode Image"
+    caption="`Compute`, `Copy`, and `CPU work` are processed serially"
+    align="center"
+>}}
+
 `Sync` mode is the simplest serial structure.
 
 1. Run `Compute #N`
@@ -27,6 +34,13 @@ So, instead of fully separating simulation and rendering to keep the GPU busy fo
 In other words, it copies one generation result, shows it on the screen, and only then moves to the next generation.
 
 ## Stream Mode
+
+{{< figure
+    src="stream.png"
+    alt="Stream Mode Image"
+    caption="`Copy`, `Kernel`, and `CPU work` overlap in the pipeline"
+    align="center"
+>}}
 
 `Stream` mode splits the work into a `Compute Stream` and a `Copy Stream`, so the whole flow becomes a pipeline. (`Copy #N` and `Compute #(N + 1)` can run at the same time)
 

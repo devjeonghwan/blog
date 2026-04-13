@@ -1,3 +1,26 @@
 .first-entry {
     min-height: auto !important;
 }
+
+.post-content figure.align-center {
+    text-align: center;
+}
+
+.post-content figure.align-center img {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.post-content figure.align-center figcaption,
+.post-content figure.align-center figcaption p {
+    text-align: center;
+}
+
+.post-content figure > figcaption > p {
+    font-size: 16px;
+}
+
+.post-content figure > img,
+.post-content figure > a > img {
+    margin-bottom: 0 !important;
+}

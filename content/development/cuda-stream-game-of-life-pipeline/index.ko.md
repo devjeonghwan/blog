@@ -17,6 +17,13 @@ tags: ["CUDA", "GPU", "Nsight Systems", "Win32", "Optimization"]
 
 ## Sync 모드
 
+{{< figure
+    src="sync.png"
+    alt="Sync Nsight Systems"
+    caption="`Compute`, `Copy`, `CPU 작업` 등이 직렬로 처리되는 모습"
+    align="center"
+>}}
+
 `Sync` 모드는 가장 단순한 직렬 구조입니다.
 
 1. `Compute #N`을 수행
@@ -27,6 +34,13 @@ tags: ["CUDA", "GPU", "Nsight Systems", "Win32", "Optimization"]
 즉, 한 세대 계산 결과를 복사하고 화면에 반영한 뒤에야 다음 세대로 넘어가는 방식입니다.
 
 ## Stream 모드
+
+{{< figure
+    src="stream.png"
+    alt="Stream Nsight Systems"
+    caption="`Copy`와 `Kernel`, `CPU 작업`이 겹쳐서 처리되는 모습"
+    align="center"
+>}}
 
 `Stream` 모드는 `Compute Stream`과 `Copy Stream`을 분리해 파이프라인 형태로 구성했습니다. (`Copy #N`과 `Compute #(N + 1)`이 겹쳐 실행될 수 있음)
 
