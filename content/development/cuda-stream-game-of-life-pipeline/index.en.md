@@ -1,5 +1,5 @@
 ---
-title: "A Simple CUDA Stream Pipeline Example with Conway's Game of Life"
+title: "A CUDA Stream Pipeline Demo with Conway's Game of Life"
 date: 2026-04-12T00:00:00+09:00
 draft: false
 slug: "cuda-stream-game-of-life-pipeline"
@@ -9,69 +9,78 @@ tags: ["CUDA", "GPU", "Nsight Systems", "Win32", "Optimization"]
 
 {{< youtube NFx8BwnqQWM >}}
 　    
-`Conway's Game of Life` works with simple rules, but it is still a good example for explaining a synchronous and asynchronous pipeline with `CUDA Stream`.
+`Conway's Game of Life` has simple rules, but it is still a good example for showing sync and async pipelines with `CUDA Stream`.
 
-This example is closer to an educational demo than an implementation designed for absolute peak performance. Its purpose is to show how `CUDA Stream` can hide the latency of **kernel execution**, **memory copies**, **CPU-side post-processing**, and **screen updates**.
+This code is an educational demo, not a build for the best possible performance. The goal is to show how **kernel execution**, **memory copies**, **CPU-side post-processing**, and **screen updates** can overlap when using `CUDA Stream`.
 
-For that reason, simulation steps and frame rendering are intentionally kept in a 1:1 relationship, prioritizing a structure that makes the difference between Sync and Stream more apparent over one that keeps the GPU busy for as long as possible.
+So, instead of fully separating simulation and rendering to keep the GPU busy for as long as possible, this demo uses each simulation generation as a screen frame too. That makes the difference between `Sync` and `Stream` easier to see.
 
 ## Sync Mode
 
 `Sync` mode is the simplest serial structure.
 
-1. `Kernel`
-2. `Device to Host Copy`
-3. `ConvertGridToPixels`
-4. `Draw`
+1. Run `Compute #N`
+2. When it finishes, run `Copy #N (Device to Host)`
+3. When the copy finishes, run `ConvertGridToPixels()` on the CPU  
+...
 
-In other words, it finishes one frame first, then moves to the next frame.
+In other words, it copies one generation result, shows it on the screen, and only then moves to the next generation.
 
 ## Stream Mode
 
-`Stream` mode uses `CUDA Stream` and splits the work into a `compute stream` and a `copy stream`, so the whole flow becomes a pipeline.
+`Stream` mode splits the work into a `Compute Stream` and a `Copy Stream`, so the whole flow becomes a pipeline. (`Copy #N` and `Compute #(N + 1)` can run at the same time)
 
-The flow is like this.
+The flow is roughly like this.
 
-1. (Initializing) Run `Compute #1`
-2. (Bootstrapping) Run `Copy #1 + Compute #2`
-3. (Steady State) After that  
-   a. Check if `Copy #N` is done  
-   b. Queue `Copy #(N + 1)` and `Compute #(N + 2)`  
-   c. Convert the finished frame on the CPU
+1. First, enqueue only `Compute #1`
+2. When `Compute #1` finishes, enqueue `Copy #1`
+3. Then enqueue `Compute #2`
+4. After that, repeat this order
+   - Check if `Copy #N` is done
+   - Swap the host buffer that was just copied into the current screen buffer
+   - Enqueue `Copy #(N + 1)`
+   - Swap the device buffers
+   - Enqueue `Compute #(N + 2)`
+   - Finally, run `ConvertGridToPixels()` on the CPU for the finished frame `#N`  
+   ...
 
-The key idea is simple. **Queue the next copy and the next compute work first, then let the CPU process the previous frame.**
+The key point is to enqueue the next copy and the next compute first, and then let the CPU process the previous frame.
+
+So in `Stream` mode, copy work, compute work, and CPU work are not fully serial. Some parts overlap.
 
 ## Buffer Layout
 
-I kept the structure as simple as possible for explanation.
+Since this post is for explanation, I kept the structure as simple as possible.
 
 - Device (GPU): `Current Grid`, `Next Grid`
 - Host (CPU): `Current Grid`, `Next Grid`
 
-The device side uses a normal ping-pong buffer. The host side also uses two buffers, so while the CPU is processing one frame, it can still receive the next `Device to Host Copy`.
+The device side uses a normal ping-pong buffer. The host side also uses a double buffer, so while the CPU is processing one frame, it can still receive the next `Device to Host Copy`.
 
 ## A Small Trick
 
-Instead of drawing only black and white cell states, I made old positions slowly get darker on the screen.
+Instead of showing only simple black and white cell states, I made old positions slowly get darker on the screen.
 
-At first, I wanted to make the kernel more compute-bound, so the difference would look bigger, but.. ~~there was no big difference..~~
+The current cell value is used like this.
 
 - `255`: Alive cell
 - `0`: Fully off (dead) cell
 - `1 ~ 254`: Trail brightness from an old position
 
-I did not add a separate trail buffer. I used one grid value to store both the state and the trail, so the copy size does not grow.
+I did not add a separate trail buffer. I used one grid value to store both the state and the trail. This also helps keep the copy size the same.
 
 ## NVTX and Nsight Systems
 
-I did not want this example to show only CUDA kernels, so I also added `NVTX` ranges to the CPU work.
+I added `NVTX` ranges so `Nsight Systems` can show not only CUDA work, but CPU work too.
 
-Because of that, in `Nsight Systems`, you can see the kernel, copy, CPU post-processing, and screen update together, including their order and timing.
+With that, `Nsight Systems` can show the kernel, copy, CPU post-processing, and screen update together, including their order and timing.
 
 ## Summary
 
-`cudaStream` is not only a tool for asynchronous copy. It is closer to an API for defining a pipeline: how to overlap **GPU kernels**, **GPU copies**, and **CPU work**.
+`CUDA Stream` is not just a simple async copy or launch feature. It is closer to a work queue model that describes the order of GPU work and what depends on what.
 
-This example is a small one made to explain that structure, and you can find the code here..
+You can place independent work on different streams so they can run at the same time. By using that, you can overlap **kernel execution**, **memory copies**, and **CPU post-processing** as a pipeline.
+
+This example is a small demo made to explain that structure, and you can find the code below.
 
 [game_of_life_cuda.cu](https://gist.github.com/devjeonghwan/81fe3b526f958f32168f2d924e502672)
