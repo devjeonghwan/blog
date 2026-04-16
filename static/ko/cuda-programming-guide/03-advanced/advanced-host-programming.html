@@ -444,7 +444,7 @@
 </section>
 <section id="environment-variables">
 <h2><span class="section-number">3.1.6. </span>환경 변수<a class="headerlink" href="#environment-variables" title="Link to this heading">#</a></h2>
-<p>CUDA는 실행과 성능에 영향을 줄 수 있는 여러 환경 변수( <a class="reference internal" href="../05-appendices/environment-variables.html"><span class="std std-numref">Section 5.2</span></a> 참고)를 제공합니다.
+<p>CUDA는 실행과 성능에 영향을 줄 수 있는 여러 환경 변수( <a class="reference internal" href="../05-appendices/environment-variables.html"><span class="std std-numref">섹션 5.2</span></a> 참고)를 제공합니다.
 이 변수들을 명시적으로 설정하지 않으면 CUDA는 합리적인 기본값을 사용합니다. 다만 디버깅 목적이나 성능 개선이 필요한 경우처럼, 사례에 따라 별도의 처리가 필요할 수 있습니다.</p>
 <p>예를 들어, 서로 다른 CUDA 스트림의 독립적인 작업이 거짓 의존성(false dependency) 때문에 직렬화될 가능성을 줄이려면 <code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_MAX_CONNECTIONS</span></code> 환경 변수 값을 높여야 할 수 있습니다. 이러한 거짓 의존성은 동일한 기반 리소스를 사용할 때 생길 수 있습니다. 우선 기본값으로 시작하고, 사용 가능한 SM 리소스 부족 같은 다른 요인으로 설명할 수 없는 CUDA 스트림 간 독립 작업의 예기치 않은 직렬화처럼 성능 문제가 있을 때만 이 환경 변수의 영향을 살펴보는 것이 좋습니다. 참고로 MPS를 사용하는 경우 이 환경 변수의 기본값은 더 낮게 설정됩니다.</p>
 <p>마찬가지로 지연 시간에 민감한 애플리케이션에서는 <code class="docutils literal notranslate"><span class="pre">CUDA_MODULE_LOADING</span></code> 환경 변수를 <code class="docutils literal notranslate"><span class="pre">EAGER</span></code>로 설정하는 편이 더 적합할 수 있습니다. 이렇게 하면 모듈 로딩에 따른 오버헤드를 모두 애플리케이션 초기화 단계로 옮겨, 실제 중요 구간 바깥에서 처리할 수 있습니다. 현재 기본 모드는 지연 모듈 로딩(lazy module loading)입니다. 이 기본 모드에서도 애플리케이션 초기화 단계에서 여러 커널에 대한 워밍업 호출을 추가해 모듈이 더 일찍 로드되도록 만들면 eager 모듈 로딩과 유사한 효과를 얻을 수 있습니다.</p>

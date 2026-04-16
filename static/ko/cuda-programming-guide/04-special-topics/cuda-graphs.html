@@ -438,7 +438,7 @@ Stream Capture</label><div class="sd-tab-content docutils">
 <div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="n">cudaGraphLaunch</span><span class="p">(</span><span class="n">graphExec</span><span class="p">,</span><span class="w"> </span><span class="n">stream</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>이를 모두 종합하고 <a class="reference internal" href="#cuda-graphs-creating-a-graph-using-stream-capture"><span class="std std-numref">Section 4.2.2.1.2</span></a>의 stream capture 예시를 사용하면, 다음 코드 스니펫은 그래프를 생성하고, 인스턴스화한 뒤, 실행합니다:</p>
+<p>이를 모두 종합하고 <a class="reference internal" href="#cuda-graphs-creating-a-graph-using-stream-capture"><span class="std std-numref">섹션 4.2.2.1.2</span></a>의 stream capture 예시를 사용하면, 다음 코드 스니펫은 그래프를 생성하고, 인스턴스화한 뒤, 실행합니다:</p>
 <div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="n">cudaGraph_t</span><span class="w"> </span><span class="n">graph</span><span class="p">;</span>
 
 <span class="n">cudaStreamBeginCapture</span><span class="p">(</span><span class="n">stream</span><span class="p">);</span>
