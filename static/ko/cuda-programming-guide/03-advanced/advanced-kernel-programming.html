@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>3.2. 고급 커널 프로그래밍 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>3.2. 고급 커널 프로그래밍 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="이 장에서는 먼저 NVIDIA GPU의 하드웨어 모델을 더 깊이 있게 살펴본 다음, 커널 성능을 개선하기 위해 CUDA 커널 코드에서 사용할 수 있는 더 고급 기능 몇 가지를 소개합니다. 또한 이 장에서는 스레드 스코프, 비동기 실행, 그리고 관련 동기화 프리미티브와 관련된 몇 가지 개념을 소개합니다. 이러한 개념적 논의는 커널 코드 내에서 사용할 수 있는 일부 고급 성능 기능을 위한 필수적인 기반을 제공합니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">
@@ -394,9 +411,7 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::atom
 <input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-4">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-async-barriers-basic-std">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
+<div class="highlight-cuda notranslate" id="table-async-barriers-basic-std"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">compute</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">iteration</span><span class="p">);</span>
@@ -431,18 +446,12 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barr
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-5" name="sd-tab-set-2" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-5">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-async-barriers-basic-ptx">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+<div class="highlight-cuda notranslate" id="table-async-barriers-basic-ptx"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">compute</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">iteration</span><span class="p">);</span>
@@ -476,18 +485,12 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx<
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-6" name="sd-tab-set-2" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-6">
 CUDA C 프리미티브</label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-async-barriers-basic-prim">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
+<div class="highlight-cuda notranslate" id="table-async-barriers-basic-prim"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">compute</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">iteration</span><span class="p">);</span>
@@ -521,11 +524,7 @@ CUDA C 프리미티브</label><div class="sd-tab-content docutils">
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 </div><p>이 패턴에서는 동기화 지점이 도착(arrive) 지점(으로 분할됩니다(<code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code>) 및 대기(wait) 지점(<code class="docutils literal notranslate"><span class="pre">bar.wait(std::move(token))</span></code>). 스레드는 다음에 참여하기 시작합니다 <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code> 첫 번째 호출을 통해 <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code>. 스레드가 호출할 때 <code class="docutils literal notranslate"><span class="pre">bar.wait(std::move(token))</span></code> 참여하는 스레드들이 완료할 때까지 블로킹됩니다 <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code> 예상된 횟수, 즉 다음에 전달되는 예상 도착 횟수 인수 <code class="docutils literal notranslate"><span class="pre">init()</span></code>. 참여하는 스레드의 다음 호출 이전에 발생하는 메모리 업데이트 <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code> 은(는) 참여하는 스레드가 다음을 호출한 이후에 참여하는 스레드에서 볼 수 있음이 보장됩니다 <code class="docutils literal notranslate"><span class="pre">bar.wait(std::move(token))</span></code>. 다음 호출에 유의하십시오 <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code> 는 스레드를 블로킹하지 않으므로, 다른 참여 스레드가 를 호출하기 전에 발생하는 메모리 업데이트에 의존하지 않는 다른 작업을 계속 진행할 수 있습니다 <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code>.</p>
 <p><em>arrive and wait</em> 패턴에는 다섯 단계가 있습니다:</p>

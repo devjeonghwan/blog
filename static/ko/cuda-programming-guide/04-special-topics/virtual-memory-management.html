@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>4.16. 가상 메모리 관리 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>4.16. 가상 메모리 관리 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="CUDA 프로그래밍 모델에서 메모리 할당 호출(예: cudaMalloc() )은 GPU 메모리의 메모리 주소를 반환합니다. 이 주소는 어떤 CUDA API와도 함께 사용하거나, 디바이스 커널 내부에서 사용할 수 있습니다. 개발자는 cudaEnablePeerAccess 를 사용하여 해당 메모리 할당에 대해 피어 디바이스 액세스를 활성화할 수 있습니다. 이렇게 하면 서로 다른 디바이스의 커널이 동일한 데이터에 액세스할 수 있습니다. 하지만 과거 및 향후의 모든 사용자 할당도 대상 피어 디바이스에 매핑됩니다. 이로 인해 사용자가 의도치 않게 모든 cudaMalloc 할당을 피어 디바이스에 매핑하는 런타임 비용을 지불하게 될 수 있습니다. 대부분의 상황에서 애플리케이션은 다른 디바이스와 단 몇 개의 할당만 공유하여 통신합니다. 일반적으로 모든 할당을 모든 디바이스에 매핑할 필요는 없습니다. 또한 이 접근 방식을 멀티 노드 설정으로 확장하는 것은 본질적으로 어렵습니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">

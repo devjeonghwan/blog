@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>1.1. 소개 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>1.1. 소개 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="3D 그래픽을 위한 특수 목적 프로세서로 탄생한 그래픽 처리 장치 (GPU)는 실시간 3D 렌더링에서 병렬 연산을 가속하기 위한 고정 기능 하드웨어로 시작했습니다. 세대를 거치며 GPU는 더 프로그래머블해졌습니다. 2003년까지 그래픽 파이프라인의 일부 단계는 완전히 프로그래머블해져, 3D 장면이나 이미지의 각 구성 요소에 대해 사용자 정의 코드를 병렬로 실행할 수 있게 되었습니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">

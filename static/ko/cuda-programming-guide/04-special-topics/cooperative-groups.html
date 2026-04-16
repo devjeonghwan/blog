@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>4.4. 코오퍼러티브 그룹(Cooperative Groups) — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>4.4. 코오퍼러티브 그룹(Cooperative Groups) — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="코오퍼러티브 그룹은 협업하는 스레드 그룹을 구성하기 위한 CUDA 프로그래밍 모델의 확장입니다. 코오퍼러티브 그룹은 스레드가 협업하는 세분성을 개발자가 제어할 수 있게 하여, 더 풍부하고 더 효율적인 병렬 분해를 표현하도록 돕습니다. 코오퍼러티브 그룹은 또한 스캔 및 병렬 리듀스 같은 일반적인 병렬 프리미티브의 구현을 제공합니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">

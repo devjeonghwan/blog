@@ -3,8 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>문서 검색 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>문서 검색 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="문서 전체 검색">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="./assets/site.css">
   <link rel="stylesheet" href="./assets/vendor/pygments.css">
   <link rel="stylesheet" href="./assets/vendor/sphinx-design.css">
@@ -21,23 +35,19 @@
   <div class="site-shell">
     
 <header class="site-header">
-  <div class="site-header__inner">
+  <div class="site-header__inner site-header__inner--without-search">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="contents.html">목차</a>
-      <a href="genindex.html">색인</a>
       <a href="notices.html">고지 사항</a>
     </nav>
-    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
-    <form class="search-form" data-doc-search-form action="search.html">
-      <div class="search-form__inner">
-        <input type="search" name="q" value="" placeholder="문서 전체 검색">
-        <button type="submit">검색</button>
-      </div>
-    </form>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
   </div>
 </header>
 

@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>4.9. 비동기 배리어 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>4.9. 비동기 배리어 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="고급 동기화 프리미티브 에서 소개된 비동기 배리어는 CUDA 동기화를 __syncthreads() 및 __syncwarp() 를 넘어 확장하여, 세밀한 제어의 비차단 조정과 통신 및 연산의 더 나은 오버랩을 가능하게 합니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">
@@ -68,9 +85,7 @@
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-0">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-basic-init-std">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
+<div class="highlight-cuda notranslate" id="table-basic-init-std"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">init_barrier</span><span class="p">()</span>
@@ -87,18 +102,12 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barr
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-1">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-basic-init-ptx">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+<div class="highlight-cuda notranslate" id="table-basic-init-ptx"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">init_barrier</span><span class="p">()</span>
@@ -115,18 +124,12 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx<
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-2" name="sd-tab-set-0" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-2">
 CUDA C 프리미티브</label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-basic-init-prim">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
+<div class="highlight-cuda notranslate" id="table-basic-init-prim"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">init_barrier</span><span class="p">()</span>
@@ -143,11 +146,7 @@ CUDA C 프리미티브</label><div class="sd-tab-content docutils">
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 </div>
 <p>어떤 스레드든 배리어에 참여하기 전에, 배리어는 <code class="docutils literal notranslate"><span class="pre">cuda::barrier::init()</span></code> friend 함수로 초기화되어야 합니다. 이는 어떤 스레드가 배리어에 도착(arrive)하기 전에 이루어져야 합니다. 이는 스레드가 배리어에 참여하기 전에 동기화해야 하지만, 스레드가 동기화하기 위해 배리어를 생성하고 있다는 점에서 부트스트래핑 문제를 야기합니다. 이 예제에서는 참여할 스레드가 협력 그룹(cooperative group)의 일부이며, <code class="docutils literal notranslate"><span class="pre">block.sync()</span></code>를 사용해 초기화를 부트스트랩합니다. 전체 스레드 블록이 배리어에 참여하므로, <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code>도 사용할 수 있습니다.</p>
@@ -180,9 +179,7 @@ CUDA C 프리미티브</label><div class="sd-tab-content docutils">
 <input checked="checked" id="sd-tab-item-3" name="sd-tab-set-1" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-3">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-phase-std">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+<div class="highlight-cuda notranslate" id="table-phase-std"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">compute</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">iteration</span><span class="p">);</span>
@@ -222,18 +219,12 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barr
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-4" name="sd-tab-set-1" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-4">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-phase-ptx">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+<div class="highlight-cuda notranslate" id="table-phase-ptx"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">compute</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">iteration</span><span class="p">);</span>
@@ -270,18 +261,12 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx<
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-5" name="sd-tab-set-1" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-5">
 CUDA C 프리미티브</label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-phase-primitives">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
+<div class="highlight-cuda notranslate" id="table-phase-primitives"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">compute</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">iteration</span><span class="p">);</span>
@@ -317,11 +302,7 @@ CUDA C 프리미티브</label><div class="sd-tab-content docutils">
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 </div>
 </section>
@@ -332,9 +313,7 @@ CUDA C 프리미티브</label><div class="sd-tab-content docutils">
 <input checked="checked" id="sd-tab-item-6" name="sd-tab-set-2" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-6">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-exit-std">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
+<div class="highlight-cuda notranslate" id="table-exit-std"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kt">__device__</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">condition_check</span><span class="p">();</span>
@@ -370,18 +349,12 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barr
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-7" name="sd-tab-set-2" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-7">
 CUDA C 프리미티브</label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-exit-primitives">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
+<div class="highlight-cuda notranslate" id="table-exit-primitives"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kt">__device__</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">condition_check</span><span class="p">();</span>
@@ -417,11 +390,7 @@ CUDA C 프리미티브</label><div class="sd-tab-content docutils">
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">bar.arrive_and_drop()</span></code> 연산은 <strong>현재</strong> 페이즈에서 참여 스레드가 도착해야 하는 의무를 이행하기 위해 배리어에 도착한 다음, <strong>다음</strong> 페이즈에서 기대되는 도착 카운트를 감소시켜 이 스레드가 더 이상 배리어에 도착할 것으로 기대되지 않도록 합니다.</p>
@@ -433,9 +402,7 @@ CUDA C 프리미티브</label><div class="sd-tab-content docutils">
 <input checked="checked" id="sd-tab-item-8" name="sd-tab-set-3" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-8">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-basic-completion-std">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
+<div class="highlight-cuda notranslate" id="table-basic-completion-std"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;functional&gt;</span>
 <span class="n">namespace</span><span class="w"> </span><span class="n">cg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="p">;</span>
@@ -498,11 +465,7 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barr
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 </div>
 </section>
@@ -512,9 +475,7 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barr
 <input checked="checked" id="sd-tab-item-9" name="sd-tab-set-4" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-9">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-tx-std">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
+<div class="highlight-cuda notranslate" id="table-tx-std"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">track_kernel</span><span class="p">()</span>
@@ -534,18 +495,12 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barr
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-10" name="sd-tab-set-4" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-10">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-tx-ptx">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+<div class="highlight-cuda notranslate" id="table-tx-ptx"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">track_kernel</span><span class="p">()</span>
@@ -565,11 +520,7 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx<
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 </div>
 <p>이 예제에서, <code class="docutils literal notranslate"><span class="pre">cuda::device::barrier_arrive_tx()</span></code> 연산은 현재 페이즈의 페이즈 동기화 지점과 연관된 도착 토큰 object를 구성합니다. 그런 다음 도착 카운트를 1 감소시키고 기대 트랜잭션 카운트를 0 증가시킵니다. 트랜잭션 카운트 업데이트가 0이므로, 배리어는 어떤 트랜잭션도 추적하고 있지 않습니다. 이어지는 <a class="reference internal" href="async-copies.html"><span class="std std-ref">텐서 메모리 가속기(TMA) 사용</span></a> 섹션에는 비동기 메모리 연산을 추적하는 예제가 포함되어 있습니다.</p>
@@ -605,9 +556,7 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx<
 <input checked="checked" id="sd-tab-item-11" name="sd-tab-set-5" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-11">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-producer-consumer-std">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
+<div class="highlight-cuda notranslate" id="table-producer-consumer-std"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
 
 <span class="n">using</span><span class="w"> </span><span class="n">barrier_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">barrier</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_block</span><span class="o">&gt;</span><span class="p">;</span>
 
@@ -660,18 +609,12 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barr
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-12" name="sd-tab-set-5" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-12">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-producer-consumer-ptx">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+<div class="highlight-cuda notranslate" id="table-producer-consumer-ptx"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
 
 <span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">produce</span><span class="p">(</span><span class="n">barrier</span><span class="w"> </span><span class="n">ready</span><span class="p">[],</span><span class="w"> </span><span class="n">barrier</span><span class="w"> </span><span class="n">filled</span><span class="p">[],</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
 <span class="p">{</span>
@@ -724,18 +667,12 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx<
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-13" name="sd-tab-set-5" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-13">
 CUDA C 프리미티브</label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-producer-consumer-primitives">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
+<div class="highlight-cuda notranslate" id="table-producer-consumer-primitives"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
 
 <span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">produce</span><span class="p">(</span><span class="n">__mbarrier_t</span><span class="w"> </span><span class="n">ready</span><span class="p">[],</span><span class="w"> </span><span class="n">__mbarrier_t</span><span class="w"> </span><span class="n">filled</span><span class="p">[],</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
 <span class="p">{</span>
@@ -788,11 +725,7 @@ CUDA C 프리미티브</label><div class="sd-tab-content docutils">
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 </div>
 <p>이 예제에서 첫 번째 워프는 프로듀서로 특화되고 나머지 워프들은 컨슈머로 특화됩니다. 모든 프로듀서 및 컨슈머 스레드는 네 개의 배리어 각각에 참여( <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">bar.arrive_and_wait()</span></code> 호출)하므로 기대 도착 카운트는 <code class="docutils literal notranslate"><span class="pre">block.size()</span></code>와 같습니다.</p>

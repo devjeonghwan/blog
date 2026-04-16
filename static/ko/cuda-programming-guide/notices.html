@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>6. 고지 사항 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>6. 고지 사항 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="이 문서는 정보 제공 목적으로만 제공되며, 제품의 특정 기능, 상태 또는 품질에 대한 보증으로 간주되어서는 안 됩니다. NVIDIA Corporation(“NVIDIA”)은 이 문서에 포함된 정보의 정확성 또는 완전성에 대해 명시적 또는 묵시적으로 어떠한 진술이나 보증도 하지 않으며, 본 문서에 포함된 오류에 대해 어떠한 책임도 지지 않습니다. NVIDIA는 이러한 정보의 결과 또는 사용, 또는 그 사용으로 인해 발생할 수 있는 제3자의 특허 또는 기타 권리 침해에 대해 어떠한 책임도 지지 않습니다. 이 문서는 (아래에서 정의되는) 어떠한 자료(Material), 코드 또는 기능의 개발, 출시 또는 제공에 대한 약속이 아닙니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="./assets/site.css">
   <link rel="stylesheet" href="./assets/vendor/pygments.css">
   <link rel="stylesheet" href="./assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="contents.html">목차</a>
-      <a href="genindex.html">색인</a>
       <a href="notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="search.html">
       <div class="search-form__inner">
@@ -81,7 +98,7 @@
 </section>
 </section>
 </article>
-          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="genindex.html">인덱스</a></section></div>
+          <div class="page-actions is-only-previous"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></section></div>
         </div>
       </main>
       <aside class="toc-panel">

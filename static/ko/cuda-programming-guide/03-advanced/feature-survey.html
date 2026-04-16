@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>3.5. CUDA 기능 둘러보기 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>3.5. CUDA 기능 둘러보기 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="이 프로그래밍 가이드의 1~3절에서는 CUDA와 GPU 프로그래밍을 소개하면서, 개념적으로 그리고 간단한 코드 예제를 통해 기초 주제를 다루었습니다. 이 가이드의 4부에서 특정 CUDA 기능을 설명하는 절에서는 이 가이드의 1~3절에서 다룬 개념에 대한 지식을 전제로 합니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">
@@ -144,7 +161,7 @@
 </section>
 <section id="driver-entry-point-access">
 <h3><span class="section-number">3.5.5.2. </span>드라이버 엔트리 포인트 액세스<a class="headerlink" href="#driver-entry-point-access" title="이 제목으로의 링크">#</a></h3>
-<p><a class="reference internal" href="../04-special-topics/driver-entry-point-access.html"><span class="std std-ref">드라이버 엔트리 포인트 액세스</span></a>는 CUDA 11.3부터 CUDA 드라이버 API와 CUDA 런타임 API에 대한 함수 포인터를 가져올 수 있는 기능을 의미합니다. 또한 개발자가 드라이버 함수의 특정 변형(variant)에 대한 함수 포인터를 가져올 수 있게 하며, CUDA 툴킷에서 उपलब्ध한 것보다 더 최신 드라이버의 드라이버 함수에 액세스할 수 있게 해 줍니다. <a class="reference internal" href="../04-special-topics/driver-entry-point-access.html"><span class="std std-numref">Section 4.20</span></a>은 드라이버 엔트리 포인트 액세스를 다룹니다.</p>
+<p><a class="reference internal" href="../04-special-topics/driver-entry-point-access.html"><span class="std std-ref">드라이버 엔트리 포인트 액세스</span></a>는 CUDA 11.3부터 CUDA 드라이버 API와 CUDA 런타임 API에 대한 함수 포인터를 가져올 수 있는 기능을 의미합니다. 또한 개발자가 드라이버 함수의 특정 변형(variant)에 대한 함수 포인터를 가져올 수 있게 하며, CUDA 툴킷에 포함된 것보다 더 최신 드라이버의 드라이버 함수에 액세스할 수 있게 해 줍니다. <a class="reference internal" href="../04-special-topics/driver-entry-point-access.html"><span class="std std-numref">Section 4.20</span></a>은 드라이버 엔트리 포인트 액세스를 다룹니다.</p>
 </section>
 <section id="error-log-management">
 <h3><span class="section-number">3.5.5.3. </span>오류 로그 관리<a class="headerlink" href="#error-log-management" title="이 제목으로의 링크">#</a></h3>

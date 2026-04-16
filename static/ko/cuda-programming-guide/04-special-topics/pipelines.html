@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>4.10. 파이프라인 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>4.10. 파이프라인 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="고급 동기화 프리미티브 에서 소개된 파이프라인은 작업을 스테이징하고 다중 버퍼 생산자–소비자 패턴을 조정하기 위한 메커니즘으로, 일반적으로 비동기 데이터 복사 와 연산을 오버랩하는 데 사용됩니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">
@@ -157,9 +174,7 @@
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-0">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::pipeline</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-example-pipelines-std">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/pipeline&gt;</span>
+<div class="highlight-cuda notranslate" id="table-example-pipelines-std"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/pipeline&gt;</span>
 
 <span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">example_kernel</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">)</span>
 <span class="p">{</span>
@@ -211,18 +226,12 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::pipe
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-1">
 CUDA C 프리미티브</label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-example-pipelines-primitives">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_pipeline.h&gt;</span>
+<div class="highlight-cuda notranslate" id="table-example-pipelines-primitives"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_pipeline.h&gt;</span>
 
 <span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">example_kernel</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">)</span>
 <span class="p">{</span>
@@ -265,11 +274,7 @@ CUDA C 프리미티브</label><div class="sd-tab-content docutils">
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 </div>
 </section>
@@ -280,9 +285,7 @@ CUDA C 프리미티브</label><div class="sd-tab-content docutils">
 <input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-2">
 CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::pipeline</span></code></label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-pipeline-basic-std">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/pipeline&gt;</span>
+<div class="highlight-cuda notranslate" id="table-pipeline-basic-std"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/pipeline&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
 
 <span class="cp">#pragma nv_diag_suppress static_var_with_dynamic_init</span>
@@ -352,11 +355,7 @@ CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::pipe
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 </div>
 <p>이 예제에서는 스레드 블록 내 스레드의 절반을 프로듀서로, 나머지 절반을 컨슈머로 사용합니다. 첫 번째 단계로, 우리는 생성해야 합니다 <code class="docutils literal notranslate"><span class="pre">cuda::pipeline</span></code> 객체를 생성해야 합니다. 일부 스레드를 프로듀서로, 일부 스레드를 컨슈머로 사용하려고 하므로, 우리는 사용해야 합니다 <strong>분할(partitioned)</strong> 파이프라인을 사용하여 <code class="docutils literal notranslate"><span class="pre">cuda::thread_scope_block</span></code>. 분할(partitioned) 파이프라인에는 <code class="docutils literal notranslate"><span class="pre">cuda::pipeline_shared_state</span></code> 참여 스레드들을 조정하기 위해. 스레드 블록 범위에서 2-스테이지 파이프라인의 상태를 초기화한 다음 호출합니다 <code class="docutils literal notranslate"><span class="pre">cuda::make_pipeline()</span></code>. 다음으로, 프로듀서 스레드들은 다음으로부터의 비동기 복사를 제출하여 파이프라인을 채웁니다 <code class="docutils literal notranslate"><span class="pre">in</span></code> 로 <code class="docutils literal notranslate"><span class="pre">buffer</span></code>. 이 시점에서 모든 데이터 복사 작업이 진행 중입니다. 마지막으로, 메인 루프에서 모든 데이터 배치를 순회하며, 스레드가 프로듀서인지 컨슈머인지에 따라 미래 배치를 위한 또 다른 비동기 복사를 제출하거나 현재 배치를 소비합니다.</p>

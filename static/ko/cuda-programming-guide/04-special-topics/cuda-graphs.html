@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>4.2. CUDA 그래프 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>4.2. CUDA 그래프 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="CUDA 그래프는 CUDA에서 작업을 제출하기 위한 또 다른 모델을 제공합니다. 그래프는 실행과는 별도로 정의되는, 커널 런치, 데이터 이동 등과 같은 일련의 연산이 의존성으로 연결된 것입니다. 이를 통해 그래프를 한 번 정의한 뒤 반복적으로 런치할 수 있습니다. 그래프의 정의를 실행과 분리하면 여러 최적화가 가능해집니다. 첫째, 설정의 상당 부분을 미리 수행하기 때문에 스트림에 비해 CPU 런치 비용이 줄어듭니다. 둘째, 전체 워크플로를 CUDA에 제시함으로써, 스트림의 조각별 작업 제출 메커니즘으로는 불가능할 수도 있는 최적화를 가능하게 합니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">

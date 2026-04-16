@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>4.5. 프로그래밍 방식 종속 런치 및 동기화 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>4.5. 프로그래밍 방식 종속 런치 및 동기화 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="프로그래밍 방식 종속 런치(Programmatic Dependent Launch) 메커니즘은 동일한 CUDA 스트림에서 의존 대상인 기본(primary) 커널의 실행이 끝나기 전에, 의존하는 보조(secondary) 커널이 실행을 시작할 수 있도록 합니다. 이 기법은 컴퓨트 기능(Compute Capability) 9.0 디바이스부터 사용할 수 있으며, 보조 커널이 기본 커널의 결과에 의존하지 않는 상당한 작업을 미리 처리할 수 있을 때 성능상 이점을 제공합니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">

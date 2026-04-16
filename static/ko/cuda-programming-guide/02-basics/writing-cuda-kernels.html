@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>2.2. CUDA SIMT 커널 작성 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>2.2. CUDA SIMT 커널 작성 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="CUDA C++ 커널은 대체로 주어진 문제에 대해 기존 CPU 코드를 작성하는 것과 같은 방식으로 작성할 수 있습니다. 하지만 성능을 개선하는 데 사용할 수 있는 GPU의 몇 가지 고유한 기능이 있습니다. 또한 GPU에서 스레드가 어떻게 스케줄링되는지, 메모리에 어떻게 접근하는지, 그리고 실행이 어떻게 진행되는지를 어느 정도 이해하면 개발자가 사용 가능한 컴퓨팅 리소스의 활용도를 최대화하는 커널을 작성하는 데 도움이 될 수 있습니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">
@@ -577,7 +594,7 @@
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code>가 <code class="docutils literal notranslate"><span class="pre">INDX</span></code>의 두 번째 인자에 나타나므로, 연속된 스레드들이 메모리의 연속된 요소에 접근하게 되며 <code class="docutils literal notranslate"><span class="pre">a</span></code>의 읽기는 완벽하게 병합됩니다.</p>
-<p>커널의 다음 단계는 <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code> 함수 호출입니다. 이는 스레드 블록의 모든 스레드가 진행하기 전에 이전 코드의 실행을 완료했음을 보장하며, 따라서 공유 메모리에 <code class="docutils literal notranslate"><span class="pre">a</span></code>를 쓰는 작업이 다음 단계 전에 완료되었음을 보장합니다. 이는 다음 단계에서 스레드들이 공유 메모리에서 읽기를 수행하게 되므로 매우 중요합니다. <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code> 호출이 없다면, 공유 메모리에 <code class="docutils literal notranslate"><span class="pre">a</span></code>를 읽어들이는 작업이 스레드 블록의 모든 워프(warp)에서 완료되기 전에 일부 워프가 코드에서 더 आगे 진행할 수 있다는 점에서, 완료가 보장되지 않습니다.</p>
+<p>커널의 다음 단계는 <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code> 함수 호출입니다. 이는 스레드 블록의 모든 스레드가 진행하기 전에 이전 코드의 실행을 완료했음을 보장하며, 따라서 공유 메모리에 <code class="docutils literal notranslate"><span class="pre">a</span></code>를 쓰는 작업이 다음 단계 전에 완료되었음을 보장합니다. 이는 다음 단계에서 스레드들이 공유 메모리에서 읽기를 수행하게 되므로 매우 중요합니다. <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code> 호출이 없다면, 공유 메모리에 <code class="docutils literal notranslate"><span class="pre">a</span></code>를 읽어들이는 작업이 스레드 블록의 모든 워프(warp)에서 완료되기 전에 일부 워프가 코드에서 더 앞서 진행할 수 있다는 점에서, 완료가 보장되지 않습니다.</p>
 <p>커널의 이 시점에서, 각 스레드 블록에 대해 <code class="docutils literal notranslate"><span class="pre">smemArray</span></code>에는 원본 행렬과 동일한 순서로 배치된 행렬의 32 x 32 타일이 들어 있습니다. 타일 내 요소들이 올바르게 전치되도록 하기 위해, <code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code> 및 <code class="docutils literal notranslate"><span class="pre">threadIdx.y</span></code>는 <code class="docutils literal notranslate"><span class="pre">smemArray</span></code>를 읽을 때 서로 교환됩니다. 전체 타일이 <code class="docutils literal notranslate"><span class="pre">c</span></code>에서 올바른 위치에 놓이도록 하기 위해, <code class="docutils literal notranslate"><span class="pre">tileRow</span></code> 및 <code class="docutils literal notranslate"><span class="pre">tileCol</span></code> 인덱스도 <code class="docutils literal notranslate"><span class="pre">c</span></code>에 쓸 때 서로 교환됩니다. 적절한 병합(coalescing)을 보장하기 위해, 아래 문장에 보이듯이 <code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code>가 <code class="docutils literal notranslate"><span class="pre">INDX</span></code>의 두 번째 인자에서 사용됩니다.</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="p">[</span><span class="n">INDX</span><span class="p">(</span><span class="w"> </span><span class="n">tileCol</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">tileRow</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smemArray</span><span class="p">[</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">][</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">];</span>
 </pre></div>

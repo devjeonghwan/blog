@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>3.1. 고급 CUDA API 및 기능 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>3.1. 고급 CUDA API 및 기능 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="이 섹션에서는 더 고급 CUDA API 및 기능의 사용을 다룹니다. 이러한 주제는 일반적으로 CUDA 커널 수정이 필요하지 않은 기법이나 기능을 다루지만, 호스트 측에서 GPU 작업 실행과 성능뿐 아니라 CPU 측 성능을 포함한 애플리케이션 수준의 동작에도 영향을 줄 수 있습니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">
@@ -228,7 +245,7 @@
 </section>
 <section id="programmatic-dependent-kernel-launch">
 <h2><span class="section-number">3.1.4. </span>프로그래밍 방식 종속 커널 실행<a class="headerlink" href="#programmatic-dependent-kernel-launch" title="이 제목으로의 링크">#</a></h2>
-<p>앞서 논의했듯이, CUDA 스트림의 의미론은 커널이 순서대로 실행된다는 것입니다. 이는 두 개의 연속된 커널이 있고 두 번째 커널이 첫 번째 커널의 결과에 의존하는 경우, 프로그래머가 두 번째 커널이 실행을 시작할 때쯤이면 종속 데이터가 사용 가능하다는 점을 안전하게 확신할 수 있도록 하기 위함입니다. 하지만 첫 번째 커널이 이후 커널이 의존하는 데이터를 이미 전역 메모리에 써 두었음에도 불구하고 여전히 더 수행할 작업이 남아 있을 수 있습니다. 마찬가지로, 종속적인 두 번째 커널도 첫 번째 커널의 데이터가 필요해지기 전까지 수행할 수 있는 독립적인 작업이 일부 있을 수 있습니다. 이런 상황에서는(하드웨어 리소스가 उपलब्ध하다는 가정 하에) 두 커널의 실행을 부분적으로 오버랩할 수 있습니다. 오버랩은 두 번째 커널의 실행 오버헤드도 함께 오버랩할 수 있습니다. 하드웨어 리소스의 가용성 외에도, 달성 가능한 오버랩의 정도는 다음과 같은 커널의 구체적인 구조에 따라 달라집니다.</p>
+<p>앞서 논의했듯이, CUDA 스트림의 의미론은 커널이 순서대로 실행된다는 것입니다. 이는 두 개의 연속된 커널이 있고 두 번째 커널이 첫 번째 커널의 결과에 의존하는 경우, 프로그래머가 두 번째 커널이 실행을 시작할 때쯤이면 종속 데이터가 사용 가능하다는 점을 안전하게 확신할 수 있도록 하기 위함입니다. 하지만 첫 번째 커널이 이후 커널이 의존하는 데이터를 이미 전역 메모리에 써 두었음에도 불구하고 여전히 더 수행할 작업이 남아 있을 수 있습니다. 마찬가지로, 종속적인 두 번째 커널도 첫 번째 커널의 데이터가 필요해지기 전까지 수행할 수 있는 독립적인 작업이 일부 있을 수 있습니다. 이런 상황에서는(하드웨어 리소스를 사용할 수 있다는 가정 하에) 두 커널의 실행을 부분적으로 오버랩할 수 있습니다. 오버랩은 두 번째 커널의 실행 오버헤드도 함께 오버랩할 수 있습니다. 하드웨어 리소스의 가용성 외에도, 달성 가능한 오버랩의 정도는 다음과 같은 커널의 구체적인 구조에 따라 달라집니다.</p>
 <ul class="simple">
 <li><p>첫 번째 커널은 실행 중 어느 시점에 두 번째 커널이 의존하는 작업을 완료하는가?</p></li>
 <li><p>두 번째 커널은 실행 중 어느 시점에 첫 번째 커널의 데이터에 대한 작업을 시작하는가?</p></li>
@@ -369,11 +386,11 @@
 </div>
 </div>
 <p>여기에는 두 종류의 전송이 있습니다: 핀 고정(pinned) 호스트 메모리에서 핀 고정(pinned) 장치 메모리로의 <code class="docutils literal notranslate"><span class="pre">batch_size-10</span></code> 전송과, 호스트 배열에서 핀 고정(pinned) 장치 메모리로의 10개 전송입니다. 또한 <cite>buffer</cite> 배열은 호스트에 있을 뿐만 아니라 현재 스코프에서만 존재하며, 그 주소는 <em>수명 짧은 포인터(ephemeral pointer)</em>로 알려져 있습니다. 이 포인터는 API 호출이 완료된 후(비동기이므로)에는 유효하지 않을 수 있습니다. 이러한 수명 짧은 포인터로 복사를 수행하려면 attribute의 <cite>srcAccessOrder</cite>를 <cite>cudaMemcpySrcAccessOrderDuringApiCall</cite>로 설정해야 합니다.</p>
-<p>We now have two attributes, the first one applies to all transfers with indices starting at 0, and less than <code class="docutils literal notranslate"><span class="pre">batch_size-10</span></code>. The second one applies to all transfers with indices starting at <code class="docutils literal notranslate"><span class="pre">batch_size-10</span></code> and less than <code class="docutils literal notranslate"><span class="pre">batch_size</span></code>.</p>
-<p>If instead of allocating the <cite>buffer</cite> array from the stack, we had allocated it from the heap using <cite>malloc</cite> the data would not be ephemeral any more. It would be valid until the pointer was explicitly freed. In such a case the best option for how to stage the copies would depend on whether the system had hardware managed memory or coherent GPU access to host memory via address translation in which case it would be best to use stream ordering, or whether it did not in which case staging the transfers immediately would make most sense. In this situation, one should use the value <code class="docutils literal notranslate"><span class="pre">cudaMemcpyAccessOrderAny</span></code> for the <code class="docutils literal notranslate"><span class="pre">srcAccessOrder</span></code> of the attribute.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">cudaMemcpyBatchAsync</span></code> function also allows the programmer to provide hints about the source and destination locations. This is done by setting the <code class="docutils literal notranslate"><span class="pre">srcLocation</span></code> and <code class="docutils literal notranslate"><span class="pre">dstLocation</span></code> fields of the <code class="docutils literal notranslate"><span class="pre">cudaMemcpyAttributes</span></code> structure. The <code class="docutils literal notranslate"><span class="pre">srcLocation``and</span> <span class="pre">``dstLocation</span></code> fields are both of type <code class="docutils literal notranslate"><span class="pre">cudaMemLocation</span></code> which is a structure that contains the type of the location and the ID of the location. This is the same <code class="docutils literal notranslate"><span class="pre">cudaMemLocation</span></code> structure that can be used to give prefetching hints to the runtime when using <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">cudaMemPrefetchAsync()</span></code>. We illustrate how to set up the hints for a transfer from the device, to a specific NUMA node of the host in the code example below:</p>
+<p>이제 속성은 두 개입니다. 첫 번째 속성은 인덱스가 0 이상이고 <code class="docutils literal notranslate"><span class="pre">batch_size-10</span></code> 미만인 모든 전송에 적용됩니다. 두 번째 속성은 인덱스가 <code class="docutils literal notranslate"><span class="pre">batch_size-10</span></code> 이상이고 <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> 미만인 모든 전송에 적용됩니다.</p>
+<p><cite>buffer</cite> 배열을 스택이 아니라 <cite>malloc</cite>으로 힙에 할당했다면, 이 데이터는 더 이상 수명 짧은(ephemeral) 데이터가 아닙니다. 포인터를 명시적으로 해제할 때까지 유효하기 때문입니다. 이 경우 복사를 어떻게 스테이징할지가 최적인지는 시스템이 하드웨어 관리 메모리(hardware managed memory)를 갖추었는지, 또는 주소 변환을 통해 호스트 메모리에 대한 일관된 GPU 접근(coherent GPU access)을 지원하는지에 따라 달라집니다. 그런 경우에는 스트림 순서(stream ordering)를 사용하는 편이 가장 좋고, 그렇지 않다면 전송을 즉시 스테이징하는 편이 더 합리적입니다. 이런 상황에서는 attribute의 <code class="docutils literal notranslate"><span class="pre">srcAccessOrder</span></code>에 <code class="docutils literal notranslate"><span class="pre">cudaMemcpyAccessOrderAny</span></code> 값을 사용해야 합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cudaMemcpyBatchAsync</span></code> 함수는 소스 위치와 목적지 위치에 대한 힌트도 프로그래머가 제공할 수 있게 해줍니다. 이는 <code class="docutils literal notranslate"><span class="pre">cudaMemcpyAttributes</span></code> 구조체의 <code class="docutils literal notranslate"><span class="pre">srcLocation</span></code> 및 <code class="docutils literal notranslate"><span class="pre">dstLocation</span></code> 필드를 설정함으로써 이루어집니다. 이 두 필드는 모두 위치의 유형과 위치 ID를 담는 <code class="docutils literal notranslate"><span class="pre">cudaMemLocation</span></code> 타입입니다. 이 <code class="docutils literal notranslate"><span class="pre">cudaMemLocation</span></code> 구조체는 <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">cudaMemPrefetchAsync()</span></code>를 사용할 때 런타임에 프리페치 힌트를 제공하는 데 쓰이는 것과 동일한 구조체입니다. 아래 코드 예제는 디바이스에서 호스트의 특정 NUMA 노드로 전송할 때 이러한 힌트를 설정하는 방법을 보여줍니다.</p>
 <div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-number">Listing 6 </span><span class="caption-text">Example of Setting Source and Destination Location Hints</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-number">예제 6 </span><span class="caption-text">소스 및 목적지 위치 힌트 설정 예</span><a class="headerlink" href="#id3" title="이 코드로의 링크">#</a></div>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// Allocate the source and destination buffers</span>
 <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="w"> </span><span class="o">*&gt;</span><span class="w"> </span><span class="n">srcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">);</span>
 <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="w"> </span><span class="o">*&gt;</span><span class="w"> </span><span class="n">dsts</span><span class="p">(</span><span class="n">batch_size</span><span class="p">);</span>
@@ -415,24 +432,23 @@
 </pre></div>
 </div>
 </div>
-<p>THe last thing to cover is the flag for hinting whether we want to use SM’s or CEs for the transfers.
-The field for this is the  <code class="docutils literal notranslate"><span class="pre">cudaMemcpyAttributesflags::flags</span></code> and the possible values are:</p>
+<p>마지막으로 살펴볼 것은 전송에 SM을 사용할지, 아니면 CE(복사 엔진)를 사용할지에 대한 힌트용 플래그입니다.
+이를 위한 필드는 <code class="docutils literal notranslate"><span class="pre">cudaMemcpyAttributesflags::flags</span></code>이며, 가능한 값은 다음과 같습니다.</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">cudaMemcpyFlagDefault</span></code> – default behavior</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cudaMemcpyFlagPreferOverlapWithCompute</span></code> – this hints that the system should prefer to use CEs for the transfers overlapping the transfer with computations. This flag is ignored on non-Tegra platforms</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaMemcpyFlagDefault</span></code> - 기본 동작</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaMemcpyFlagPreferOverlapWithCompute</span></code> - 전송과 연산이 겹치는 경우, 시스템이 전송에 CE를 우선 사용하도록 힌트를 줍니다. 이 플래그는 Tegra가 아닌 플랫폼에서는 무시됩니다.</p></li>
 </ul>
-<p>In summary, the main points regarding “cudaMemcpyBatchAsync” are as follows:</p>
+<p>정리하면, <code class="docutils literal notranslate"><span class="pre">cudaMemcpyBatchAsync</span></code>의 핵심 사항은 다음과 같습니다.</p>
 <ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">cudaMemcpyBatchAsync</span></code> function (and its 3D variant) allows the programmer to specify a batch of memory transfers, allowing the amortization of transfer setup overheads.</p></li>
-<li><p>Other than the source and destination pointers and the transfer sizes, the function can take one or more memory copy attributes providing information about the kind of memory being transferred and the corresponding stream ordering behavior of the source pointers, hints about the source and destination locations, and hints as to whether to prefer to overlap the transfer with compute (if possible) or whether to use SMs for the transfer.</p></li>
-<li><p>Given the above information the runtime can attempt to optimize the transfer to the maximum degree possible..</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaMemcpyBatchAsync</span></code> 함수와 그 3D 변형은 프로그래머가 메모리 전송 배치를 지정할 수 있게 해주며, 이를 통해 전송 설정 오버헤드를 여러 전송에 분산할 수 있습니다.</p></li>
+<li><p>이 함수는 소스/목적지 포인터와 전송 크기 외에도 하나 이상의 메모리 복사 attribute를 받을 수 있습니다. 이 attribute에는 전송 대상 메모리의 종류, 소스 포인터에 대응하는 스트림 순서 동작, 소스 및 목적지 위치 힌트, 그리고 가능한 경우 연산과 전송을 겹치도록 할지 또는 전송에 SM을 사용할지를 결정하기 위한 힌트가 포함될 수 있습니다.</p></li>
+<li><p>런타임은 이러한 정보를 바탕으로 전송을 가능한 한 최대한 최적화하려고 시도할 수 있습니다.</p></li>
 </ul>
 </section>
 <section id="environment-variables">
-<h2><span class="section-number">3.1.6. </span>Environment Variables<a class="headerlink" href="#environment-variables" title="Link to this heading">#</a></h2>
-<p>CUDA provides various environment variables (see <a class="reference internal" href="../05-appendices/environment-variables.html"><span class="std std-numref">Section 5.2</span></a>), which can affect execution and performance.
-If they are not explicitly set, CUDA uses reasonable default values for them, but
-special handling may be required on a per-case basis, e.g., for debugging purposes or to get improved performance.</p>
+<h2><span class="section-number">3.1.6. </span>환경 변수<a class="headerlink" href="#environment-variables" title="Link to this heading">#</a></h2>
+<p>CUDA는 실행과 성능에 영향을 줄 수 있는 여러 환경 변수( <a class="reference internal" href="../05-appendices/environment-variables.html"><span class="std std-numref">Section 5.2</span></a> 참고)를 제공합니다.
+이 변수들을 명시적으로 설정하지 않으면 CUDA는 합리적인 기본값을 사용합니다. 다만 디버깅 목적이나 성능 개선이 필요한 경우처럼, 사례에 따라 별도의 처리가 필요할 수 있습니다.</p>
 <p>예를 들어, 서로 다른 CUDA 스트림의 독립적인 작업이 거짓 의존성(false dependency) 때문에 직렬화될 가능성을 줄이려면 <code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_MAX_CONNECTIONS</span></code> 환경 변수 값을 높여야 할 수 있습니다. 이러한 거짓 의존성은 동일한 기반 리소스를 사용할 때 생길 수 있습니다. 우선 기본값으로 시작하고, 사용 가능한 SM 리소스 부족 같은 다른 요인으로 설명할 수 없는 CUDA 스트림 간 독립 작업의 예기치 않은 직렬화처럼 성능 문제가 있을 때만 이 환경 변수의 영향을 살펴보는 것이 좋습니다. 참고로 MPS를 사용하는 경우 이 환경 변수의 기본값은 더 낮게 설정됩니다.</p>
 <p>마찬가지로 지연 시간에 민감한 애플리케이션에서는 <code class="docutils literal notranslate"><span class="pre">CUDA_MODULE_LOADING</span></code> 환경 변수를 <code class="docutils literal notranslate"><span class="pre">EAGER</span></code>로 설정하는 편이 더 적합할 수 있습니다. 이렇게 하면 모듈 로딩에 따른 오버헤드를 모두 애플리케이션 초기화 단계로 옮겨, 실제 중요 구간 바깥에서 처리할 수 있습니다. 현재 기본 모드는 지연 모듈 로딩(lazy module loading)입니다. 이 기본 모드에서도 애플리케이션 초기화 단계에서 여러 커널에 대한 워밍업 호출을 추가해 모듈이 더 일찍 로드되도록 만들면 eager 모듈 로딩과 유사한 효과를 얻을 수 있습니다.</p>
 <p>여러 CUDA 환경 변수에 대한 자세한 내용은 <a class="reference internal" href="../05-appendices/environment-variables.html"><span class="std std-ref">CUDA 환경 변수</span></a>를 참조하십시오. 환경 변수 값은 애플리케이션을 실행하기 <em>전에</em> 설정하는 것이 좋습니다. 애플리케이션 내부에서 값을 바꾸면 효과가 없을 수 있습니다.</p>
@@ -445,7 +461,7 @@ special handling may be required on a per-case basis, e.g., for debugging purpos
       <aside class="toc-panel">
         <div class="toc-panel__card">
           <h2 class="toc-title">이 페이지에서</h2>
-          <div class="toc-list"><ul><li><a class="toc-link" href="#cudalaunchkernelex">3.1.1. cudaLaunchKernelEx</a></li><li><a class="toc-link" href="#launching-clusters">3.1.2. 클러스터 실행:</a><ul><li><a class="toc-link" href="#launching-with-clusters-using-cudalaunchkernelex">3.1.2.1. cudaLaunchKernelEx를 사용한 클러스터 실행</a></li><li><a class="toc-link" href="#blocks-as-clusters">3.1.2.2. 클러스터로서의 블록</a></li></ul></li><li><a class="toc-link" href="#more-on-streams-and-events">3.1.3. 스트림 및 이벤트에 대한 추가 내용</a><ul><li><a class="toc-link" href="#stream-priorities">3.1.3.1. 스트림 우선순위</a></li><li><a class="toc-link" href="#explicit-synchronization">3.1.3.2. 명시적 동기화</a></li><li><a class="toc-link" href="#implicit-synchronization">3.1.3.3. 암묵적 동기화</a></li></ul></li><li><a class="toc-link" href="#programmatic-dependent-kernel-launch">3.1.4. 프로그래밍 방식 종속 커널 실행</a></li><li><a class="toc-link" href="#batched-memory-transfers">3.1.5. 배치 메모리 전송</a></li><li><a class="toc-link" href="#environment-variables">3.1.6. Environment Variables</a></li></ul></div>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#cudalaunchkernelex">3.1.1. cudaLaunchKernelEx</a></li><li><a class="toc-link" href="#launching-clusters">3.1.2. 클러스터 실행:</a><ul><li><a class="toc-link" href="#launching-with-clusters-using-cudalaunchkernelex">3.1.2.1. cudaLaunchKernelEx를 사용한 클러스터 실행</a></li><li><a class="toc-link" href="#blocks-as-clusters">3.1.2.2. 클러스터로서의 블록</a></li></ul></li><li><a class="toc-link" href="#more-on-streams-and-events">3.1.3. 스트림 및 이벤트에 대한 추가 내용</a><ul><li><a class="toc-link" href="#stream-priorities">3.1.3.1. 스트림 우선순위</a></li><li><a class="toc-link" href="#explicit-synchronization">3.1.3.2. 명시적 동기화</a></li><li><a class="toc-link" href="#implicit-synchronization">3.1.3.3. 암묵적 동기화</a></li></ul></li><li><a class="toc-link" href="#programmatic-dependent-kernel-launch">3.1.4. 프로그래밍 방식 종속 커널 실행</a></li><li><a class="toc-link" href="#batched-memory-transfers">3.1.5. 배치 메모리 전송</a></li><li><a class="toc-link" href="#environment-variables">3.1.6. 환경 변수</a></li></ul></div>
         </div>
       </aside>
     </div>

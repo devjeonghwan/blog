@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>4.19. API와의 CUDA 상호운용성 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>4.19. API와의 CUDA 상호운용성 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="CUDA에서 API를 통해 GPU 데이터에 직접 접근하면 CUDA 커널로 해당 데이터를 읽고 쓸 수 있으며, 이를 통해 다른 API에서 이를 소비하면서도 CUDA 기능을 제공할 수 있습니다. 두 가지 주요 개념이 있습니다. 하나는 직접 접근 방식으로, openGL 및 Direct3D[9-11]와의 Graphics Interoperability 이며, 이를 통해 OpenGL과 Direct3D의 리소스를 CUDA 주소 공간으로 매핑할 수 있습니다. 다른 하나는 더 유연한 External resource interoperability 로, OS 수준 핸들을 통해 가져오기 및 내보내기를 수행하여 메모리 및 동기화 객체에 접근할 수 있습니다. 이는 Direct3D[11-12], Vulkan 및 NVIDIA Software Communication Interface Interoperability에 대해 지원됩니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">

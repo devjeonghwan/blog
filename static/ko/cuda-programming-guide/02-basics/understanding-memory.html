@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>2.4. 통합 메모리 및 시스템 메모리 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>2.4. 통합 메모리 및 시스템 메모리 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="이기종 시스템에는 데이터를 저장할 수 있는 여러 물리 메모리가 있습니다. 호스트 CPU에는 DRAM이 연결되어 있고, 시스템의 각 GPU에는 자체적으로 연결된 DRAM이 있습니다. 성능은 데이터가 이를 액세스하는 프로세서의 메모리에 상주할 때 가장 좋습니다. CUDA는 명시적으로 메모리 배치를 관리 하기 위한 API를 제공하지만, 이는 장황할 수 있고 소프트웨어 설계를 복잡하게 만들 수 있습니다. CUDA는 서로 다른 물리 메모리 간 데이터의 할당, 배치 및 마이그레이션을 용이하게 하는 것을 목표로 하는 기능과 역량을 제공합니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">

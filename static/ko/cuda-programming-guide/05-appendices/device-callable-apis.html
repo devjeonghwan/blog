@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>5.6. 디바이스에서 호출 가능한 API 및 인트린식 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>5.6. 디바이스에서 호출 가능한 API 및 인트린식 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="이 장에는 CUDA 커널과 디바이스 코드에서 호출할 수 있는 API 및 인트린식에 대한 참조 자료와 API 문서가 포함되어 있습니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">
@@ -433,7 +450,7 @@
 <span class="p">);</span>
 </pre></div>
 </div>
-<p>의 복사를 수행합니다 <strong>``shape`` 바이트</strong>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">shape</span></code> 바이트를 복사합니다.</p>
 <p>사용법 2</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TyGroup</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TyElem</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TyDstLayout</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">TySrcLayout</span><span class="o">&gt;</span>
 <span class="kt">void</span><span class="w"> </span><span class="n">memcpy_async</span><span class="p">(</span>
@@ -445,7 +462,7 @@
 <span class="p">);</span>
 </pre></div>
 </div>
-<p><strong>``min(dstLayout, srcLayout)`` 요소</strong>의 복사를 수행합니다. 레이아웃이 <code class="docutils literal notranslate"><span class="pre">cuda::aligned_size_t&lt;N&gt;</span></code> 타입인 경우, 둘 다 동일한 정렬(alignment)을 지정해야 합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">min(dstLayout,</span> <span class="pre">srcLayout)</span></code> 개의 요소를 복사합니다. 레이아웃이 <code class="docutils literal notranslate"><span class="pre">cuda::aligned_size_t&lt;N&gt;</span></code> 타입인 경우, 둘 다 동일한 정렬(alignment)을 지정해야 합니다.</p>
 <p><strong>정오표</strong>
 CUDA 11.1에서 src 및 dst 입력 레이아웃 모두와 함께 도입된 <code class="docutils literal notranslate"><span class="pre">memcpy_async</span></code> API는 레이아웃이 바이트가 아니라 요소 단위로 제공되기를 기대합니다. 요소 타입은 <code class="docutils literal notranslate"><span class="pre">TyElem</span></code>에서 추론되며 크기는 <code class="docutils literal notranslate"><span class="pre">sizeof(TyElem)</span></code>입니다. <code class="docutils literal notranslate"><span class="pre">cuda::aligned_size_t&lt;N&gt;</span></code> 타입이 레이아웃으로 사용되는 경우, 지정된 요소 개수에 <code class="docutils literal notranslate"><span class="pre">sizeof(TyElem)</span></code>를 곱한 값은 N의 배수여야 하며, 요소 타입으로 <code class="docutils literal notranslate"><span class="pre">std::byte</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">char</span></code>를 사용하는 것이 권장됩니다.</p>
 <p>복사의 지정된 shape 또는 레이아웃이 <code class="docutils literal notranslate"><span class="pre">cuda::aligned_size_t&lt;N&gt;</span></code> 타입이면, 정렬은 최소 <code class="docutils literal notranslate"><span class="pre">min(16,</span> <span class="pre">N)</span></code>으로 보장됩니다. 이 경우 <code class="docutils literal notranslate"><span class="pre">dst</span></code> 및 <code class="docutils literal notranslate"><span class="pre">src</span></code> 포인터는 모두 N 바이트로 정렬되어야 하며, 복사되는 바이트 수는 N의 배수여야 합니다.</p>

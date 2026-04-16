@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>4.18. CUDA 동적 병렬 처리 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>4.18. CUDA 동적 병렬 처리 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="CUDA 동적 병렬 처리(CUDA Dynamic Parallelism) - 흔히 CDP로 약칭 - 는 GPU에서 실행 중인 코드가 새로운 GPU 작업을 생성할 수 있게 하는 CUDA 프로그래밍 모델의 기능입니다. 즉, GPU에서 이미 실행 중인 디바이스 코드로부터 추가 커널 런치를 통해 새로운 작업을 GPU에 추가할 수 있습니다. 이 기능은 디바이스에서 실행되는 스레드가 런타임에 실행 구성을 결정할 수 있게 해 주므로, 호스트와 디바이스 간 실행 제어 및 데이터 전송의 필요성을 줄일 수 있습니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">
@@ -101,7 +118,7 @@
 <p>디바이스 런타임에서의 커널 실행 순서는 CUDA 스트림 순서 지정 의미론을 따릅니다. 하나의 그리드 내에서 동일한 스트림으로 실행된 모든 커널( <a class="reference internal" href="../05-appendices/device-callable-apis.html"><span class="std std-ref">The Fire-and-Forget Stream</span></a> 제외)은 순서대로 실행됩니다. 동일한 그리드의 여러 스레드가 동일한 스트림으로 실행을 수행하는 경우, 스트림 내 순서는 그리드 내의 스레드 스케줄링에 따라 달라지며, 이는 <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code>과 같은 동기화 프리미티브로 제어할 수 있습니다.</p>
 <p>명명된 스트림은 그리드 내의 모든 스레드가 공유하지만, 암시적 <em>NULL</em> 스트림은 스레드 블록 내의 모든 스레드만 공유한다는 점에 유의하십시오. 스레드 블록 내 여러 스레드가 암시적 스트림으로 실행을 수행하면, 이러한 실행은 순서대로 실행됩니다. 서로 다른 스레드 블록의 스레드가 암시적 스트림으로 실행을 수행하면, 이러한 실행은 동시에 실행될 수 있습니다. 스레드 블록 내 여러 스레드에서의 실행에 대해 동시성이 필요하다면, 명시적인 명명 스트림을 사용해야 합니다.</p>
 <p>디바이스 런타임은 CUDA 실행 모델 내에서 새로운 동시성 보장을 도입하지 않습니다. 즉, 디바이스에서 서로 다른 어떤 수의 스레드 블록 사이에도 동시 실행이 보장되지 않습니다.</p>
-<p>동시성 보장 부재는 부모 그리드와 그 자식 그리드에도 확장됩니다. 부모 그리드가 자식 그리드를 실행하면, 스트림 종속성이 만족되고 하드웨어 자원이 उपलब्ध하면 자식은 실행을 시작할 수 있지만, 부모 그리드가 암시적 동기화 지점에 도달할 때까지 실행 시작이 보장되지는 않습니다.</p>
+<p>동시성 보장 부재는 부모 그리드와 그 자식 그리드에도 확장됩니다. 부모 그리드가 자식 그리드를 실행하면, 스트림 종속성이 만족되고 하드웨어 자원을 사용할 수 있으면 자식은 실행을 시작할 수 있지만, 부모 그리드가 암시적 동기화 지점에 도달할 때까지 실행 시작이 보장되지는 않습니다.</p>
 <p>동시성은 디바이스 구성, 애플리케이션 작업 부하, 런타임 스케줄링에 따라 달라질 수 있습니다. 따라서 서로 다른 스레드 블록 간의 어떤 동시성에도 의존하는 것은 안전하지 않습니다.</p>
 </section>
 </section>

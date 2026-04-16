@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>3.3. CUDA 드라이버 API — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>3.3. CUDA 드라이버 API — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="이 가이드의 이전 섹션에서는 CUDA 런타임을 다루었습니다. CUDA 런타임 API와 CUDA 드라이버 API 에서 언급했듯이, CUDA 런타임은 더 낮은 수준의 CUDA 드라이버 API 위에 작성되어 있습니다. 이 섹션에서는 CUDA 런타임과 드라이버 API 간의 차이점 일부와, 이를 서로 혼용하는 방법을 다룹니다. 대부분의 애플리케이션은 CUDA 드라이버 API와 상호작용할 필요 없이도 완전한 성능으로 동작할 수 있습니다. 그러나 새로운 인터페이스는 때때로 런타임 API보다 드라이버 API에서 더 일찍 제공되며, 가상 메모리 관리 와 같은 일부 고급 인터페이스는 드라이버 API에서만 노출됩니다.">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">

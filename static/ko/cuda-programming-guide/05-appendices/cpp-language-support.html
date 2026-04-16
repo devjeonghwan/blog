@@ -4,8 +4,22 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>5.3. C++ 언어 지원 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <title>5.3. C++ 언어 지원 — CUDA 프로그래밍 가이드</title>
   <meta name="description" content="nvcc 은(는) 다음 사양에 따라 CUDA 및 디바이스 코드를 처리합니다:">
+  
+  
+  <script>
+    (function () {
+      try {
+        var storedTheme = window.localStorage.getItem("site-theme");
+        var initialTheme = storedTheme === "dark" || storedTheme === "light" ? storedTheme : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+      } catch (_error) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../assets/site.css">
   <link rel="stylesheet" href="../assets/vendor/pygments.css">
   <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
@@ -28,13 +42,16 @@
   <div class="site-header__inner">
     <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
     <a class="brand" href="../index.html">
-      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+      <span class="brand__title">CUDA 프로그래밍 가이드</span>
     </a>
     <nav class="header-links">
       <a href="../contents.html">목차</a>
-      <a href="../genindex.html">색인</a>
       <a href="../notices.html">고지 사항</a>
     </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드로 전환">
+      <span class="theme-toggle__label">다크</span>
+    </button>
+    
     <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
     <form class="search-form" data-doc-search-form action="../search.html">
       <div class="search-form__inner">
@@ -934,7 +951,7 @@
 <hr class="docutils"/>
 <p><strong>포맷 지정자</strong></p>
 <p>표준 <code class="docutils literal notranslate"><span class="pre">printf()</span></code>와 마찬가지로, 포맷 지정자는 다음 형태를 취합니다: <code class="docutils literal notranslate"><span class="pre">%[flags][width][.precision][size]type</span></code></p>
-<p>다음 필드가 지원됩니다. 모든 동작에 대한 완전한 설명은 널리 उपलब्ध한 문서를 참조하십시오.</p>
+<p>다음 필드가 지원됩니다. 모든 동작에 대한 완전한 설명은 널리 알려진 문서를 참조하십시오.</p>
 <ul class="simple">
 <li><p>플래그: <code class="docutils literal notranslate"><span class="pre">#</span></code>, <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">'</span></code>, <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code></p></li>
 <li><p>너비: <code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">0-9</span></code></p></li>
@@ -1953,11 +1970,11 @@ Hello thread 3, value=1.2345
 <p>유효하지 않은 경우:</p>
 <ul class="simple">
 <li><p>호스트 코드의 <code class="docutils literal notranslate"><span class="pre">nvstd::function</span></code> 인스턴스는 <code class="docutils literal notranslate"><span class="pre">__device__</span></code> 함수의 주소 또는 <code class="docutils literal notranslate"><span class="pre">operator()</span></code>가 <code class="docutils literal notranslate"><span class="pre">__device__</span></code> 함수인 함수 객체(functor)로 초기화할 수 없습니다.</p></li>
-<li><p>Similarly, instances of <code class="docutils literal notranslate"><span class="pre">nvstd::function</span></code> in device code cannot be initialized with the address of a <code class="docutils literal notranslate"><span class="pre">__host__</span></code> function or with a functor whose <code class="docutils literal notranslate"><span class="pre">operator()</span></code> is a <code class="docutils literal notranslate"><span class="pre">__host__</span></code> function.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">nvstd::function</span></code> instances cannot be passed from host code to device code (or vice versa) at runtime.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">nvstd::function</span></code> cannot be used in the parameter type of a <code class="docutils literal notranslate"><span class="pre">__global__</span></code> function if the <code class="docutils literal notranslate"><span class="pre">__global__</span></code> function is launched from host code.</p></li>
+<li><p>마찬가지로 디바이스 코드의 <code class="docutils literal notranslate"><span class="pre">nvstd::function</span></code> 인스턴스도 <code class="docutils literal notranslate"><span class="pre">__host__</span></code> 함수의 주소나, <code class="docutils literal notranslate"><span class="pre">operator()</span></code>가 <code class="docutils literal notranslate"><span class="pre">__host__</span></code> 함수인 함수 객체(functor)로 초기화할 수 없습니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nvstd::function</span></code> 인스턴스는 런타임에 호스트 코드에서 디바이스 코드로, 또는 그 반대로 전달할 수 없습니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__global__</span></code> 함수가 호스트 코드에서 런치되는 경우, 그 <code class="docutils literal notranslate"><span class="pre">__global__</span></code> 함수의 파라미터 타입으로 <code class="docutils literal notranslate"><span class="pre">nvstd::function</span></code>을 사용할 수 없습니다.</p></li>
 </ul>
-<p>Examples of invalid cases:</p>
+<p>유효하지 않은 경우의 예:</p>
 <div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;nvfunctional&gt;</span>
 
 <span class="kt">__device__</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">device_function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
@@ -2189,9 +2206,7 @@ Hello thread 3, value=1.2345
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-0">
 cuda::atomic_ref</label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-cuda-atomic-ref">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/atomic&gt;</span>
+<div class="highlight-cuda notranslate" id="table-cuda-atomic-ref"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/atomic&gt;</span>
 
 <span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">kernel</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">cuda</span><span class="o">::</span><span class="n">atomic_ref</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_device</span><span class="o">&gt;</span><span class="w"> </span><span class="n">atomic_ref</span><span class="p">{</span><span class="o">*</span><span class="n">flag</span><span class="p">};</span>
@@ -2210,18 +2225,12 @@ cuda::atomic_ref</label><div class="sd-tab-content docutils">
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-1">
 cuda::atomic</label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-cuda-atomic">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/atomic&gt;</span>
+<div class="highlight-cuda notranslate" id="table-cuda-atomic"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/atomic&gt;</span>
 
 <span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">kernel</span><span class="p">(</span><span class="n">cuda</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_device</span><span class="o">&gt;*</span><span class="w"> </span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -2239,18 +2248,12 @@ cuda::atomic</label><div class="sd-tab-content docutils">
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 <input id="sd-tab-item-2" name="sd-tab-set-0" type="radio"/>
 <label class="sd-tab-label" for="sd-tab-item-2">
 원자 함수(<code class="docutils literal notranslate"><span class="pre">atomicAdd</span></code> 및 <code class="docutils literal notranslate"><span class="pre">atomicExch</span></code>)</label><div class="sd-tab-content docutils">
-<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-atomic-functions">
-<tbody>
-<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">kernel</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-cuda notranslate" id="table-atomic-functions"><div class="highlight"><pre><span></span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">kernel</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// Consumer: blocks until flag is set by producer, then reads data</span>
 <span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">atomicAdd</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
@@ -2267,11 +2270,7 @@ cuda::atomic</label><div class="sd-tab-content docutils">
 <span class="p">}</span>
 </pre></div>
 </div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
+
 </div>
 </div>
 </li>

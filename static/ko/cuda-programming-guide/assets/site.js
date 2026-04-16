@@ -21,6 +21,72 @@
     document.body.classList.remove("search-open");
   }
 
+  function readStoredTheme() {
+    try {
+      var storedTheme = window.localStorage.getItem("site-theme");
+      if (storedTheme === "dark" || storedTheme === "light") {
+        return storedTheme;
+      }
+    } catch (_error) {
+      return null;
+    }
+    return null;
+  }
+
+  function currentTheme() {
+    return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  }
+
+  function updateThemeToggleState() {
+    var isDarkTheme = currentTheme() === "dark";
+    document.querySelectorAll("[data-theme-toggle]").forEach(function (button) {
+      button.setAttribute("aria-pressed", isDarkTheme ? "true" : "false");
+      button.setAttribute("aria-label", isDarkTheme ? "라이트 모드로 전환" : "다크 모드로 전환");
+      var themeLabel = button.querySelector(".theme-toggle__label");
+      if (themeLabel) {
+        themeLabel.textContent = isDarkTheme ? "라이트" : "다크";
+      }
+    });
+  }
+
+  function applyTheme(themeName, shouldPersist) {
+    var normalizedTheme = themeName === "dark" ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", normalizedTheme);
+    if (shouldPersist) {
+      try {
+        window.localStorage.setItem("site-theme", normalizedTheme);
+      } catch (_error) {
+      }
+    }
+    updateThemeToggleState();
+  }
+
+  function toggleTheme() {
+    applyTheme(currentTheme() === "dark" ? "light" : "dark", true);
+  }
+
+  function ensureThemeToggle() {
+    document.querySelectorAll(".site-header__inner").forEach(function (headerInner) {
+      if (headerInner.querySelector("[data-theme-toggle]")) {
+        return;
+      }
+      var themeToggle = document.createElement("button");
+      themeToggle.className = "theme-toggle";
+      themeToggle.type = "button";
+      themeToggle.setAttribute("data-theme-toggle", "");
+      themeToggle.setAttribute("aria-label", "다크 모드로 전환");
+      themeToggle.innerHTML = '<span class="theme-toggle__label">다크</span>';
+      var searchForm = headerInner.querySelector(".search-form");
+      if (searchForm) {
+        headerInner.insertBefore(themeToggle, searchForm);
+        return;
+      }
+      headerInner.appendChild(themeToggle);
+    });
+  }
+
+  applyTheme(readStoredTheme() || currentTheme(), false);
+
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")
@@ -132,109 +198,9 @@
     });
   }
 
-  function createTableModal() {
-    var modal = document.createElement("div");
-    modal.className = "table-modal";
-    modal.innerHTML = [
-      '<div class="table-modal__dialog" role="dialog" aria-modal="true" aria-label="표 크게 보기">',
-      '  <div class="table-modal__header">',
-      '    <div class="table-modal__title">표 크게 보기</div>',
-      '    <button class="table-modal__close" type="button" aria-label="닫기">✕</button>',
-      "  </div>",
-      '  <div class="table-modal__body"></div>',
-      "</div>",
-    ].join("");
-    document.body.appendChild(modal);
-
-    function closeModal() {
-      modal.classList.remove("is-open");
-      modal.querySelector(".table-modal__body").innerHTML = "";
-      document.body.style.overflow = "";
-    }
-
-    modal.addEventListener("click", function (event) {
-      if (event.target === modal || event.target.closest(".table-modal__close")) {
-        closeModal();
-      }
-    });
-
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") {
-        closeModal();
-      }
-    });
-
-    return {
-      open: function (tableFrame, title) {
-        var body = modal.querySelector(".table-modal__body");
-        body.innerHTML = "";
-        var clone = tableFrame.cloneNode(true);
-        var button = clone.querySelector(".table-expand-button");
-        if (button) {
-          button.remove();
-        }
-        clone.classList.add("table-frame--modal");
-
-        var canvas = document.createElement("div");
-        canvas.className = "table-modal__canvas";
-        body.appendChild(canvas);
-        canvas.appendChild(clone);
-
-        modal.querySelector(".table-modal__title").textContent = title || "표 크게 보기";
-        modal.classList.add("is-open");
-        document.body.style.overflow = "hidden";
-        window.requestAnimationFrame(function () {
-          var sourceWidth = Math.max(tableFrame.scrollWidth, Math.round(tableFrame.getBoundingClientRect().width));
-          var bodyStyles = window.getComputedStyle(body);
-          var horizontalPadding =
-            (parseFloat(bodyStyles.paddingLeft) || 0) + (parseFloat(bodyStyles.paddingRight) || 0);
-          var availableWidth = Math.max(body.clientWidth - horizontalPadding, 0);
-
-          if (sourceWidth > 0) {
-            clone.style.width = sourceWidth + "px";
-            clone.style.maxWidth = "none";
-          }
-
-          var scale = 1;
-          if (sourceWidth > 0 && availableWidth > 0) {
-            scale = availableWidth / sourceWidth;
-          }
-
-          clone.style.position = "absolute";
-          clone.style.left = "0";
-          clone.style.top = "0";
-          clone.style.transformOrigin = "top left";
-          clone.style.transform = "scale(" + scale + ")";
-          canvas.style.width = "100%";
-          canvas.style.height = Math.ceil(clone.scrollHeight * scale) + "px";
-        });
-      },
-    };
-  }
-
-  function enhanceTables() {
-    var frames = Array.prototype.slice.call(document.querySelectorAll(".doc-article .table-frame"));
-    if (!frames.length) {
-      return;
-    }
-
-    var modal = createTableModal();
-    frames.forEach(function (frame, index) {
-      var firstElementChild = frame.firstElementChild;
-      if (firstElementChild && firstElementChild.classList.contains("table-expand-button")) {
-        return;
-      }
-
-      var button = document.createElement("button");
-      button.className = "table-expand-button";
-      button.type = "button";
-      button.textContent = "표 크게 보기";
-      var caption = frame.querySelector("caption");
-      var title = caption ? caption.textContent.trim() : "표 " + (index + 1);
-      button.addEventListener("click", function () {
-        modal.open(frame, title);
-      });
-      frame.insertBefore(button, frame.firstChild);
+  function removeTableExpandControls() {
+    document.querySelectorAll(".table-expand-button, .table-modal").forEach(function (element) {
+      element.remove();
     });
   }
 
@@ -458,11 +424,20 @@
     });
   }
 
+  function attachThemeToggle() {
+    ensureThemeToggle();
+    updateThemeToggleState();
+    document.querySelectorAll("[data-theme-toggle]").forEach(function (button) {
+      button.addEventListener("click", toggleTheme);
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     attachSidebarToggle();
     attachSearchToggle();
+    attachThemeToggle();
     attachSearchForms();
-    enhanceTables();
+    removeTableExpandControls();
     updateActiveTocLink();
     initializeSearchPage();
   });
