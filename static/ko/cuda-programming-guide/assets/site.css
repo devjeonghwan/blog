@@ -208,7 +208,7 @@ video {
   align-items: center;
 }
 
-.header-links a {
+.header-link {
   color: var(--text-muted);
   font-size: 0.9rem;
 }
@@ -1331,8 +1331,16 @@ html[data-theme="dark"] .doc-article .admonition.error .admonition-title {
     padding: 0 var(--header-inline-padding);
   }
 
+  .site-header__inner.site-header__inner--has-compact-persistent-links {
+    grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+  }
+
   .site-header__inner.site-header__inner--without-search {
     grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .site-header__inner.site-header__inner--without-search.site-header__inner--has-compact-persistent-links {
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
   }
 
   .brand {
@@ -1343,6 +1351,29 @@ html[data-theme="dark"] .doc-article .admonition.error .admonition-title {
     display: none;
   }
 
+  .site-header__inner.site-header__inner--has-compact-persistent-links .header-links {
+    display: inline-flex;
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    gap: 10px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .site-header__inner.site-header__inner--has-compact-persistent-links .header-link {
+    display: none;
+  }
+
+  .site-header__inner.site-header__inner--has-compact-persistent-links .header-link--compact-persistent {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .theme-toggle {
     grid-column: 3;
     grid-row: 1;
@@ -1350,6 +1381,10 @@ html[data-theme="dark"] .doc-article .admonition.error .admonition-title {
     height: 30px;
     padding: 0;
     justify-content: center;
+  }
+
+  .site-header__inner.site-header__inner--has-compact-persistent-links .theme-toggle {
+    grid-column: 4;
   }
 
   .theme-toggle__label {
@@ -1362,6 +1397,11 @@ html[data-theme="dark"] .doc-article .admonition.error .admonition-title {
     justify-content: center;
     grid-column: 4;
     justify-self: end;
+  }
+
+  .site-header__inner.site-header__inner--has-compact-persistent-links .site-header .search-toggle,
+  .site-header__inner.site-header__inner--has-compact-persistent-links .search-toggle {
+    grid-column: 5;
   }
 
   .site-header .search-form {
