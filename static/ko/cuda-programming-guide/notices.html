@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>6. 고지 사항 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="이 문서는 정보 제공 목적으로만 제공되며, 제품의 특정 기능, 상태 또는 품질에 대한 보증으로 간주되어서는 안 됩니다. NVIDIA Corporation(“NVIDIA”)은 이 문서에 포함된 정보의 정확성 또는 완전성에 대해 명시적 또는 묵시적으로 어떠한 진술이나 보증도 하지 않으며, 본 문서에 포함된 오류에 대해 어떠한 책임도 지지 않습니다. NVIDIA는 이러한 정보의 결과 또는 사용, 또는 그 사용으로 인해 발생할 수 있는 제3자의 특허 또는 기타 권리 침해에 대해 어떠한 책임도 지지 않습니다. 이 문서는 (아래에서 정의되는) 어떠한 자료(Material), 코드 또는 기능의 개발, 출시 또는 제공에 대한 약속이 아닙니다.">
+  <link rel="stylesheet" href="./assets/site.css">
+  <link rel="stylesheet" href="./assets/vendor/pygments.css">
+  <link rel="stylesheet" href="./assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="./assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="./assets/vendor/design-tabs.js"></script>
+  <script defer src="./assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="contents.html">목차</a>
+      <a href="genindex.html">색인</a>
+      <a href="notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link is-active" href="notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="index.html">홈</a></li><li><a href="index.html">CUDA 프로그래밍 가이드</a></li><li>6. 고지 사항</li></ul>
+          <h1 class="page-title">6. 고지 사항</h1>
+          <article class="doc-article">
+<section id="notices">
+
+<section id="notice">
+<h2><span class="section-number">6.1. </span>고지<a class="headerlink" href="#notice" title="이 제목으로의 링크">#</a></h2>
+<p>이 문서는 정보 제공 목적으로만 제공되며, 제품의 특정 기능, 상태 또는 품질에 대한 보증으로 간주되어서는 안 됩니다. NVIDIA Corporation(“NVIDIA”)은 이 문서에 포함된 정보의 정확성 또는 완전성에 대해 명시적 또는 묵시적으로 어떠한 진술이나 보증도 하지 않으며, 본 문서에 포함된 오류에 대해 어떠한 책임도 지지 않습니다. NVIDIA는 이러한 정보의 결과 또는 사용, 또는 그 사용으로 인해 발생할 수 있는 제3자의 특허 또는 기타 권리 침해에 대해 어떠한 책임도 지지 않습니다. 이 문서는 (아래에서 정의되는) 어떠한 자료(Material), 코드 또는 기능의 개발, 출시 또는 제공에 대한 약속이 아닙니다.</p>
+<p>NVIDIA는 사전 통지 없이 언제든지 이 문서에 대한 정정, 수정, 개선, 향상 및 기타 모든 변경을 할 권리를 보유합니다.</p>
+<p>고객은 주문 전에 최신 관련 정보를 확보해야 하며, 그러한 정보가 최신이고 완전한지 확인해야 합니다.</p>
+<p>NVIDIA 제품은, NVIDIA와 고객의 권한 있는 대표자가 서명한 개별 판매 계약에서 달리 합의하지 않는 한, 주문 확인 시 제공되는 NVIDIA의 표준 판매 약관(“판매 약관”)에 따라 판매됩니다. NVIDIA는 본 문서에서 언급된 NVIDIA 제품의 구매와 관련하여 고객의 일반 약관을 적용하는 것에 대해 명시적으로 이의를 제기합니다. 본 문서로 인해 직접적이든 간접적이든 어떠한 계약상 의무도 성립되지 않습니다.</p>
+<p>NVIDIA 제품은 의료, 군사, 항공기, 우주 또는 생명 유지 장비에서의 사용에 적합하도록 설계, 승인 또는 보증되지 않으며, NVIDIA 제품의 고장 또는 오작동이 합리적으로 개인 상해, 사망, 재산 또는 환경 피해로 이어질 것으로 예상될 수 있는 응용 분야에서도 마찬가지입니다. NVIDIA는 그러한 장비 또는 응용 분야에 NVIDIA 제품이 포함되거나 사용되는 것에 대해 어떠한 책임도 지지 않으며, 따라서 그러한 포함 및/또는 사용은 고객의 전적인 위험 부담입니다.</p>
+<p>NVIDIA는 이 문서를 기반으로 하는 제품이 특정 용도에 적합하다는 어떠한 진술이나 보증도 하지 않습니다. 각 제품의 모든 매개변수에 대한 테스트는 NVIDIA에 의해 반드시 수행되는 것은 아닙니다. 이 문서에 포함된 정보의 적용 가능성을 평가하고 결정하며, 제품이 고객이 계획한 응용 분야에 적합하고 알맞은지 확인하고, 응용 프로그램 또는 제품의 결함을 방지하기 위해 해당 응용 분야에 필요한 테스트를 수행하는 것은 전적으로 고객의 책임입니다. 고객의 제품 설계상의 취약점은 NVIDIA 제품의 품질과 신뢰성에 영향을 미칠 수 있으며, 이 문서에 포함된 조건 및/또는 요구사항을 넘어서는 추가 또는 다른 조건 및/또는 요구사항을 초래할 수 있습니다. NVIDIA는 (i) 본 문서에 반하는 방식으로 NVIDIA 제품을 사용하는 경우 또는 (ii) 고객의 제품 설계에 근거하거나 그에 기인할 수 있는 어떠한 결함, 손해, 비용 또는 문제와 관련하여 어떠한 책임도 지지 않습니다.</p>
+<p>이 문서에 따라 어떠한 NVIDIA의 특허권, 저작권 또는 기타 NVIDIA 지식재산권에 대해서도 명시적이거나 묵시적인 라이선스는 부여되지 않습니다. NVIDIA가 제3자 제품 또는 서비스에 관해 게시한 정보는, 해당 제품 또는 서비스의 사용에 대한 NVIDIA의 라이선스, 보증 또는 보증/승인에 해당하지 않습니다. 그러한 정보를 사용하려면 제3자의 특허 또는 기타 지식재산권에 따른 제3자의 라이선스가 필요할 수 있으며, 또는 NVIDIA의 특허 또는 기타 지식재산권에 따른 NVIDIA의 라이선스가 필요할 수 있습니다.</p>
+<p>이 문서에 포함된 정보의 복제는, NVIDIA의 사전 서면 승인 하에, 변경 없이 복제되고 모든 적용 가능한 수출 법률 및 규정을 완전히 준수하며, 관련된 모든 조건, 제한 및 고지 사항이 동반되는 경우에만 허용됩니다.</p>
+<p>본 문서 및 모든 NVIDIA 설계 사양, 레퍼런스 보드, 파일, 도면, 진단 자료, 목록 및 기타 문서(합쳐서 또는 개별적으로 “자료(MATERIALS)”)는 “있는 그대로(AS IS)” 제공됩니다. NVIDIA는 자료에 관하여 명시적, 묵시적, 법정 또는 기타 어떠한 보증도 하지 않으며, 비침해, 상품성 및 특정 목적에의 적합성에 대한 모든 묵시적 보증을 명시적으로 부인합니다. 법률로 금지되지 않는 범위 내에서, NVIDIA는 NVIDIA가 그러한 손해의 가능성에 대해 고지받았더라도, 본 문서의 사용으로 인해 발생하는 어떠한 손해(직접, 간접, 특별, 부수적, 징벌적 또는 결과적 손해를 포함하되 이에 한정되지 않음)에 대해서도, 그 원인 및 책임 이론과 무관하게, 어떠한 경우에도 책임을 지지 않습니다. 고객이 어떠한 이유로든 발생할 수 있는 손해와는 무관하게, 본 문서에 설명된 제품에 대한 NVIDIA의 고객에 대한 총합 및 누적 책임은 해당 제품에 대한 판매 약관에 따라 제한됩니다.</p>
+</section>
+<section id="opencl">
+<h2><span class="section-number">6.2. </span>OpenCL<a class="headerlink" href="#opencl" title="이 제목으로의 링크">#</a></h2>
+<p>OpenCL은 Khronos Group Inc.에 대한 라이선스 하에 사용되는 Apple Inc.의 상표입니다.</p>
+</section>
+<section id="trademarks">
+<h2><span class="section-number">6.3. </span>상표<a class="headerlink" href="#trademarks" title="이 제목으로의 링크">#</a></h2>
+<p>NVIDIA 및 NVIDIA 로고는 미국 및 기타 국가에서 NVIDIA Corporation의 상표 또는 등록 상표입니다. 기타 회사 및 제품명은 해당 회사의 상표일 수 있습니다.</p>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="genindex.html">인덱스</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#notice">6.1. 고지</a></li><li><a class="toc-link" href="#opencl">6.2. OpenCL</a></li><li><a class="toc-link" href="#trademarks">6.3. 상표</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

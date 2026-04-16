@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4.15. 프로세스 간 통신 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="서로 다른 호스트 프로세스가 관리하는 여러 GPU 간 통신은 프로세스 간 통신(IPC) API 및 IPC 공유 가능 메모리 버퍼를 사용하고, 이후 피어 GPU의 디바이스 메모리에 대한 프로세스 로컬 디바이스 포인터를 얻는 데 사용되는 프로세스 이식 가능 핸들을 생성함으로써 지원됩니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part4.html">4. CUDA 기능</a></li><li>4.15. 프로세스 간 통신</li></ul>
+          <h1 class="page-title">4.15. 프로세스 간 통신</h1>
+          <article class="doc-article">
+<section id="interprocess-communication">
+<span id="id1"></span>
+<p>서로 다른
+호스트 프로세스가 관리하는 여러 GPU 간 통신은
+프로세스 간 통신(IPC) API 및 IPC 공유 가능 메모리 버퍼를 사용하고,
+이후 피어 GPU의 디바이스 메모리에 대한 프로세스 로컬 디바이스 포인터를 얻는 데 사용되는
+프로세스 이식 가능 핸들을 생성함으로써 지원됩니다.</p>
+<p>호스트 스레드가 생성한 모든 디바이스 메모리 포인터 또는 이벤트 핸들은 동일한 프로세스 내의 다른 어떤 스레드에서도 직접 참조할 수 있습니다.
+하지만 디바이스 포인터 또는 이벤트 핸들은 이를 생성한 프로세스 밖에서는 유효하지 않으므로, 다른 프로세스에 속한 스레드가 직접 참조할 수는 없습니다.
+프로세스 간에 디바이스 메모리와 CUDA 이벤트에 액세스하려면, 애플리케이션은 표준 호스트 운영체제 IPC 메커니즘(예: 프로세스 간 공유 메모리 또는 파일)을 사용해 다른 프로세스와 공유할 수 있는 프로세스 이식 가능 핸들을 생성하기 위해 CUDA 프로세스 간 통신(IPC) 또는 가상 메모리 관리 API를 사용해야 합니다.
+프로세스들 간에 프로세스 이식 가능 핸들이 교환되면, CUDA IPC 또는 VMM API를 사용하여 해당 핸들로부터 프로세스 로컬 디바이스 포인터를 얻어야 합니다.
+그런 다음 프로세스 로컬 디바이스 포인터는 단일 프로세스 내에서와 동일하게 사용할 수 있습니다.</p>
+<p>단일 노드 및 단일 운영체제 인스턴스 내 IPC에 사용되는 것과 같은 유형의 이식 가능 핸들 접근 방식은
+멀티 노드 NVLink로 연결된 클러스터에서 GPU 간 피어 투 피어 통신에도 사용됩니다.
+멀티 노드의 경우, 통신하는 GPU는 각 클러스터 노드의 독립적인 운영체제 인스턴스 내에서 실행되는 프로세스에 의해 관리되므로,
+운영체제 인스턴스 수준보다 한 단계 높은 추가 추상화가 필요합니다.
+멀티 노드 피어 통신은 멀티 노드 GPU 피어 간에 소위 “패브릭(fabric)” 핸들을 생성하고 교환한 다음,
+멀티 노드 랭크에 해당하는 참여 프로세스 및 운영체제 인스턴스 내에서 프로세스 로컬 디바이스 포인터를 얻는 방식으로 달성됩니다.</p>
+<p>GPU 통신을 위한 프로세스 로컬 디바이스 포인터를 얻는 데 사용되는
+프로세스 이식 가능 핸들 및
+노드 및 운영체제 인스턴스 이식 가능 핸들을 설정하고 교환하는 데 사용되는 구체적인 API는
+아래(단일 노드 CUDA IPC) 및 ref::<cite>virtual-memory-management</cite>를 참조하십시오.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>IPC에 사용할 때 CUDA IPC API와 가상 메모리 관리(VMM) API를 사용하는 것에는 각각의 장점과 제한 사항이 있습니다.</p>
+<p>CUDA IPC API는 현재 Linux 플랫폼에서만 지원됩니다.</p>
+<p>CUDA 가상 메모리 관리 API는 메모리 할당 시점에 피어 접근성 및 공유에 대해 할당 단위(per-allocation) 제어를 허용하지만, CUDA 드라이버 API를 사용해야 합니다.</p>
+</div>
+<section id="ipc-using-the-legacy-interprocess-communication-api">
+<span id="cuda-ipc"></span><h2><span class="section-number">4.15.1. </span>레거시 프로세스 간 통신 API를 사용한 IPC<a class="headerlink" href="#ipc-using-the-legacy-interprocess-communication-api" title="이 제목에 대한 링크">#</a></h2>
+<p>프로세스 간에 디바이스 메모리 포인터와 이벤트를 공유하려면, 애플리케이션은 참조 매뉴얼에 자세히 설명된 CUDA 프로세스 간 통신 API를 사용해야 합니다.
+IPC API를 사용하면 애플리케이션이 <code class="docutils literal notranslate"><span class="pre">cudaIpcGetMemHandle()</span></code>을 사용하여 주어진 디바이스 메모리 포인터에 대한 IPC 핸들을 얻을 수 있습니다.
+CUDA IPC 핸들은 표준 호스트 운영체제 IPC 메커니즘(예: 프로세스 간 공유 메모리 또는 파일)을 사용해 다른 프로세스로 전달할 수 있습니다.
+<code class="docutils literal notranslate"><span class="pre">cudaIpcOpenMemHandle()</span></code>은 IPC 핸들을 사용하여 다른 프로세스 내에서 사용할 수 있는 유효한 디바이스 포인터를 검색합니다.
+이벤트 핸들은 유사한 엔트리 포인트를 사용하여 공유할 수 있습니다.</p>
+<p>IPC API 사용 예시는 단일 주 프로세스가 입력 데이터 배치를 생성하고, 재생성이나 복사 없이 그 데이터를 여러 보조 프로세스에서 사용할 수 있도록 만드는 경우입니다.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>IPC API는 Linux에서만 지원됩니다.</p>
+<p>IPC API는 <code class="docutils literal notranslate"><span class="pre">cudaMallocManaged</span></code> 할당에 대해서는 지원되지 않습니다.</p>
+<p>서로 통신하기 위해 CUDA IPC를 사용하는 애플리케이션은 동일한 CUDA 드라이버 및 런타임으로 컴파일, 링크 및 실행해야 합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cudaMalloc()</span></code>에 의해 수행된 할당은 성능상의 이유로 더 큰 메모리 블록에서 서브 할당될 수 있습니다. 이 경우 CUDA IPC API는 기반이 되는 전체 메모리 블록을 공유하게 되며, 그 결과 다른 서브 할당도 공유될 수 있어 프로세스 간 정보 노출로 이어질 가능성이 있습니다. 이 동작을 방지하기 위해 2MiB 정렬 크기를 갖는 할당만 공유할 것을 권장합니다.</p>
+<p>L4T 및 컴퓨트 기능 7.x 이상을 갖는 임베디드 Linux Tegra 디바이스에서는 IPC 이벤트 공유 API만 지원됩니다. IPC 메모리 공유 API는 Tegra 플랫폼에서 지원되지 않습니다.</p>
+</div>
+</section>
+<section id="ipc-using-the-virtual-memory-management-api">
+<h2><span class="section-number">4.15.2. </span>Virtual Memory Management API를 사용한 IPC<a class="headerlink" href="#ipc-using-the-virtual-memory-management-api" title="이 제목에 대한 링크">#</a></h2>
+<p>CUDA Virtual Memory Management API를 사용하면
+IPC 공유 가능한 메모리 할당을 생성할 수 있으며, 운영체제별 IPC 핸들 데이터 구조를 통해 여러 운영체제를 지원합니다.</p>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#ipc-using-the-legacy-interprocess-communication-api">4.15.1. 레거시 프로세스 간 통신 API를 사용한 IPC</a></li><li><a class="toc-link" href="#ipc-using-the-virtual-memory-management-api">4.15.2. Virtual Memory Management API를 사용한 IPC</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

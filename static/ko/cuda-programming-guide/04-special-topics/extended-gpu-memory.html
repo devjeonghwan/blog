@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4.17. 확장 GPU 메모리 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="고대역폭 NVLink-C2C를 활용하는 확장 GPU 메모리(EGM) 기능은 단일 노드 및 다중 노드 시스템 모두에서 GPU가 모든 시스템 메모리에 효율적으로 접근할 수 있도록 합니다. EGM은 설정 내 어느 GPU 스레드에서나 접근할 수 있는 물리 메모리 할당을 가능하게 함으로써 통합 CPU-GPU NVIDIA 시스템에 적용됩니다. EGM은 모든 GPU가 GPU-GPU NVLink 또는 NVLink-C2C의 속도로 해당 리소스에 접근할 수 있도록 보장합니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part4.html">4. CUDA 기능</a></li><li>4.17. 확장 GPU 메모리</li></ul>
+          <h1 class="page-title">4.17. 확장 GPU 메모리</h1>
+          <article class="doc-article">
+<section id="extended-gpu-memory">
+<span id="id1"></span>
+<p>고대역폭 NVLink-C2C를 활용하는 확장 GPU 메모리(EGM) 기능은 단일 노드 및 다중 노드 시스템 모두에서 GPU가 모든 시스템 메모리에 효율적으로 접근할 수 있도록 합니다.
+EGM은 설정 내 어느 GPU 스레드에서나 접근할 수 있는 물리 메모리 할당을 가능하게 함으로써 통합 CPU-GPU NVIDIA 시스템에 적용됩니다. EGM은 모든 GPU가 GPU-GPU NVLink 또는 NVLink-C2C의 속도로 해당 리소스에 접근할 수 있도록 보장합니다.</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../_images/egm-c2c-intro.png"><img alt="EGM" loading="lazy" src="../_images/egm-c2c-intro.png" style="width: 800px;"/>
+</a>
+</figure>
+<p>이 설정에서는 로컬 고대역폭 NVLink-C2C를 통해 메모리 접근이 이루어집니다. 원격 메모리 접근에는 GPU NVLink가 사용되며, 일부 경우에는 NVLink-C2C도 사용됩니다. EGM을 사용하면 GPU 스레드는 NVSwitch 패브릭을 통해 CPU 연결 메모리와 HBM3를 포함한 사용 가능한 모든 메모리 리소스에 접근할 수 있는 기능을 갖게 됩니다.</p>
+<section id="preliminaries">
+<h2><span class="section-number">4.17.1. </span>사전 준비<a class="headerlink" href="#preliminaries" title="이 제목으로의 링크">#</a></h2>
+<p>EGM 기능을 위한 API 변경 사항을 살펴보기 전에, 현재 지원되는 토폴로지, 식별자 할당, 가상 메모리 관리의 전제 조건, 그리고 EGM을 위한 CUDA 타입을 다룹니다.</p>
+<section id="egm-platforms-system-topology">
+<h3><span class="section-number">4.17.1.1. </span>EGM 플랫폼: 시스템 토폴로지<a class="headerlink" href="#egm-platforms-system-topology" title="이 제목으로의 링크">#</a></h3>
+<p>현재 EGM은 여러 플랫폼에서 활성화할 수 있습니다: <strong>(1) 단일 노드, 단일 GPU</strong>:
+Arm 기반 CPU, CPU에 연결된 메모리, 그리고 GPU로 구성됩니다. CPU와 GPU 사이에는 고대역폭 C2C(Chip-to-Chip) 인터커넥트가 있습니다.
+<strong>(2) 단일 노드, 다중 GPU</strong>: 각각 연결된 메모리를 가진 ARM 기반 CPU들과, NVLink 기반 네트워크를 통해 연결된 여러 GPU로 구성됩니다.
+<strong>(3) 다중 노드, 다중 GPU</strong>: 위 (1) 또는 (2)와 같은 단일 노드 시스템이 둘 이상이며,
+NVLink 기반 네트워크를 통해 연결됩니다.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>사용 가능한 디바이스를 제한하기 위해 <code class="docutils literal notranslate"><span class="pre">cgroups</span></code>를 사용하면 EGM을 통한 라우팅이 차단되고
+성능 문제가 발생합니다. 대신 <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code>를 사용하세요.</p>
+</div>
+</section>
+<section id="socket-identifiers-what-are-they-how-to-access-them">
+<h3><span class="section-number">4.17.1.2. </span>소켓 식별자: 무엇인가요? 어떻게 접근하나요?<a class="headerlink" href="#socket-identifiers-what-are-they-how-to-access-them" title="이 제목으로의 링크">#</a></h3>
+<p>NUMA(Non-Uniform Memory Access)는 멀티프로세서 컴퓨터 시스템에서 사용되는 메모리 아키텍처로, 메모리가 여러 노드로 나뉩니다. 각 노드는 자체 프로세서와 메모리를 가집니다. 이러한 시스템에서 NUMA는 시스템을 노드로 분할하고 고유한 식별자( 를 할당합니다.<cite>numaID</cite>)를 모든 노드에 할당합니다.</p>
+<p>EGM은 운영 체제가 할당하는 NUMA 노드 식별자를 사용합니다.
+이 식별자는 디바이스의 순서 번호(ordinal)와는 다르며, 가장 가까운 호스트 노드와 연관되어 있습니다.
+또한 기존 방법에 더해, 사용자는 호스트 노드의 식별자를 얻을 수 있습니다 (<cite>numaID</cite>)를 호출하여 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__DEVICE.html">cuDeviceGetAttribute</a>
+와 함께 <code class="docutils literal notranslate"><span class="pre">CU_DEVICE_ATTRIBUTE_HOST_NUMA_ID</span></code> 다음과 같이 속성 유형을 사용합니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">numaId</span><span class="p">;</span>
+<span class="n">cuDeviceGetAttribute</span><span class="p">(</span><span class="o">&amp;</span><span class="n">numaId</span><span class="p">,</span><span class="w"> </span><span class="n">CU_DEVICE_ATTRIBUTE_HOST_NUMA_ID</span><span class="p">,</span><span class="w"> </span><span class="n">deviceOrdinal</span><span class="p">);</span>
+</pre></div>
+</div>
+</section><section id="allocators-and-egm-support">
+<h3><span class="section-number">4.17.1.3. </span>할당자 및 EGM 지원<a class="headerlink" href="#allocators-and-egm-support" title="이 제목으로의 링크">#</a></h3>
+<p>시스템 메모리를 EGM으로 매핑하는 것은 어떤 성능 문제도 일으키지 않습니다. 사실, EGM으로 매핑된 원격 소켓의 시스템 메모리에 접근하는 것은 더 빠를 것입니다. 이는 EGM 트래픽이 NVLinks를 통해 라우팅되도록 보장되기 때문입니다. 현재, <code class="docutils literal notranslate"><span class="pre">cuMemCreate</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cudaMemPoolCreate</span></code> 할당자는 적절한 위치 유형과 NUMA 식별자와 함께 지원됩니다.</p>
+</section>
+<section id="memory-management-extensions-to-current-apis">
+<h3><span class="section-number">4.17.1.4. </span>현재 API에 대한 메모리 관리 확장<a class="headerlink" href="#memory-management-extensions-to-current-apis" title="이 제목으로의 링크">#</a></h3>
+<p>현재 EGM 메모리는 Virtual Memory (<code class="docutils literal notranslate"><span class="pre">cuMemCreate</span></code>) 또는
+Stream Ordered Memory (<code class="docutils literal notranslate"><span class="pre">cudaMemPoolCreate</span></code>) 할당자를 통해 매핑할 수 있습니다. 사용자는
+물리 메모리를 할당하고 모든 소켓에서 이를 가상
+메모리 주소 공간에 매핑할 책임이 있습니다.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>멀티 노드, 멀티 GPU 플랫폼에는 프로세스 간 통신이 필요합니다.
+따라서 독자께서는 <a class="reference internal" href="inter-process-communication.html"><span class="std std-numref">Chapter 4.15</span></a>를 참고하시기를 권장합니다.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>더 잘 이해하기 위해 CUDA Programming Guide의 <a class="reference internal" href="virtual-memory-management.html"><span class="std std-numref">Chapter 4.16</span></a> 및 <a class="reference internal" href="stream-ordered-memory-allocation.html"><span class="std std-numref">Chapter 4.3</span></a>을 읽어보시기를 권장합니다.</p>
+</div>
+<p>NUMA와 유사한 노드 식별자를 사용하여 이러한 접근 방식이 할당 위치를 이해할 수 있도록, 새로운 CUDA 속성 유형이 API에 추가되었습니다:</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><strong>CUDA 유형</strong></p></td>
+<td><p><strong>사용 대상</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CU_MEM_LOCATION_TYPE_HOST_NUMA</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CUmemAllocationProp</span></code> for
+<code class="docutils literal notranslate"><span class="pre">cuMemCreate</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cudaMemLocationTypeHostNuma</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cudaMemPoolProps</span></code> for
+<code class="docutils literal notranslate"><span class="pre">cudaMemPoolCreate</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>NUMA 전용 CUDA 타입에 대해 더 알아보려면 <a class="reference external" href="https://www.google.com/url?q=https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__TYPES.html&amp;sa=D&amp;source=editors&amp;ust=1696873412599124&amp;usg=AOvVaw0Ru93Acs_FpJG0gl02BLMX">CUDA Driver API</a>
+및 <a class="reference external" href="https://www.google.com/url?q=https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html%23group__CUDART__TYPES_1gg2279aa08666f329f3ba4afe397fa60f024dc63fb938dee27b41e3842da35d2d0&amp;sa=D&amp;source=editors&amp;ust=1696873412599344&amp;usg=AOvVaw2O-SyvDt1G37IjcpFzc-4C">CUDA Runtime Data Types</a>를 참조하십시오.</p>
+</div>
+</section>
+</section>
+<section id="using-the-egm-interface">
+<h2><span class="section-number">4.17.2. </span>EGM 인터페이스 사용<a class="headerlink" href="#using-the-egm-interface" title="Link to this heading">#</a></h2>
+<section id="single-node-single-gpu">
+<h3><span class="section-number">4.17.2.1. </span>단일 노드, 단일 GPU<a class="headerlink" href="#single-node-single-gpu" title="Link to this heading">#</a></h3>
+<p>기존 CUDA 호스트 할당자 중 어느 것이든, 그리고 시스템에서 할당된
+메모리 또한 고대역폭 C2C의 이점을 얻는 데 사용할 수 있습니다. 사용자에게는
+로컬 액세스가 오늘날의 호스트 할당이 의미하는 바입니다.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>메모리 할당자와 페이지 크기에 대한 자세한 내용은 튜닝 가이드를 참조하십시오.</p>
+</div>
+</section>
+<section id="single-node-multi-gpu">
+<h3><span class="section-number">4.17.2.2. </span>단일 노드, 멀티 GPU<a class="headerlink" href="#single-node-multi-gpu" title="Link to this heading">#</a></h3>
+<p>멀티 GPU 시스템에서는 사용자가 배치를 위한 호스트 정보를 제공해야 합니다.
+앞서 언급했듯이, 해당 정보를 표현하는 자연스러운 방법은 NUMA 노드 ID를
+사용하는 것이며 EGM은 이 접근 방식을 따릅니다. 따라서 <code class="docutils literal notranslate"><span class="pre">cuDeviceGetAttribute</span></code> 함수를 사용하면
+사용자는 가장 가까운 NUMA 노드 id를 알아낼 수 있어야 합니다. (참조: <a class="reference external" href="#socket-identifiers-what-are-they-how-to-access-them">Socket Identifiers: What are they? How to access them?</a>).
+그다음 사용자는 VMM(가상 메모리 관리) API 또는 CUDA 메모리 풀을 사용하여
+EGM 메모리를 할당하고 관리할 수 있습니다.</p>
+<section id="using-vmm-apis">
+<h4><span class="section-number">4.17.2.2.1. </span>VMM API 사용<a class="headerlink" href="#using-vmm-apis" title="이 제목으로의 링크">#</a></h4>
+<p>가상 메모리 관리 API를 사용한 메모리 할당의 첫 단계는
+할당을 뒷받침할 물리 메모리 청크를 생성하는 것입니다.
+자세한 내용은 CUDA Programming Guide의 <a class="reference external" href="#virtual-memory-management">가상 메모리 관리 섹션</a>을
+참조하십시오. EGM 할당에서는 사용자가 위치 유형으로
+<code class="docutils literal notranslate"><span class="pre">CU_MEM_LOCATION_TYPE_HOST_NUMA</span></code>  을, 위치 식별자로는
+<cite>numaID</cite>를 명시적으로 제공해야 합니다. 또한 EGM에서는 할당이
+플랫폼의 적절한 단위(granularity)에 맞게 정렬되어야 합니다. 다음
+코드 스니펫은 <code class="docutils literal notranslate"><span class="pre">cuMemCreate</span></code>를 사용하여 물리 메모리를 할당하는 예를 보여줍니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUmemAllocationProp</span><span class="w"> </span><span class="n">prop</span><span class="p">{};</span>
+<span class="n">prop</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_MEM_ALLOCATION_TYPE_PINNED</span><span class="p">;</span>
+<span class="n">prop</span><span class="p">.</span><span class="n">location</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_MEM_LOCATION_TYPE_HOST_NUMA</span><span class="p">;</span>
+<span class="n">prop</span><span class="p">.</span><span class="n">location</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numaId</span><span class="p">;</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">granularity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">cuMemGetAllocationGranularity</span><span class="p">(</span><span class="o">&amp;</span><span class="n">granularity</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">prop</span><span class="p">,</span><span class="w"> </span><span class="n">MEM_ALLOC_GRANULARITY_MINIMUM</span><span class="p">);</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">padded_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ROUND_UP</span><span class="p">(</span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">granularity</span><span class="p">);</span>
+<span class="n">CUmemGenericAllocationHandle</span><span class="w"> </span><span class="n">allocHandle</span><span class="p">;</span>
+<span class="n">cuMemCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">allocHandle</span><span class="p">,</span><span class="w"> </span><span class="n">padded_size</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">prop</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>물리 메모리 할당 후에는 주소 공간을 예약하고
+이를 포인터에 매핑해야 합니다. 이러한 절차에는 EGM 관련
+변경 사항이 없습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUdeviceptr</span><span class="w"> </span><span class="n">dptr</span><span class="p">;</span>
+<span class="n">cuMemAddressReserve</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dptr</span><span class="p">,</span><span class="w"> </span><span class="n">padded_size</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">cuMemMap</span><span class="p">(</span><span class="n">dptr</span><span class="p">,</span><span class="w"> </span><span class="n">padded_size</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocHandle</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>마지막으로 사용자는 매핑된 가상 주소
+범위를 명시적으로 보호해야 합니다. 그렇지 않으면 매핑된 공간에 대한 접근이
+크래시로 이어집니다.
+메모리 할당과 마찬가지로 사용자는 위치 유형으로
+<code class="docutils literal notranslate"><span class="pre">CU_MEM_LOCATION_TYPE_HOST_NUMA</span></code>을 제공해야 하며,
+위치 식별자로는 <cite>numaId</cite>를 제공해야 합니다. 다음 코드 스니펫은
+호스트 노드와 GPU에 대한 액세스 디스크립터를 생성하여, 매핑된 메모리에 대해
+양쪽 모두에 읽기 및 쓰기 액세스를 부여합니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUmemAccessDesc</span><span class="w"> </span><span class="n">accessDesc</span><span class="p">[</span><span class="mi">2</span><span class="p">]{{}};</span>
+<span class="n">accessDesc</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">location</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_MEM_LOCATION_TYPE_HOST_NUMA</span><span class="p">;</span>
+<span class="n">accessDesc</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">location</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numaId</span><span class="p">;</span>
+<span class="n">accessDesc</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_MEM_ACCESS_FLAGS_PROT_READWRITE</span><span class="p">;</span>
+<span class="n">accessDesc</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">location</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_MEM_LOCATION_TYPE_DEVICE</span><span class="p">;</span>
+<span class="n">accessDesc</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">location</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentDev</span><span class="p">;</span>
+<span class="n">accessDesc</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_MEM_ACCESS_FLAGS_PROT_READWRITE</span><span class="p">;</span>
+<span class="n">cuMemSetAccess</span><span class="p">(</span><span class="n">dptr</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">accessDesc</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="using-cuda-memory-pool">
+<h4><span class="section-number">4.17.2.2.2. </span>CUDA 메모리 풀 사용<a class="headerlink" href="#using-cuda-memory-pool" title="이 제목으로의 링크">#</a></h4>
+<p>EGM을 정의하기 위해 사용자는 노드에 메모리 풀을 생성하고
+피어에 대한 액세스를 부여할 수 있습니다. 이 경우 사용자는 위치 유형으로
+<code class="docutils literal notranslate"><span class="pre">cudaMemLocationTypeHostNuma</span></code>을, 위치 식별자로는 <cite>numaId</cite>를
+명시적으로 정의해야 합니다. 다음 코드 스니펫은
+메모리 풀 <code class="docutils literal notranslate"><span class="pre">cudaMemPoolCreate</span></code>을 생성하는 예를 보여줍니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaSetDevice</span><span class="p">(</span><span class="n">homeDevice</span><span class="p">);</span>
+<span class="n">cudaMemPoolProps</span><span class="w"> </span><span class="n">props</span><span class="p">{};</span>
+<span class="n">props</span><span class="p">.</span><span class="n">allocType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaMemAllocationTypePinned</span><span class="p">;</span>
+<span class="n">props</span><span class="p">.</span><span class="n">location</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaMemLocationTypeHostNuma</span><span class="p">;</span>
+<span class="n">props</span><span class="p">.</span><span class="n">location</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numaId</span><span class="p">;</span>
+<span class="n">cudaMemPoolCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">memPool</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">props</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>또한 직접 연결 피어 액세스의 경우, 기존 피어 액세스 API인 <code class="docutils literal notranslate"><span class="pre">cudaMemPoolSetAccess</span></code>를 사용하는 것도 가능합니다. <cite>accessingDevice</cite>에 대한 예는 다음 코드 스니펫에 나와 있습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaMemAccessDesc</span><span class="w"> </span><span class="n">desc</span><span class="p">{};</span>
+<span class="n">desc</span><span class="p">.</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaMemAccessFlagsProtReadWrite</span><span class="p">;</span>
+<span class="n">desc</span><span class="p">.</span><span class="n">location</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaMemLocationTypeDevice</span><span class="p">;</span>
+<span class="n">desc</span><span class="p">.</span><span class="n">location</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">accessingDevice</span><span class="p">;</span>
+<span class="n">cudaMemPoolSetAccess</span><span class="p">(</span><span class="n">memPool</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">desc</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>메모리 풀이 생성되고 액세스가 부여되면, 사용자는 생성된 메모리 풀을 <cite>residentDevice</cite>로 설정하고 <code class="docutils literal notranslate"><span class="pre">cudaMallocAsync</span></code>를 사용하여 메모리 할당을 시작할 수 있습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaDeviceSetMemPool</span><span class="p">(</span><span class="n">residentDevice</span><span class="p">,</span><span class="w"> </span><span class="n">memPool</span><span class="p">);</span>
+<span class="n">cudaMallocAsync</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">memPool</span><span class="p">,</span><span class="w"> </span><span class="n">stream</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>EGM은 2MB 페이지로 매핑됩니다. 따라서 매우 큰 할당에 접근할 때 사용자는 TLB 미스를 더 많이 겪을 수 있습니다.</p>
+</div>
+</section>
+</section>
+<section id="multi-node-multi-gpu">
+<h3><span class="section-number">4.17.2.3. </span>멀티 노드, 멀티 GPU<a class="headerlink" href="#multi-node-multi-gpu" title="이 제목으로의 링크">#</a></h3>
+<p>메모리 할당을 넘어, 원격 피어 액세스에는 EGM 전용 수정 사항이 없으며 CUDA 프로세스 간(IPC) 프로토콜을 따릅니다. IPC에 대한 자세한 내용은 <a class="reference external" href="https://www.google.com/url?q=https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html%23allocating-physical-memory&amp;sa=D&amp;source=editors&amp;ust=1696873412606850&amp;usg=AOvVaw0IF8bdtDWgRlAiW3tIoyXg">CUDA Programming Guide</a>를 참조하십시오.</p>
+<p>사용자는 <code class="docutils literal notranslate"><span class="pre">cuMemCreate</span></code>를 사용하여 메모리를 할당해야 하며, 또한 위치 유형으로 <code class="docutils literal notranslate"><span class="pre">CU_MEM_LOCATION_TYPE_HOST_NUMA</span></code>를, 위치 식별자로 <cite>numaID</cite>를 다시 명시적으로 제공해야 합니다. 또한 요청된 핸들 유형으로 <code class="docutils literal notranslate"><span class="pre">CU_MEM_HANDLE_TYPE_FABRIC</span></code>를 정의해야 합니다. 다음 코드 스니펫은 노드 A에서 물리 메모리를 할당하는 예를 보여줍니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUmemAllocationProp</span><span class="w"> </span><span class="n">prop</span><span class="p">{};</span>
+<span class="n">prop</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_MEM_ALLOCATION_TYPE_PINNED</span><span class="p">;</span>
+<span class="n">prop</span><span class="p">.</span><span class="n">requestedHandleTypes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_MEM_HANDLE_TYPE_FABRIC</span><span class="p">;</span>
+<span class="n">prop</span><span class="p">.</span><span class="n">location</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_MEM_LOCATION_TYPE_HOST_NUMA</span><span class="p">;</span>
+<span class="n">prop</span><span class="p">.</span><span class="n">location</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numaId</span><span class="p">;</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">granularity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">cuMemGetAllocationGranularity</span><span class="p">(</span><span class="o">&amp;</span><span class="n">granularity</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">prop</span><span class="p">,</span>
+<span class="w">                              </span><span class="n">MEM_ALLOC_GRANULARITY_MINIMUM</span><span class="p">);</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">padded_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ROUND_UP</span><span class="p">(</span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">granularity</span><span class="p">);</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">page_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">padded_size</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">page_size</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">CUmemGenericAllocationHandle</span><span class="w"> </span><span class="n">allocHandle</span><span class="p">;</span>
+<span class="n">cuMemCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">allocHandle</span><span class="p">,</span><span class="w"> </span><span class="n">padded_size</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">prop</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">cuMemCreate</span></code>를 사용하여 할당 핸들을 생성한 후, 사용자는 <code class="docutils literal notranslate"><span class="pre">cuMemExportToShareableHandle</span></code>를 호출하여 해당 핸들을 다른 노드인 노드 B로 내보낼 수 있습니다:</p><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cuMemExportToShareableHandle</span><span class="p">(</span><span class="o">&amp;</span><span class="n">fabricHandle</span><span class="p">,</span><span class="w"> </span><span class="n">allocHandle</span><span class="p">,</span>
+<span class="w">                             </span><span class="n">CU_MEM_HANDLE_TYPE_FABRIC</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="c1">// At this point, fabricHandle should be sent to Node B via TCP/IP.</span>
+</pre></div>
+</div>
+<p>노드 B에서는
+<code class="docutils literal notranslate"><span class="pre">cuMemImportFromShareableHandle</span></code>를 사용하여 핸들을 가져올 수 있으며, 다른 패브릭
+핸들과 동일하게 취급할 수 있습니다</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// At this point, fabricHandle should be received from Node A via TCP/IP.</span>
+<span class="n">CUmemGenericAllocationHandle</span><span class="w"> </span><span class="n">allocHandle</span><span class="p">;</span>
+<span class="n">cuMemImportFromShareableHandle</span><span class="p">(</span><span class="o">&amp;</span><span class="n">allocHandle</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">fabricHandle</span><span class="p">,</span>
+<span class="w">                               </span><span class="n">CU_MEM_HANDLE_TYPE_FABRIC</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>노드 B에서 핸들이 가져와지면, 사용자는 주소
+공간을 예약하고 이를 일반적인 방식으로 로컬에 매핑할 수 있습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">size_t</span><span class="w"> </span><span class="n">granularity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">cuMemGetAllocationGranularity</span><span class="p">(</span><span class="o">&amp;</span><span class="n">granularity</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">prop</span><span class="p">,</span>
+<span class="w">                              </span><span class="n">MEM_ALLOC_GRANULARITY_MINIMUM</span><span class="p">);</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">padded_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ROUND_UP</span><span class="p">(</span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">granularity</span><span class="p">);</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">page_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">padded_size</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">page_size</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">CUdeviceptr</span><span class="w"> </span><span class="n">dptr</span><span class="p">;</span>
+<span class="n">cuMemAddressReserve</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dptr</span><span class="p">,</span><span class="w"> </span><span class="n">padded_size</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">cuMemMap</span><span class="p">(</span><span class="n">dptr</span><span class="p">,</span><span class="w"> </span><span class="n">padded_size</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocHandle</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>마지막 단계로, 사용자는
+노드 B의 각 로컬 GPU에 적절한 액세스를 부여해야 합니다. 여덟 개의 로컬 GPU에 읽기 및
+쓰기 액세스를 부여하는 예제 코드 스니펫은 다음과 같습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Give all 8 local  GPUS access to exported EGM memory located on Node A.                                                               |</span>
+<span class="n">CUmemAccessDesc</span><span class="w"> </span><span class="n">accessDesc</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="n">accessDesc</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">location</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_MEM_LOCATION_TYPE_DEVICE</span><span class="p">;</span>
+<span class="w">   </span><span class="n">accessDesc</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">location</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">   </span><span class="n">accessDesc</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_MEM_ACCESS_FLAGS_PROT_READWRITE</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">cuMemSetAccess</span><span class="p">(</span><span class="n">dptr</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">accessDesc</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#preliminaries">4.17.1. 사전 준비</a><ul><li><a class="toc-link" href="#egm-platforms-system-topology">4.17.1.1. EGM 플랫폼: 시스템 토폴로지</a></li><li><a class="toc-link" href="#socket-identifiers-what-are-they-how-to-access-them">4.17.1.2. 소켓 식별자: 무엇인가요? 어떻게 접근하나요?</a></li><li><a class="toc-link" href="#allocators-and-egm-support">4.17.1.3. 할당자 및 EGM 지원</a></li><li><a class="toc-link" href="#memory-management-extensions-to-current-apis">4.17.1.4. 현재 API에 대한 메모리 관리 확장</a></li></ul></li><li><a class="toc-link" href="#using-the-egm-interface">4.17.2. EGM 인터페이스 사용</a><ul><li><a class="toc-link" href="#single-node-single-gpu">4.17.2.1. 단일 노드, 단일 GPU</a></li><li><a class="toc-link" href="#single-node-multi-gpu">4.17.2.2. 단일 노드, 멀티 GPU</a><ul><li><a class="toc-link" href="#using-vmm-apis">4.17.2.2.1. VMM API 사용</a></li><li><a class="toc-link" href="#using-cuda-memory-pool">4.17.2.2.2. CUDA 메모리 풀 사용</a></li></ul></li><li><a class="toc-link" href="#multi-node-multi-gpu">4.17.2.3. 멀티 노드, 멀티 GPU</a></li></ul></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

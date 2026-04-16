@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>1.1. 소개 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="3D 그래픽을 위한 특수 목적 프로세서로 탄생한 그래픽 처리 장치 (GPU)는 실시간 3D 렌더링에서 병렬 연산을 가속하기 위한 고정 기능 하드웨어로 시작했습니다. 세대를 거치며 GPU는 더 프로그래머블해졌습니다. 2003년까지 그래픽 파이프라인의 일부 단계는 완전히 프로그래머블해져, 3D 장면이나 이미지의 각 구성 요소에 대해 사용자 정의 코드를 병렬로 실행할 수 있게 되었습니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link is-active" href="introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part1.html">1. CUDA 소개</a></li><li>1.1. 소개</li></ul>
+          <h1 class="page-title">1.1. 소개</h1>
+          <article class="doc-article">
+<section id="introduction">
+<span id="id1"></span>
+<section id="the-graphics-processing-unit">
+<span id="introduction-the-gpu"></span><h2><span class="section-number">1.1.1. </span>그래픽 처리 장치<a class="headerlink" href="#the-graphics-processing-unit" title="이 제목에 대한 링크">#</a></h2>
+<p>3D 그래픽을 위한 특수 목적 프로세서로 탄생한 <em>그래픽 처리 장치</em>(GPU)는 실시간 3D 렌더링에서 병렬 연산을 가속하기 위한 고정 기능 하드웨어로 시작했습니다. 세대를 거치며 GPU는 더 프로그래머블해졌습니다. 2003년까지 그래픽 파이프라인의 일부 단계는 완전히 프로그래머블해져, 3D 장면이나 이미지의 각 구성 요소에 대해 사용자 정의 코드를 병렬로 실행할 수 있게 되었습니다.</p>
+<p>2006년 NVIDIA는 그래픽 API와 무관하게 모든 계산 워크로드가 GPU의 처리량 능력을 활용할 수 있도록 <em>컴퓨트 통합 디바이스 아키텍처</em>(CUDA)를 도입했습니다.</p>
+<p>그 이후 CUDA와 GPU 컴퓨팅은 유체 역학이나 에너지 전달과 같은 과학 시뮬레이션부터 데이터베이스 및 분석과 같은 비즈니스 애플리케이션에 이르기까지 거의 모든 유형의 계산 워크로드를 가속하는 데 사용되어 왔습니다. 또한 GPU의 성능과 프로그래머빌리티는 이미지 분류에서 확산(Diffusion) 또는 대규모 언어 모델과 같은 생성형 인공지능에 이르기까지 새로운 알고리즘과 기술의 발전을 뒷받침하는 기반이 되어 왔습니다.</p>
+</section>
+<section id="the-benefits-of-using-gpus">
+<span id="from-graphics-processing-to-general-purpose-parallel-computing"></span><h2><span class="section-number">1.1.2. </span>GPU 사용의 이점<a class="headerlink" href="#the-benefits-of-using-gpus" title="이 제목에 대한 링크">#</a></h2>
+<p>GPU는 비슷한 가격 및 전력 범위 내에서 CPU보다 훨씬 더 높은 명령 처리량과 메모리 대역폭을 제공합니다. 많은 애플리케이션이 이러한 기능을 활용하여 CPU에서보다 GPU에서 훨씬 더 빠르게 실행됩니다(참조: <a class="reference external" href="https://www.nvidia.com/en-us/accelerated-applications/">GPU 애플리케이션</a>). FPGA와 같은 다른 컴퓨팅 장치도 에너지 효율이 매우 높지만, GPU에 비해 프로그래밍 유연성이 훨씬 낮습니다.</p>
+<p>GPU와 CPU는 서로 다른 목표를 염두에 두고 설계되었습니다. CPU는 연산의 직렬 시퀀스(스레드라고 함)를 가능한 한 빠르게 실행하는 데 탁월하도록 설계되었으며, 이러한 스레드 수십 개를 병렬로 실행할 수 있습니다. 반면 GPU는 수천 개의 스레드를 병렬로 실행하는 데 탁월하도록 설계되었고, 단일 스레드 성능을 낮추는 대신 훨씬 더 큰 총 처리량을 달성합니다.</p>
+<p>GPU는 고도로 병렬적인 계산에 특화되어 데이터 처리 유닛에 더 많은 트랜지스터를 할당하는 반면, CPU는 데이터 캐싱과 흐름 제어에 더 많은 트랜지스터를 할당합니다. <a class="reference internal" href="#from-graphics-processing-to-general-purpose-parallel-computing-gpu-devotes-more-transistors-to-data-processing"><span class="std std-numref">그림 1</span></a>은 CPU와 GPU의 칩 리소스 분포 예를 보여줍니다.</p>
+<figure class="align-center" id="from-graphics-processing-to-general-purpose-parallel-computing-gpu-devotes-more-transistors-to-data-processing">
+<a class="reference internal image-reference" href="../_images/gpu-devotes-more-transistors-to-data-processing.png"><img alt="GPU는 데이터 처리에 더 많은 트랜지스터를 할당" loading="lazy" src="../_images/gpu-devotes-more-transistors-to-data-processing.png" style="width: 600px;"/>
+</a>
+<figcaption>
+<p><span class="caption-number">그림 1 </span><span class="caption-text">GPU는 데이터 처리에 더 많은 트랜지스터를 할당</span><a class="headerlink" href="#from-graphics-processing-to-general-purpose-parallel-computing-gpu-devotes-more-transistors-to-data-processing" title="이 이미지에 대한 링크">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="getting-started-quickly">
+<span id="introduction-getting-started-quickly"></span><h2><span class="section-number">1.1.3. </span>빠르게 시작하기<a class="headerlink" href="#getting-started-quickly" title="이 제목에 대한 링크">#</a></h2>
+<p>GPU가 제공하는 컴퓨팅 성능을 활용하는 방법은 다양합니다. 이 가이드는 C++와 같은 고수준 언어로 CUDA GPU 플랫폼을 프로그래밍하는 방법을 다룹니다. 하지만 GPU 코드를 직접 작성할 필요가 없는 애플리케이션에서도 GPU를 활용하는 방법은 많습니다.</p>
+<p>다양한 도메인의 알고리즘과 루틴으로 구성된 계속 확장되는 컬렉션을 특화 라이브러리를 통해 사용할 수 있습니다. 라이브러리가 이미 구현되어 있다면—특히 NVIDIA에서 제공하는 경우—이를 사용하는 것이 알고리즘을 처음부터 다시 구현하는 것보다 대개 생산성과 성능 면에서 더 유리합니다. cuBLAS, cuFFT, cuDNN, CUTLASS 같은 라이브러리는 개발자가 이미 잘 확립된 알고리즘을 다시 구현하는 일을 피하도록 돕는 라이브러리의 몇 가지 예에 불과합니다. 이러한 라이브러리는 각 GPU 아키텍처에 맞게 최적화되어 있어 생산성, 성능, 이식성의 이상적인 조합을 제공한다는 추가 이점도 있습니다.</p>
+<p>또한 특히 인공지능에 사용되는 프레임워크 중에는 GPU 가속 빌딩 블록을 제공하는 것들이 있습니다. 이러한 프레임워크 중 다수는 앞서 언급한 GPU 가속 라이브러리를 활용하여 가속을 달성합니다.</p>
+<p>추가로, NVIDIA의 Warp나 OpenAI의 Triton과 같은 도메인 특화 언어(DSL)는 CUDA 플랫폼에서 직접 실행되도록 컴파일됩니다. 이는 이 가이드에서 다루는 고수준 언어보다도 더 고수준의 GPU 프로그래밍 방법을 제공합니다.</p>
+<p><a class="reference external" href="https://github.com/NVIDIA/accelerated-computing-hub">NVIDIA Accelerated Computing Hub</a>에는 GPU 및 CUDA 컴퓨팅을 학습할 수 있도록 리소스, 예제, 튜토리얼이 포함되어 있습니다.</p>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="../part1.html">1. CUDA 소개</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="programming-model.html">1.2. 프로그래밍 모델</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#the-graphics-processing-unit">1.1.1. 그래픽 처리 장치</a></li><li><a class="toc-link" href="#the-benefits-of-using-gpus">1.1.2. GPU 사용의 이점</a></li><li><a class="toc-link" href="#getting-started-quickly">1.1.3. 빠르게 시작하기</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

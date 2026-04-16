@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4.8. 오류 로그 관리 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="오류 로그 관리 메커니즘은 문제의 원인을 설명하는 평이한 영어 형식으로 CUDA API 오류를 개발자에게 보고할 수 있게 해줍니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part4.html">4. CUDA 기능</a></li><li>4.8. 오류 로그 관리</li></ul>
+          <h1 class="page-title">4.8. 오류 로그 관리</h1>
+          <article class="doc-article">
+<section id="error-log-management">
+<span id="id1"></span>
+<p><em>오류 로그 관리</em> 메커니즘은 문제의 원인을 설명하는 평이한 영어 형식으로 CUDA API 오류를 개발자에게 보고할 수 있게 해줍니다.</p>
+<section id="background">
+<h2><span class="section-number">4.8.1. </span>배경<a class="headerlink" href="#background" title="이 제목으로의 링크">#</a></h2>
+<p>전통적으로, 실패한 CUDA API 호출을 알리는 유일한 단서는 0이 아닌 코드가 반환되는 것입니다.
+CUDA Toolkit 12.9 기준으로 CUDA 런타임은 오류 조건에 대해 100개가 넘는 서로 다른 반환 코드를 정의하지만, 그중 많은 것들은 일반적(generic)이며 개발자에게 원인 디버깅에 대한 도움을 제공하지 않습니다.</p>
+</section>
+<section id="activation">
+<h2><span class="section-number">4.8.2. </span>활성화<a class="headerlink" href="#activation" title="이 제목으로의 링크">#</a></h2>
+<p><em>CUDA_LOG_FILE</em> 환경 변수를 설정하십시오. 허용되는 값은 <em>stdout</em>, <em>stderr</em>, 또는 파일을 쓰기 위한 시스템의 유효한 경로입니다.
+로그 버퍼는 프로그램 실행 전에 <em>CUDA_LOG_FILE</em>이 설정되지 않았더라도 API를 통해 덤프할 수 있습니다.
+참고: 오류 없이 실행되면 로그가 전혀 출력되지 않을 수 있습니다.</p>
+</section>
+<section id="output">
+<h2><span class="section-number">4.8.3. </span>출력<a class="headerlink" href="#output" title="이 제목으로의 링크">#</a></h2>
+<p>로그는 다음 형식으로 출력됩니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Time</span><span class="p">][</span><span class="n">TID</span><span class="p">][</span><span class="n">Source</span><span class="p">][</span><span class="n">Severity</span><span class="p">][</span><span class="n">API</span><span class="w"> </span><span class="n">Entry</span><span class="w"> </span><span class="n">Point</span><span class="p">]</span><span class="w"> </span><span class="n">Message</span>
+</pre></div>
+</div>
+<p>다음 줄은 개발자가 할당되지 않은 버퍼에 오류 로그 관리 로그를 덤프하려고 할 때 생성되는 실제 오류 메시지입니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">22</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mf">32.099</span><span class="p">][</span><span class="mi">25642</span><span class="p">][</span><span class="n">CUDA</span><span class="p">][</span><span class="n">E</span><span class="p">][</span><span class="n">cuLogsDumpToMemory</span><span class="p">]</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="n">cannot</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="nb">NULL</span>
+</pre></div>
+</div>
+<p>이전에는, 개발자가 받는 것은 반환 코드의 <em>CUDA_ERROR_INVALID_VALUE</em>와, <em>cuGetErrorString</em>이 호출된 경우의 “invalid argument” 정도가 전부였습니다.</p>
+</section>
+<section id="api-description">
+<h2><span class="section-number">4.8.4. </span>API 설명<a class="headerlink" href="#api-description" title="이 제목으로의 링크">#</a></h2>
+<p>CUDA Driver는 오류 로그 관리 기능과 상호작용하기 위한 API를 두 가지 범주로 제공합니다.</p>
+<p>이 기능은 오류 로그가 생성될 때마다 사용될 콜백 함수를 개발자가 등록할 수 있게 하며, 콜백 시그니처는 다음과 같습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="n">callbackFunc</span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">CUlogLevel</span><span class="w"> </span><span class="n">logLevel</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">length</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>콜백은 다음 API로 등록됩니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUresult</span><span class="w"> </span><span class="n">cuLogsRegisterCallback</span><span class="p">(</span><span class="n">CUlogsCallback</span><span class="w"> </span><span class="n">callbackFunc</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">userData</span><span class="p">,</span><span class="w"> </span><span class="n">CUlogsCallbackHandle</span><span class="w"> </span><span class="o">*</span><span class="n">callback_out</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>여기서 <em>userData</em>는 수정 없이 콜백 함수로 전달됩니다. <em>callback_out</em>은 호출자가 <em>cuLogsUnregisterCallback</em>에서 사용하기 위해 저장해야 합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUresult</span><span class="w"> </span><span class="n">cuLogsUnregisterCallback</span><span class="p">(</span><span class="n">CUlogsCallbackHandle</span><span class="w"> </span><span class="n">callback</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>다른 API 함수 집합은 로그의 출력을 관리하기 위한 것입니다. 중요한 개념은 로그 이터레이터(iterator)로, 버퍼의 현재 끝을 가리킵니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUresult</span><span class="w"> </span><span class="n">cuLogsCurrent</span><span class="p">(</span><span class="n">CUlogIterator</span><span class="w"> </span><span class="o">*</span><span class="n">iterator_out</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">flags</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>전체 로그 버퍼의 덤프를 원하지 않는 상황에서는 호출 소프트웨어가 이터레이터 위치를 유지할 수 있습니다. 현재 flags 매개변수는 0이어야 하며, 추가 옵션은 향후 CUDA 릴리스용으로 예약되어 있습니다.</p>
+<p>언제든지, 오류 로그 버퍼는 다음 함수들로 파일 또는 메모리로 덤프할 수 있습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUresult</span><span class="w"> </span><span class="n">cuLogsDumpToFile</span><span class="p">(</span><span class="n">CUlogIterator</span><span class="w"> </span><span class="o">*</span><span class="n">iterator</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">pathToFile</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">flags</span><span class="p">)</span>
+<span class="n">CUresult</span><span class="w"> </span><span class="n">cuLogsDumpToMemory</span><span class="p">(</span><span class="n">CUlogIterator</span><span class="w"> </span><span class="o">*</span><span class="n">iterator</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="o">*</span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">flags</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>iterator</em>가 NULL이면 최대 100개 항목까지 전체 버퍼가 덤프됩니다. <em>iterator</em>가 NULL이 아니면 해당 항목부터 시작하여 로그가 덤프되며, <em>iterator</em>의 값은 <em>cuLogsCurrent</em>가 호출된 것처럼 로그의 현재 끝으로 업데이트됩니다. 버퍼에 100개를 초과하는 로그 항목이 있었던 경우, 이를 알리는 메모가 덤프 시작 부분에 추가됩니다.</p>
+<p>flags 매개변수는 0이어야 하며, 추가 옵션은 향후 CUDA 릴리스용으로 예약되어 있습니다.</p>
+<p><em>cuLogsDumpToMemory</em> 함수에는 추가 고려 사항이 있습니다:</p>
+<ol class="arabic simple">
+<li><p>버퍼 자체는 null 종료되지만, 각 개별 로그 항목은 개행(n) 문자로만 구분됩니다.</p></li>
+<li><p>버퍼의 최대 크기는 25600바이트입니다.</p></li>
+<li><p><em>size</em>에 제공된 값이 원하는 모든 로그를 저장하기에 충분하지 않으면, 첫 번째 항목으로 메모가 추가되며, 들어가지 못하는 가장 오래된 항목은 덤프되지 않습니다.</p></li>
+<li><p>반환 후 <em>size</em>에는 제공된 버퍼에 실제로 기록된 바이트 수가 포함됩니다.</p></li>
+</ol>
+</section>
+<section id="limitations-and-known-issues">
+<h2><span class="section-number">4.8.5. </span>제한 사항 및 알려진 문제<a class="headerlink" href="#limitations-and-known-issues" title="이 제목으로의 링크">#</a></h2>
+<ol class="arabic simple">
+<li><p>로그 버퍼는 100개 항목으로 제한됩니다. 이 제한에 도달하면 가장 오래된 항목이 대체되며, 로그 덤프에는 롤오버를 알리는 줄이 포함됩니다.</p></li>
+<li><p>아직 모든 CUDA API가 포함되어 있지는 않습니다. 이는 모든 API에 대해 더 나은 사용 오류 보고를 제공하기 위한 진행 중인 프로젝트입니다.</p></li>
+<li><p>오류 로그 관리 로그 위치(제공된 경우)는 로그가 생성되기 전에는/생성되지 않는 한 유효성 테스트가 수행되지 않습니다.</p></li>
+<li><p>오류 로그 관리 API는 현재 CUDA Driver를 통해서만 사용할 수 있습니다. 동등한 API는 향후 릴리스에서 CUDA 런타임에 추가될 예정입니다.</p></li>
+<li><p>로그 메시지는 어떤 언어로도 현지화되어 있지 않으며, 제공되는 모든 로그는 미국식 영어(US English)로 되어 있습니다.</p></li>
+</ol>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="lazy-loading.html">4.7. 지연 로딩</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="async-barriers.html">4.9. 비동기 배리어</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#background">4.8.1. 배경</a></li><li><a class="toc-link" href="#activation">4.8.2. 활성화</a></li><li><a class="toc-link" href="#output">4.8.3. 출력</a></li><li><a class="toc-link" href="#api-description">4.8.4. API 설명</a></li><li><a class="toc-link" href="#limitations-and-known-issues">4.8.5. 제한 사항 및 알려진 문제</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

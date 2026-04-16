@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3.4. 다중 GPU를 갖춘 시스템 프로그래밍 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="멀티 GPU 프로그래밍을 통해 애플리케이션은 멀티 GPU 시스템이 제공하는 더 큰 총(aggregate) 산술 성능, 메모리 용량, 그리고 메모리 대역폭을 활용함으로써, 단일 GPU로는 불가능한 문제 크기를 다루고 그 이상의 성능 수준을 달성할 수 있습니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part3.html">3. 고급 CUDA</a></li><li>3.4. 다중 GPU를 갖춘 시스템 프로그래밍</li></ul>
+          <h1 class="page-title">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</h1>
+          <article class="doc-article">
+<section id="programming-systems-with-multiple-gpus">
+<span id="multi-gpu-introduction"></span>
+<p>멀티 GPU 프로그래밍을 통해 애플리케이션은 멀티 GPU 시스템이 제공하는 더 큰 총(aggregate) 산술 성능,
+메모리 용량, 그리고 메모리 대역폭을 활용함으로써,
+단일 GPU로는 불가능한 문제 크기를 다루고 그 이상의 성능 수준을 달성할 수 있습니다.</p>
+<p>CUDA는 호스트 API,
+드라이버 인프라스트럭처, 그리고 이를 지원하는 GPU 하드웨어 기술을 통해 멀티 GPU 프로그래밍을 가능하게 합니다:</p>
+<ul class="simple">
+<li><p>호스트 스레드 CUDA 컨텍스트 관리</p></li>
+<li><p>시스템의 모든 프로세서를 위한 통합 메모리 주소 지정</p></li>
+<li><p>GPU 간 피어 투 피어(peer-to-peer) 대용량 메모리 전송</p></li>
+<li><p>세밀한 피어 투 피어 GPU 로드/스토어 메모리 액세스</p></li>
+<li><p><a class="reference external" href="https://developer.nvidia.com/nccl">NCCL</a>을 사용하는 병렬 리덕션, <a class="reference external" href="https://developer.nvidia.com/nvshmem">NVSHMEM</a> 및 MPI와 같은 API와 함께 NVLink 및/또는 GPU-Direct RDMA를 사용하는 통신, 그리고 CUDA 프로세스 간 통신과 같은 고수준 추상화 및 지원 시스템 소프트웨어</p></li>
+</ul>
+<p>가장 기본적인 수준에서, 멀티 GPU 프로그래밍을 위해서는 애플리케이션이
+여러 활성 CUDA 컨텍스트를 동시에 관리하고,
+데이터를 GPU로 분배하며,
+GPU에서 커널을 런치하여 작업을 완료하고,
+그 결과가 애플리케이션에 의해 처리될 수 있도록
+통신하거나 수집해야 합니다.
+이를 수행하는 방법의 세부 사항은 애플리케이션의 알고리즘, 사용 가능한 병렬성,
+그리고 기존 코드 구조를 적절한 멀티 GPU 프로그래밍 접근 방식에 얼마나 효과적으로 매핑할 수 있는지에 따라 달라집니다.
+가장 일반적인 멀티 GPU 프로그래밍 접근 방식에는 다음이 포함됩니다:</p>
+<ul class="simple">
+<li><p>여러 GPU를 구동하는 단일 호스트 스레드</p></li>
+<li><p>각자 자신의 GPU를 구동하는 여러 호스트 스레드</p></li>
+<li><p>각자 자신의 GPU를 구동하는 여러 단일 스레드 호스트 프로세스</p></li>
+<li><p>각자 자신의 GPU를 구동하는 여러 스레드를 포함하는 여러 호스트 프로세스</p></li>
+<li><p>NVLink로 연결된 멀티 노드 클러스터로, 클러스터 노드 전반의 여러 운영 체제 인스턴스 내에서 실행되는 스레드와 프로세스에 의해 GPU가 구동됨</p></li>
+</ul>
+<p>GPU는 위에 나열된 각 멀티 디바이스 작업 분배 접근 방식을 모두 포괄하여,
+디바이스 메모리 간의 메모리 전송 및 피어 액세스를 통해 서로 통신할 수 있습니다.
+고성능, 저지연 GPU 통신은
+피어 투 피어 GPU 메모리 액세스 사용을 질의하고 활성화하며,
+NVLink를 활용하여 디바이스 간 고대역폭 전송과
+더 세밀한 로드/스토어 연산을 달성함으로써 지원됩니다.</p>
+<p>CUDA 통합 가상 주소 지정은, 예를 들어 NVLink를 통해,
+고성능 피어 투 피어 메모리 액세스 및 전송의 사용을 질의하고 활성화하기 위한
+최소한의 추가 단계만으로 동일한 호스트 프로세스 내에서 여러 GPU 간 통신을 허용합니다.</p>
+<p>서로 다른 호스트 프로세스에 의해 관리되는 여러 GPU 간의 통신은
+프로세스 간 통신(IPC)과
+가상 메모리 관리(VMM) API를 통해 지원됩니다.
+고수준 IPC 개념과 노드 내(intra-node) CUDA IPC API에 대한 소개는
+<a class="reference internal" href="../04-special-topics/inter-process-communication.html"><span class="std std-ref">프로세스 간 통신</span></a> 섹션에서 다룹니다.
+고급 가상 메모리 관리(VMM) API는 노드 내 및
+멀티 노드 IPC를 모두 지원하며, Linux 및 Windows
+운영 체제 모두에서 사용할 수 있고,
+<a class="reference internal" href="../04-special-topics/virtual-memory-management.html"><span class="std std-ref">가상 메모리 관리</span></a>에 설명된 바와 같이
+메모리 버퍼의 IPC 공유에 대해 할당 단위별(per-allocation) 세분성 제어를 허용합니다.</p>
+<p>CUDA 자체는 GPU 그룹 내에서,
+잠재적으로 호스트를 포함할 수도 있는 집합(collective) 연산을 구현하는 데 필요한 API를 제공하지만,
+고수준 멀티 GPU 집합 API 자체를 제공하지는 않습니다.
+멀티 GPU 집합 연산은
+<a class="reference external" href="https://developer.nvidia.com/nccl">NCCL</a>
+및
+<a class="reference external" href="https://developer.nvidia.com/nvshmem">NVSHMEM</a>과 같은
+더 높은 추상화 수준의 CUDA 통신 라이브러리에서 제공됩니다.</p>
+<section id="multi-device-context-and-execution-management">
+<span id="multi-gpu-context-execution"></span><h2><span class="section-number">3.4.1. </span>다중 디바이스 컨텍스트 및 실행 관리<a class="headerlink" href="#multi-device-context-and-execution-management" title="이 제목으로의 링크">#</a></h2>
+<p>애플리케이션이 여러 GPU를 사용하기 위해 필요한 첫 단계는 사용 가능한 GPU 디바이스를 열거하고,
+하드웨어 속성, CPU 친화도(affinity), 피어에 대한 연결성을 기반으로 사용 가능한 디바이스 중에서 적절히 선택한 다음,
+애플리케이션이 사용할 각 디바이스에 대해 CUDA 컨텍스트를 생성하는 것입니다.</p>
+<section id="device-enumeration">
+<span id="multi-gpu-device-enumeration"></span><h3><span class="section-number">3.4.1.1. </span>디바이스 열거<a class="headerlink" href="#device-enumeration" title="이 제목으로의 링크">#</a></h3>
+<p>다음 코드 샘플은 CUDA 지원 디바이스 수를 조회하고,
+각 디바이스를 열거하며, 해당 속성을 조회하는 방법을 보여줍니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">deviceCount</span><span class="p">;</span>
+<span class="n">cudaGetDeviceCount</span><span class="p">(</span><span class="o">&amp;</span><span class="n">deviceCount</span><span class="p">);</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">device</span><span class="p">;</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">device</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">device</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">deviceCount</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">device</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cudaDeviceProp</span><span class="w"> </span><span class="n">deviceProp</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cudaGetDeviceProperties</span><span class="p">(</span><span class="o">&amp;</span><span class="n">deviceProp</span><span class="p">,</span><span class="w"> </span><span class="n">device</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"Device %d has compute capability %d.%d.</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+<span class="w">           </span><span class="n">device</span><span class="p">,</span><span class="w"> </span><span class="n">deviceProp</span><span class="p">.</span><span class="n">major</span><span class="p">,</span><span class="w"> </span><span class="n">deviceProp</span><span class="p">.</span><span class="n">minor</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="device-selection">
+<span id="id1"></span><h3><span class="section-number">3.4.1.2. </span>디바이스 선택<a class="headerlink" href="#device-selection" title="이 제목으로의 링크">#</a></h3>
+<p>호스트 스레드는 <code class="docutils literal notranslate"><span class="pre">cudaSetDevice()</span></code>을(를) 호출하여 현재 동작 중인 디바이스를 언제든지 설정할 수 있습니다.
+디바이스 메모리 할당과 커널 런치는 현재 디바이스에서 수행되며, 스트림과 이벤트는 현재 설정된 디바이스와 연관되어 생성됩니다.
+호스트 스레드가 <code class="docutils literal notranslate"><span class="pre">cudaSetDevice()</span></code>을(를) 호출하기 전까지는 현재 디바이스의 기본값이 디바이스 0입니다.</p>
+<p>다음 코드 샘플은 현재 디바이스 설정이 이후의 메모리 할당 및 커널 실행 연산에 어떤 영향을 미치는지 설명합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">);</span>
+<span class="n">cudaSetDevice</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">            </span><span class="c1">// Set device 0 as current</span>
+<span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">p0</span><span class="p">;</span>
+<span class="n">cudaMalloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">p0</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span><span class="w">       </span><span class="c1">// Allocate memory on device 0</span>
+<span class="n">MyKernel</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="mi">128</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">p0</span><span class="p">);</span><span class="w"> </span><span class="c1">// Launch kernel on device 0</span>
+
+<span class="n">cudaSetDevice</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">            </span><span class="c1">// Set device 1 as current</span>
+<span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">p1</span><span class="p">;</span>
+<span class="n">cudaMalloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span><span class="w">       </span><span class="c1">// Allocate memory on device 1</span>
+<span class="n">MyKernel</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="mi">128</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">p1</span><span class="p">);</span><span class="w"> </span><span class="c1">// Launch kernel on device 1</span>
+</pre></div>
+</div>
+</section>
+<section id="multi-device-stream-event-and-memory-copy-behavior">
+<span id="multi-gpu-stream-and-event-behavior"></span><h3><span class="section-number">3.4.1.3. </span>다중 디바이스 스트림, 이벤트 및 메모리 복사 동작<a class="headerlink" href="#multi-device-stream-event-and-memory-copy-behavior" title="이 제목으로의 링크">#</a></h3>
+<p>다음 코드 샘플에 설명된 바와 같이, 현재 디바이스에 연관되지 않은 스트림에 커널 런치를 발행하면 실패합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaSetDevice</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">               </span><span class="c1">// Set device 0 as current</span>
+<span class="n">cudaStream_t</span><span class="w"> </span><span class="n">s0</span><span class="p">;</span>
+<span class="n">cudaStreamCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s0</span><span class="p">);</span><span class="w">          </span><span class="c1">// Create stream s0 on device 0</span>
+<span class="n">MyKernel</span><span class="o">&lt;&lt;&lt;</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">s0</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span><span class="w"> </span><span class="c1">// Launch kernel on device 0 in s0</span>
+
+<span class="n">cudaSetDevice</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">               </span><span class="c1">// Set device 1 as current</span>
+<span class="n">cudaStream_t</span><span class="w"> </span><span class="n">s1</span><span class="p">;</span>
+<span class="n">cudaStreamCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s1</span><span class="p">);</span><span class="w">          </span><span class="c1">// Create stream s1 on device 1</span>
+<span class="n">MyKernel</span><span class="o">&lt;&lt;&lt;</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">s1</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span><span class="w"> </span><span class="c1">// Launch kernel on device 1 in s1</span>
+
+<span class="c1">// This kernel launch will fail, since stream s0 is not associated to device 1:</span>
+<span class="n">MyKernel</span><span class="o">&lt;&lt;&lt;</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">s0</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span><span class="w"> </span><span class="c1">// Launch kernel on device 1 in s0</span>
+</pre></div>
+</div>
+<p>메모리 복사는 현재 디바이스에 연관되지 않은 스트림에 발행되더라도 성공합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cudaEventRecord()</span></code>은(는) 입력 이벤트와 입력 스트림이 서로 다른 디바이스에 연관되어 있으면 실패합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cudaEventElapsedTime()</span></code>은(는) 두 입력 이벤트가 서로 다른 디바이스에 연관되어 있으면 실패합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cudaEventSynchronize()</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cudaEventQuery()</span></code>은(는) 입력 이벤트가 현재 디바이스와 다른 디바이스에 연관되어 있더라도 성공합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cudaStreamWaitEvent()</span></code>은(는) 입력 스트림과 입력 이벤트가 서로 다른 디바이스에 연관되어 있더라도 성공합니다. 따라서 <code class="docutils literal notranslate"><span class="pre">cudaStreamWaitEvent()</span></code>은(는) 여러 디바이스를 서로 동기화하는 데 사용할 수 있습니다.</p>
+<p>각 디바이스는 자체 <a class="reference internal" href="../02-basics/asynchronous-execution.html"><span class="std std-ref">기본 스트림</span></a>을 가지므로, 한 디바이스의 기본 스트림에 발행된 명령은 다른 어떤 디바이스의 기본 스트림에 발행된 명령에 대해 순서가 어긋나게 실행되거나 동시에 실행될 수 있습니다.</p>
+</section>
+</section>
+<section id="multi-device-peer-to-peer-transfers-and-memory-access">
+<span id="multi-gpu-peer-memory-access"></span><h2><span class="section-number">3.4.2. </span>다중 디바이스 피어-투-피어 전송 및 메모리 액세스<a class="headerlink" href="#multi-device-peer-to-peer-transfers-and-memory-access" title="이 제목으로의 링크">#</a></h2>
+<section id="peer-to-peer-memory-transfers">
+<span id="multi-gpu-peer-to-peer-transfers"></span><h3><span class="section-number">3.4.2.1. </span>피어-투-피어 메모리 전송<a class="headerlink" href="#peer-to-peer-memory-transfers" title="이 제목으로의 링크">#</a></h3>
+<p>CUDA는 디바이스 간 메모리 전송을 수행할 수 있으며, 피어-투-피어 메모리 액세스가 가능한 경우 성능을 최대화하기 위해
+전용 복사 엔진과 NVLink 하드웨어를 활용합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cudaMemcpy</span></code>은(는) 복사 타입 <code class="docutils literal notranslate"><span class="pre">cudaMemcpyDeviceToDevice</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">cudaMemcpyDefault</span></code>과 함께 사용할 수 있습니다.</p>
+<p>그렇지 않으면, 다음 코드 샘플에 설명된 바와 같이 복사는 <code class="docutils literal notranslate"><span class="pre">cudaMemcpyPeer()</span></code>, <code class="docutils literal notranslate"><span class="pre">cudaMemcpyPeerAsync()</span></code>, <code class="docutils literal notranslate"><span class="pre">cudaMemcpy3DPeer()</span></code>, 또는 <code class="docutils literal notranslate"><span class="pre">cudaMemcpy3DPeerAsync()</span></code>을(를) 사용하여 수행해야 합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaSetDevice</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">                   </span><span class="c1">// Set device 0 as current</span>
+<span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">p0</span><span class="p">;</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">);</span>
+<span class="n">cudaMalloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">p0</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span><span class="w">              </span><span class="c1">// Allocate memory on device 0</span>
+
+<span class="n">cudaSetDevice</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">                   </span><span class="c1">// Set device 1 as current</span>
+<span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">p1</span><span class="p">;</span>
+<span class="n">cudaMalloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span><span class="w">              </span><span class="c1">// Allocate memory on device 1</span>
+
+<span class="n">cudaSetDevice</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">                   </span><span class="c1">// Set device 0 as current</span>
+<span class="n">MyKernel</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="mi">128</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">p0</span><span class="p">);</span><span class="w">        </span><span class="c1">// Launch kernel on device 0</span>
+
+<span class="n">cudaSetDevice</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">                   </span><span class="c1">// Set device 1 as current</span>
+<span class="n">cudaMemcpyPeer</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">p0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span><span class="w"> </span><span class="c1">// Copy p0 to p1</span>
+<span class="n">MyKernel</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="mi">128</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">p1</span><span class="p">);</span><span class="w">        </span><span class="c1">// Launch kernel on device 1</span>
+</pre></div>
+</div>
+<p>서로 다른 두 디바이스의 메모리 간 복사(암시적 <em>NULL</em> 스트림에서):</p>
+<ul class="simple">
+<li><p>어느 한 디바이스에 이전에 발행된 모든 명령이 완료될 때까지 시작되지 않으며</p></li>
+<li><p>복사 이후 어느 한 디바이스에 발행된 어떤 명령( <a class="reference internal" href="../02-basics/asynchronous-execution.html"><span class="std std-ref">비동기 실행</span></a> 참조)도 시작되기 전에 완료될 때까지 실행됩니다.</p></li>
+</ul>
+<p>스트림의 일반적인 동작과 일관되게, 두 디바이스의 메모리 간 비동기 복사는 다른 스트림의 복사나 커널과 오버랩될 수 있습니다.</p>
+<p><a class="reference internal" href="#multi-gpu-peer-to-peer-memory-access"><span class="std std-ref">피어-투-피어 메모리 액세스</span></a>에 설명된 바와 같이 두 디바이스 간 피어-투-피어 액세스가 활성화된 경우, 이 두 디바이스 간 피어-투-피어 메모리 복사는 더 이상 호스트를 통해 스테이징할 필요가 없으므로 더 빠릅니다.</p>
+</section>
+<section id="peer-to-peer-memory-access">
+<span id="multi-gpu-peer-to-peer-memory-access"></span><h3><span class="section-number">3.4.2.2. </span>피어-투-피어 메모리 액세스<a class="headerlink" href="#peer-to-peer-memory-access" title="이 제목으로의 링크">#</a></h3>
+<p>시스템 속성, 특히 PCIe 및/또는 NVLink 토폴로지에 따라 디바이스는 서로의 메모리를 주소 지정할 수 있습니다(즉, 한 디바이스에서 실행되는 커널이 다른 디바이스의 메모리에 대한 포인터를 역참조할 수 있습니다).
+피어-투-피어 메모리 액세스는 지정된 디바이스에 대해 <code class="docutils literal notranslate"><span class="pre">cudaDeviceCanAccessPeer()</span></code>이(가) true를 반환하는 경우 두 디바이스 간에 지원됩니다.</p>
+<p>피어-투-피어 메모리 액세스는 다음 코드 샘플에 설명된 바와 같이 <code class="docutils literal notranslate"><span class="pre">cudaDeviceEnablePeerAccess()</span></code>을(를) 호출하여 두 디바이스 간에 활성화해야 합니다. NVSwitch가 활성화되지 않은 시스템에서는 각 디바이스가 시스템 전체에서 최대 8개의 피어 연결을 지원할 수 있습니다.</p>
+<p>두 디바이스 모두에 대해 통합 가상 주소 공간이 사용되므로(<a class="reference internal" href="../02-basics/understanding-memory.html"><span class="std std-ref">통합 가상 주소 공간</span></a> 참조), 아래 코드 샘플에 보이는 것처럼 동일한 포인터를 사용하여 두 디바이스에서 메모리를 주소 지정할 수 있습니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaSetDevice</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">                   </span><span class="c1">// Set device 0 as current</span>
+<span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">p0</span><span class="p">;</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">);</span>
+<span class="n">cudaMalloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">p0</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span><span class="w">              </span><span class="c1">// Allocate memory on device 0</span>
+<span class="n">MyKernel</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="mi">128</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">p0</span><span class="p">);</span><span class="w">        </span><span class="c1">// Launch kernel on device 0</span>
+
+<span class="n">cudaSetDevice</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">                   </span><span class="c1">// Set device 1 as current</span>
+<span class="n">cudaDeviceEnablePeerAccess</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">   </span><span class="c1">// Enable peer-to-peer access</span>
+<span class="w">                                    </span><span class="c1">// with device 0</span>
+
+<span class="c1">// Launch kernel on device 1</span>
+<span class="c1">// This kernel launch can access memory on device 0 at address p0</span>
+<span class="n">MyKernel</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="mi">128</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">p0</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p><code class="docutils literal notranslate"><span class="pre">cudaDeviceEnablePeerAccess()</span></code>을(를) 사용하여 피어 메모리 액세스를 활성화하는 것은 피어 디바이스에서 이전 및 이후의 모든 GPU 메모리 할당에 대해 전역적으로 동작합니다.
+<code class="docutils literal notranslate"><span class="pre">cudaDeviceEnablePeerAccess()</span></code>을(를) 통해 디바이스에 대한 피어 액세스를 활성화하면, 할당을 즉시 현재 디바이스 및 액세스 권한을 가진 다른 모든 피어가 접근 가능하도록 만들어야 하므로 해당 피어에서의 디바이스 메모리 할당 연산에 런타임 비용이 추가되며, 피어 디바이스 수에 따라 스케일되는 곱셈적 오버헤드가 더해집니다.</p>
+<p>모든 디바이스 메모리 할당에 대해 피어 메모리 액세스를 활성화하는 것보다 더 확장성 있는 대안은 CUDA Virtual Memory Management API를 사용하여 필요할 때만, 할당 시점에 명시적으로 피어 액세스 가능한 메모리 영역을 할당하는 것입니다.
+메모리 할당 중 피어 접근성을 명시적으로 요청하면, 피어가 접근할 수 없는 할당에 대해서는 메모리 할당의 런타임 비용이 영향을 받지 않으며, 피어 액세스 가능한 데이터 구조는 소프트웨어 디버깅 및 신뢰성 향상을 위해 올바르게 스코프가 지정됩니다(ref::<cite>virtual-memory-management</cite> 참조).</p>
+</div>
+</section>
+<section id="peer-to-peer-memory-consistency">
+<span id="multi-gpu-peer-to-peer-memory-consistency-synchronization"></span><h3><span class="section-number">3.4.2.3. </span>피어-투-피어 메모리 일관성<a class="headerlink" href="#peer-to-peer-memory-consistency" title="이 제목으로의 링크">#</a></h3>
+<p>여러 디바이스에 분산된 그리드에서 동시에 실행되는 스레드에 의한 메모리 액세스의 순서와
+정확성을 강제하기 위해 동기화 연산을 사용해야 합니다.
+디바이스 간 동기화하는 스레드는 <code class="docutils literal notranslate"><span class="pre">thread_scope_system</span></code>
+<a class="reference external" href="https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html">동기화 스코프</a>에서 동작합니다.
+유사하게, 메모리 연산은
+<code class="docutils literal notranslate"><span class="pre">thread_scope_system</span></code> <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/">메모리 동기화 도메인</a>에 속합니다.</p>
+<p>CUDA ref::<cite>atomic-functions</cite>는 단일 GPU만 해당 객체에 접근하는 경우
+피어 디바이스 메모리에 있는 객체에 대해 읽기-수정-쓰기 연산을 수행할 수 있습니다.
+피어 원자성(peer atomicity)에 대한 요구사항과 제한 사항은 CUDA 메모리 모델의 <a class="reference external" href="https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_model.html">원자성 요구사항</a> 논의에 설명되어 있습니다.</p>
+</section>
+<section id="multi-device-managed-memory">
+<span id="multi-gpu-managed-memory"></span><h3><span class="section-number">3.4.2.4. </span>다중 디바이스 관리형 메모리<a class="headerlink" href="#multi-device-managed-memory" title="이 제목으로의 링크">#</a></h3>
+<p>관리형 메모리는 피어-투-피어를 지원하는 멀티 GPU 시스템에서 사용할 수 있습니다.
+동시 다중 디바이스 관리형 메모리 액세스에 대한 상세 요구사항과
+관리형 메모리에 대한 GPU 전용 액세스를 위한 API는 <a class="reference internal" href="../04-special-topics/unified-memory.html"><span class="std std-ref">Multi-GPU</span></a>에 설명되어 있습니다.</p>
+</section>
+<section id="host-iommu-hardware-pci-access-control-services-and-vms">
+<span id="multi-gpu-host-iommu-acs-vm"></span><h3><span class="section-number">3.4.2.5. </span>호스트 IOMMU 하드웨어, PCI 액세스 제어 서비스, 및 VM<a class="headerlink" href="#host-iommu-hardware-pci-access-control-services-and-vms" title="이 제목으로의 링크">#</a></h3>
+<p>특히 Linux에서는 CUDA와 디스플레이 드라이버가 IOMMU가 활성화된 베어메탈 PCIe 피어-투-피어 메모리 전송을 지원하지 않습니다.
+하지만 CUDA와 디스플레이 드라이버는 가상 머신 패스스루(pass through)를 통한 IOMMU는 지원합니다.
+Linux를 베어메탈 시스템에서 실행할 때는 사일런트(silent) 디바이스 메모리 손상을 방지하기 위해 IOMMU를 비활성화해야 합니다.
+반대로, 가상 머신의 PCIe 패스스루에는 IOMMU를 활성화하고 VFIO 드라이버를 사용해야 합니다.</p>
+<p>Windows에서는 위의 IOMMU 제한이 존재하지 않습니다.</p>
+<p><a class="reference external" href="https://download.nvidia.com/XFree86/Linux-x86_64/510.85.02/README/dma_issues.html">64비트 플랫폼에서 DMA 버퍼 할당</a>도 참조하십시오.</p>
+<p>또한, IOMMU를 지원하는 시스템에서는 PCI 액세스 제어 서비스(ACS)를 활성화할 수 있습니다.
+PCI ACS 기능은 모든 PCI 포인트-투-포인트 트래픽을 CPU 루트 컴플렉스를 통해 리디렉션하며, 전체 바이섹션 대역폭 감소로 인해 상당한 성능 손실을 야기할 수 있습니다.</p>
+</section>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="driver-api.html">3.3. CUDA 드라이버 API</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="feature-survey.html">3.5. CUDA 기능 둘러보기</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#multi-device-context-and-execution-management">3.4.1. 다중 디바이스 컨텍스트 및 실행 관리</a><ul><li><a class="toc-link" href="#device-enumeration">3.4.1.1. 디바이스 열거</a></li><li><a class="toc-link" href="#device-selection">3.4.1.2. 디바이스 선택</a></li><li><a class="toc-link" href="#multi-device-stream-event-and-memory-copy-behavior">3.4.1.3. 다중 디바이스 스트림, 이벤트 및 메모리 복사 동작</a></li></ul></li><li><a class="toc-link" href="#multi-device-peer-to-peer-transfers-and-memory-access">3.4.2. 다중 디바이스 피어-투-피어 전송 및 메모리 액세스</a><ul><li><a class="toc-link" href="#peer-to-peer-memory-transfers">3.4.2.1. 피어-투-피어 메모리 전송</a></li><li><a class="toc-link" href="#peer-to-peer-memory-access">3.4.2.2. 피어-투-피어 메모리 액세스</a></li><li><a class="toc-link" href="#peer-to-peer-memory-consistency">3.4.2.3. 피어-투-피어 메모리 일관성</a></li><li><a class="toc-link" href="#multi-device-managed-memory">3.4.2.4. 다중 디바이스 관리형 메모리</a></li><li><a class="toc-link" href="#host-iommu-hardware-pci-access-control-services-and-vms">3.4.2.5. 호스트 IOMMU 하드웨어, PCI 액세스 제어 서비스, 및 VM</a></li></ul></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

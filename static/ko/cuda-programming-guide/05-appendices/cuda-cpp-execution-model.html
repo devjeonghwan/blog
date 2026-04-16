@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>5.8. CUDA C++ 실행 모델 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="CUDA C++는 CUDA C++를 통해 기존 C++ 애플리케이션의 병렬화를 용이하게 하기 위해, 모든 디바이스 실행 스레드에 대해 병렬 전방 진행(parallel forward progress) [intro.progress.9] 을 제공하는 것을 목표로 합니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part5.html">5. 기술 부록</a></li><li>5.8. CUDA C++ 실행 모델</li></ul>
+          <h1 class="page-title">5.8. CUDA C++ 실행 모델</h1>
+          <article class="doc-article">
+<section id="cuda-c-execution-model">
+<span id="cuda-cplusplus-execution-model"></span>
+<p>CUDA C++는 CUDA C++를 통해 기존 C++ 애플리케이션의 병렬화를 용이하게 하기 위해, 모든 디바이스 실행 스레드에 대해 <a class="reference external" href="https://eel.is/c++draft/intro.progress">병렬 전방 진행(parallel forward progress) [intro.progress.9]</a>을 제공하는 것을 목표로 합니다.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><a class="reference external" href="https://eel.is/c++draft/intro.progress">[intro.progress]</a></span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg aria-hidden="true" class="sd-octicon sd-octicon-chevron-right" height="1.5em" version="1.1" viewbox="0 0 24 24" width="1.5em"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<ul>
+<li><p class="sd-card-text"><a class="reference external" href="https://eel.is/c++draft/intro.progress">[intro.progress.7]</a>: <a class="reference external" href="https://eel.is/c++draft/intro.progress">동시 전방 진행 보장(concurrent forward progress guarantees)</a>을 제공하는 실행 스레드의 경우, 구현은 해당 스레드가 종료되지 않은 한 결국 진행을 하게 됨을 보장합니다.</p>
+<p class="sd-card-text">[참고 5: 이는 다른 실행 스레드(있는 경우)가 진행을 했거나 진행 중인지 여부와 관계없이 적용됩니다.
+이 요구 사항을 결국 충족한다는 것은, 지정되지 않았지만 유한한 시간 내에 이것이 발생함을 의미합니다. — 참고 끝]</p>
+</li>
+<li><p class="sd-card-text"><a class="reference external" href="https://eel.is/c++draft/intro.progress">[intro.progress.9]</a>: <a class="reference external" href="https://eel.is/c++draft/intro.progress">병렬 전방 진행 보장(parallel forward progress guarantees)</a>을 제공하는 실행 스레드의 경우, 구현은 해당 스레드가 아직 어떤 실행 단계도 수행하지 않았다면 결국 진행을 하게 됨을 보장할 필요는 없습니다; 이 스레드가 한 단계를 수행하면, <a class="reference external" href="https://eel.is/c++draft/intro.progress">동시 전방 진행 보장(concurrent forward progress guarantees)</a>을 제공합니다.</p>
+<blockquote>
+<div><p class="sd-card-text">[참고 6: 이는 이 실행 스레드를 언제 시작해야 하는지에 대한 요구 사항을 지정하지 않으며, 이는 일반적으로 이 실행 스레드를 생성하는 엔터티에 의해 지정됩니다. 예를 들어, 동시 전방 진행 보장을 제공하고 임의의 순서로 작업 집합의 작업을 하나씩 수행하는 실행 스레드는, 이러한 작업에 대해 병렬 전방 진행의 요구 사항을 만족합니다. — 참고 끝]</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+</details><p>CUDA C++ 프로그래밍 언어는 C++ 프로그래밍 언어의 확장입니다.
+이 절에서는 현재 <a class="reference external" href="https://eel.is/c++draft/">ISO 국제 표준 ISO/IEC 14882 – 프로그래밍 언어 C++</a> 초안의 <a class="reference external" href="https://eel.is/c++draft/intro.progress">[intro.progress]</a> 절에 대한 수정 사항과 확장을 문서화합니다.
+수정된 절은 명시적으로 표시되며, 그 diff는 <strong>굵게</strong> 표시됩니다.
+그 외의 모든 절은 추가 사항입니다.</p>
+<section id="host-threads">
+<span id="cuda-cplusplus-execution-model-host-threads"></span><h2><span class="section-number">5.8.1. </span>호스트 스레드<a class="headerlink" href="#host-threads" title="이 제목에 대한 링크">#</a></h2>
+<p><a class="reference external" href="https://en.cppreference.com/w/cpp/language/main_function">main</a>, <a class="reference external" href="https://en.cppreference.com/w/cpp/thread/thread">std::thread</a>,
+및 <a class="reference external" href="https://en.cppreference.com/w/cpp/thread/jthread">std::jthread</a>를 실행하기 위해 호스트 구현이 생성한 실행 스레드가 제공하는 전방 진행은 호스트 구현의 <a class="reference external" href="https://eel.is/c++draft/intro.progress">[intro.progress]</a>에 따른 구현 정의 동작입니다.
+범용 호스트 구현은 동시 전방 진행을 제공해야 합니다.</p>
+<p>호스트 구현이 <a class="reference external" href="https://eel.is/c++draft/intro.progress">동시 전방 진행 보장(concurrent forward progress) [intro.progress.7]</a>을 제공한다면,
+CUDA C++는 디바이스 스레드에 대해 <a class="reference external" href="https://eel.is/c++draft/intro.progress">병렬 전방 진행 보장(parallel forward progress) [intro.progress.9]</a>을 제공합니다.</p>
+</section>
+<section id="device-threads">
+<span id="cuda-cplusplus-execution-model-device-threads"></span><h2><span class="section-number">5.8.2. </span>디바이스 스레드<a class="headerlink" href="#device-threads" title="Link to this heading">#</a></h2>
+<p>디바이스 스레드가 한 번 진행을 하면:</p>
+<ul>
+<li><p><a class="reference external" href="https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EXECUTION.html">Cooperative Grid</a>의 일부라면,
+해당 그리드의 모든 디바이스 스레드는 결국 진행해야 합니다.</p></li>
+<li><p>그렇지 않다면, 해당 <a class="reference internal" href="../02-basics/intro-to-cuda-cpp.html"><span class="std std-ref">thread-block cluster</span></a>의 모든 디바이스 스레드는
+결국 진행해야 합니다.</p>
+<blockquote>
+<div><p>[Note: 다른 thread-block cluster에 있는 스레드가 결국 진행한다는 보장은 없습니다. - end note.]</p>
+<p>[Note: 이는 해당 스레드 블록 내의 모든 디바이스 스레드가 결국 진행해야 함을 의미합니다. - end note.]</p>
+</div></blockquote>
+</li>
+</ul>
+<p><a class="reference external" href="https://eel.is/c++draft/intro.progress">[intro.progress.1]</a>을 다음과 같이 수정하십시오(수정 내용은 <strong>굵게</strong> 표시됨):</p>
+<p>구현은 어떤 <strong>호스트</strong> 스레드든 결국 다음 중 하나를 수행한다고 가정할 수 있습니다:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>종료하거나,</p></li>
+<li><p>함수 <a class="reference external" href="https://en.cppreference.com/w/cpp/thread/yield">std::this_thread::yield</a> (<a class="reference external" href="http://eel.is/c++draft/thread.thread.this">[thread.thread.this]</a>)를 호출하거나,</p></li>
+<li><p>라이브러리 I/O 함수 호출을 수행하거나,</p></li>
+<li><p>volatile glvalue를 통한 접근을 수행하거나,</p></li>
+<li><p>동기화 연산 또는 원자적 연산을 수행하거나, 또는</p></li>
+<li><p>단순한 무한 루프의 실행을 계속합니다(<a class="reference external" href="http://eel.is/c++draft/stmt.iter.general">[stmt.iter.general]</a>).</p></li>
+</ol>
+</div></blockquote>
+<p><strong>구현은 어떤 디바이스 스레드든 결국 다음 중 하나를 수행한다고 가정할 수 있습니다:</strong></p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><strong>종료하거나</strong>,</p></li>
+<li><p><strong>라이브러리 I/O 함수 호출을 수행하거나</strong>,</p></li>
+<li><p><strong>지정된 객체가 자동 저장 기간을 갖는 경우를 제외하고 volatile glvalue를 통한 접근을 수행하거나, 또는</strong></p></li>
+<li><p><strong>지정된 객체가 자동 저장 기간을 갖는 경우를 제외하고 동기화 연산 또는 원자적 읽기 연산을 수행합니다.</strong></p></li>
+</ol>
+<p>[Note: 호스트 스레드에 비해 디바이스 스레드의 일부 현재 제한 사항은
+우리가 알고 있는 구현 결함이며, 시간이 지남에 따라 수정할 수도 있습니다.
+예로는, 결국 자동 저장 기간 객체에 대해
+volatile 또는 atomic 연산만 수행하는 디바이스 스레드로부터 발생하는
+정의되지 않은 동작이 포함됩니다.
+하지만 호스트 스레드에 비해 디바이스 스레드의 다른 제한 사항은
+의도적으로 선택한 것입니다. 이러한 제한 사항은
+디바이스 스레드가 C++ 표준을 엄격히 따르는 경우에는 불가능한
+성능 최적화를 가능하게 합니다.
+예를 들어, 결국 원자적 쓰기 또는 펜스만 수행하는 프로그램에
+전방 진행을 제공하면, 실질적인 이점은 거의 없는 반면
+전체 성능은 저하될 것입니다. - end note.]</p>
+</div></blockquote>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text"><a class="reference external" href="https://eel.is/c++draft/intro.progress">[intro.progress.1]</a>의 수정으로 인해 호스트 스레드와 디바이스 스레드 간 전방 진행 보장 차이가 발생하는 예.</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg aria-hidden="true" class="sd-octicon sd-octicon-chevron-right" height="1.5em" version="1.1" viewbox="0 0 24 24" width="1.5em"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">다음 예시는 위의 호스트 및 디바이스 스레드에 대한 구현 가정의 항목화된 하위 절을 각각 “host.threads.&lt;id&gt;” 및 “device.threads.&lt;id&gt;”를 사용하여 참조합니다.</p>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="c1">// Example: Execution.Model.Device.0</span>
+<span class="linenos">2</span><span class="c1">// Outcome: grid eventually terminates per device.threads.4 because the atomic object does not have automatic storage duration.</span>
+<span class="linenos">3</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ex0</span><span class="p">(</span><span class="n">cuda</span><span class="o">::</span><span class="n">atomic_ref</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_device</span><span class="o">&gt;</span><span class="w"> </span><span class="n">atom</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">4</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">5</span><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">atom</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">cuda</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="linenos">6</span><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">7</span><span class="w">        </span><span class="n">atom</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span>
+<span class="linenos">8</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">9</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="c1">// Example: Execution.Model.Device.1</span>
+<span class="linenos">2</span><span class="c1">// Allowed outcome: No thread makes progress because device threads don't support host.threads.2.</span>
+<span class="linenos">3</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ex1</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">4</span><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">yield</span><span class="p">();</span>
+<span class="linenos">5</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="c1">// Example: Execution.Model.Device.2</span>
+<span class="linenos">2</span><span class="c1">// Allowed outcome: No thread makes progress because device threads don't support host.threads.4</span>
+<span class="linenos">3</span><span class="c1">// for objects with automatic storage duration (see exception in device.threads.3).</span>
+<span class="linenos">4</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ex2</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">5</span><span class="w">    </span><span class="k">volatile</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">True</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="linenos">6</span><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="n">True</span><span class="p">);</span>
+<span class="linenos">7</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="c1">// Example: Execution.Model.Device.3</span>
+<span class="linenos">2</span><span class="c1">// Allowed outcome: No thread makes progress because device threads don't support host.threads.5</span>
+<span class="linenos">3</span><span class="c1">// for objects with automatic storage duration (see exception in device.threads.4).</span>
+<span class="linenos">4</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ex3</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">5</span><span class="w">    </span><span class="n">cuda</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">bool</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_thread</span><span class="o">&gt;</span><span class="w"> </span><span class="n">True</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="linenos">6</span><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="n">True</span><span class="p">.</span><span class="n">load</span><span class="p">());</span>
+<span class="linenos">7</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="c1">// Example: Execution.Model.Device.4</span>
+<span class="linenos">2</span><span class="c1">// Allowed outcome: No thread makes progress because device threads don't support host.thread.6.</span>
+<span class="linenos">3</span><span class="n">__global</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ex4</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">4</span><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* empty */</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">5</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="cuda-apis">
+<span id="cuda-cplusplus-execution-model-cuda-apis"></span><h2><span class="section-number">5.8.3. </span>CUDA API<a class="headerlink" href="#cuda-apis" title="Link to this heading">#</a></h2>
+<p>CUDA API 호출은 결국 반환하거나, 또는 적어도 하나의 디바이스 스레드가 진행하도록 보장해야 합니다.</p>
+<p>CUDA 질의 함수(예: <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__STREAM.html">cudaStreamQuery</a>,
+<a class="reference external" href="https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EVENT.html">cudaEventQuery</a> 등)는 디바이스 스레드가 진행하지 않는 상태에서
+일관되게 <code class="docutils literal notranslate"><span class="pre">cudaErrorNotReady</span></code>를 반환해서는 안 됩니다.</p>
+<blockquote>
+<div><p>[Note: 디바이스 스레드는 API 호출과 “관련”될 필요가 없습니다. 예를 들어, 한 스트림 또는 프로세스에서 동작하는 API가 다른 스트림 또는 프로세스의 디바이스 스레드 진행을 보장할 수도 있습니다. - end note.]</p>
+<p>[Note: CUDA API 전방 진행 준수 여부를 프로그램에서 테스트하는 간단하지만 충분하지는 않은 방법은 다음 환경 변수를 설정한 상태에서 프로그램을 실행한 다음: <code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_MAX_CONNECTIONS=1</span> <span class="pre">CUDA_LAUNCH_BLOCKING=1</span></code>, 프로그램이 여전히 종료하는지 확인하는 것입니다.
+종료하지 않는다면 프로그램에 버그가 있습니다.
+이 방법은 모든 전방 진행 버그를 잡아내지는 못하므로 충분하지 않지만, 많은 버그를 잡아낼 수는 있습니다. - end note.]</p>
+</div></blockquote>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">CUDA API 전방 진행 보장 예.</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg aria-hidden="true" class="sd-octicon sd-octicon-chevron-right" height="1.5em" version="1.1" viewbox="0 0 24 24" width="1.5em"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// Example: Execution.Model.API.1</span>
+<span class="linenos"> 2</span><span class="c1">// Outcome: if no other device threads (e.g., from other processes) are making progress,</span>
+<span class="linenos"> 3</span><span class="c1">// this program terminates and returns cudaSuccess.</span>
+<span class="linenos"> 4</span><span class="c1">// Rationale: CUDA guarantees that if the device is empty:</span>
+<span class="linenos"> 5</span><span class="c1">// - `cudaDeviceSynchronize` eventually ensures that at least one device-thread makes progress, which implies that eventually `hello_world` grid and one of its device-threads start.</span>
+<span class="linenos"> 6</span><span class="c1">// - All thread-block threads eventually start (due to "if a device thread makes progress, all other threads in its thread-block cluster eventually make progress").</span>
+<span class="linenos"> 7</span><span class="c1">// - Once all threads in thread-block arrive at `__syncthreads` barrier, all waiting threads are unblocked.</span>
+<span class="linenos"> 8</span><span class="c1">// - Therefore all device threads eventually exit the `hello_world`` grid.</span>
+<span class="linenos"> 9</span><span class="c1">// - And `cudaDeviceSynchronize`` eventually unblocks.</span>
+<span class="linenos">10</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">hello_world</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nf">__syncthreads</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">11</span><span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">12</span><span class="w">    </span><span class="n">hello_world</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+<span class="linenos">13</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">cudaDeviceSynchronize</span><span class="p">();</span>
+<span class="linenos">14</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// Example: Execution.Model.API.2</span>
+<span class="linenos"> 2</span><span class="c1">// Allowed outcome: eventually, no thread makes progress.</span>
+<span class="linenos"> 3</span><span class="c1">// Rationale: the `cudaDeviceSynchronize` API below is only called if a device thread eventually makes progress and sets the flag.</span>
+<span class="linenos"> 4</span><span class="c1">// However, CUDA only guarantees that `producer` device thread eventually starts if the synchronization API is called.</span>
+<span class="linenos"> 5</span><span class="c1">// Therefore, the host thread may never be unblocked from the flag spin-loop.</span>
+<span class="linenos"> 6</span><span class="n">cuda</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_system</span><span class="o">&gt;</span><span class="w"> </span><span class="n">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos"> 7</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">producer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">flag</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 8</span><span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="n">cudaHostRegister</span><span class="p">(</span><span class="o">&amp;</span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">flag</span><span class="p">));</span>
+<span class="linenos">10</span><span class="w">    </span><span class="n">producer</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+<span class="linenos">11</span><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">flag</span><span class="p">.</span><span class="n">load</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="linenos">12</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">cudaDeviceSynchronize</span><span class="p">();</span>
+<span class="linenos">13</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// Example: Execution.Model.API.3</span>
+<span class="linenos"> 2</span><span class="c1">// Allowed outcome: eventually, no thread makes progress.</span>
+<span class="linenos"> 3</span><span class="c1">// Rationale: same as Example.Model.API.2, with the addition that a single CUDA query API call does not guarantee</span>
+<span class="linenos"> 4</span><span class="c1">// the device thread eventually starts, only repeated CUDA query API calls do (see Execution.Model.API.4).</span>
+<span class="linenos"> 5</span><span class="n">cuda</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_system</span><span class="o">&gt;</span><span class="w"> </span><span class="n">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos"> 6</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">producer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">flag</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 7</span><span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="n">cudaHostRegister</span><span class="p">(</span><span class="o">&amp;</span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">flag</span><span class="p">));</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="n">producer</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+<span class="linenos">10</span><span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">cudaStreamQuery</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="linenos">11</span><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">flag</span><span class="p">.</span><span class="n">load</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="linenos">12</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">cudaDeviceSynchronize</span><span class="p">();</span>
+<span class="linenos">13</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// Example: Execution.Model.API.4</span>
+<span class="linenos"> 2</span><span class="c1">// Outcome: terminates.</span>
+<span class="linenos"> 3</span><span class="c1">// Rationale: same as Execution.Model.API.3, but this example repeatedly calls</span>
+<span class="linenos"> 4</span><span class="c1">// a CUDA query API in within the flag spin-loop, which guarantees that the device thread</span>
+<span class="linenos"> 5</span><span class="c1">// eventually makes progress.</span>
+<span class="linenos"> 6</span><span class="n">cuda</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_system</span><span class="o">&gt;</span><span class="w"> </span><span class="n">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos"> 7</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">producer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">flag</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 8</span><span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="n">cudaHostRegister</span><span class="p">(</span><span class="o">&amp;</span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">flag</span><span class="p">));</span>
+<span class="linenos">10</span><span class="w">    </span><span class="n">producer</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+<span class="linenos">11</span><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">flag</span><span class="p">.</span><span class="n">load</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">12</span><span class="w">        </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">cudaStreamQuery</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="linenos">13</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">14</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">cudaDeviceSynchronize</span><span class="p">();</span>
+<span class="linenos">15</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</details><section id="dependencies">
+<span id="cuda-cplusplus-execution-model-cuda-dependencies"></span><h3><span class="section-number">5.8.3.1. </span>종속성<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h3>
+<p>디바이스 스레드는 모든 종속성이 완료되기 전에는 시작해서는 안 됩니다.</p>
+<blockquote>
+<div><p>[Note: 디바이스 스레드가 진행을 시작하지 못하게 하는 종속성은 예를 들어 <a class="reference internal" href="../02-basics/asynchronous-execution.html"><span class="std std-ref">CUDA Stream Commands</span></a>를 통해 생성할 수 있습니다.
+여기에는 무엇보다도 <a class="reference internal" href="../02-basics/asynchronous-execution.html"><span class="std std-ref">CUDA Events</span></a> 및 <a class="reference internal" href="../02-basics/intro-to-cuda-cpp.html"><span class="std std-ref">CUDA Kernels</span></a>의 완료에 대한 종속성이 포함될 수 있습니다. - end note.]</p>
+</div></blockquote>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">종속성으로 인해 보장되는 CUDA API 전방 진행 보장 예</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg aria-hidden="true" class="sd-octicon sd-octicon-chevron-right" height="1.5em" version="1.1" viewbox="0 0 24 24" width="1.5em"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// Example: Execution.Model.Stream.0</span>
+<span class="linenos"> 2</span><span class="c1">// Allowed outcome: eventually, no thread makes progress.</span>
+<span class="linenos"> 3</span><span class="c1">// Rationale: while CUDA guarantees that one device thread makes progress, since there</span>
+<span class="linenos"> 4</span><span class="c1">// is no dependency between `first` and `second`, it does not guarantee which thread,</span>
+<span class="linenos"> 5</span><span class="c1">// and therefore it could always pick the device thread from `second`, which then never</span>
+<span class="linenos"> 6</span><span class="c1">// unblocks from the spin-loop.</span>
+<span class="linenos"> 7</span><span class="c1">// That is, `second` may starve `first`.</span>
+<span class="linenos"> 8</span><span class="n">cuda</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_system</span><span class="o">&gt;</span><span class="w"> </span><span class="n">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos"> 9</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">first</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">flag</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">10</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">second</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">while</span><span class="p">(</span><span class="n">flag</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">cuda</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">11</span><span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">12</span><span class="w">    </span><span class="n">cudaHostRegister</span><span class="p">(</span><span class="o">&amp;</span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">flag</span><span class="p">));</span>
+<span class="linenos">13</span><span class="w">    </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">s0</span><span class="p">,</span><span class="w"> </span><span class="n">s1</span><span class="p">;</span>
+<span class="linenos">14</span><span class="w">    </span><span class="n">cudaStreamCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s0</span><span class="p">);</span>
+<span class="linenos">15</span><span class="w">    </span><span class="n">cudaStreamCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s1</span><span class="p">);</span>
+<span class="linenos">16</span><span class="w">    </span><span class="n">first</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">s0</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+<span class="linenos">17</span><span class="w">    </span><span class="n">second</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">s1</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+<span class="linenos">18</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">cudaDeviceSynchronize</span><span class="p">();</span>
+<span class="linenos">19</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// Example: Execution.Model.Stream.1</span>
+<span class="linenos"> 2</span><span class="c1">// Outcome: terminates.</span>
+<span class="linenos"> 3</span><span class="c1">// Rationale: same as Execution.Model.Stream.0, but this example has a stream dependency</span>
+<span class="linenos"> 4</span><span class="c1">// between first and second, which requires CUDA to run the grids in order.</span>
+<span class="linenos"> 5</span><span class="n">cuda</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_system</span><span class="o">&gt;</span><span class="w"> </span><span class="n">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos"> 6</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">first</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">flag</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 7</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">second</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">while</span><span class="p">(</span><span class="n">flag</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">cuda</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 8</span><span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="n">cudaHostRegister</span><span class="p">(</span><span class="o">&amp;</span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">flag</span><span class="p">));</span>
+<span class="linenos">10</span><span class="w">    </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">s0</span><span class="p">;</span>
+<span class="linenos">11</span><span class="w">    </span><span class="n">cudaStreamCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s0</span><span class="p">);</span>
+<span class="linenos">12</span><span class="w">    </span><span class="n">first</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">s0</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+<span class="linenos">13</span><span class="w">    </span><span class="n">second</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">s0</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+<span class="linenos">14</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">cudaDeviceSynchronize</span><span class="p">();</span>
+<span class="linenos">15</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="../notices.html">6. 고지 사항</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#host-threads">5.8.1. 호스트 스레드</a></li><li><a class="toc-link" href="#device-threads">5.8.2. 디바이스 스레드</a></li><li><a class="toc-link" href="#cuda-apis">5.8.3. CUDA API</a><ul><li><a class="toc-link" href="#dependencies">5.8.3.1. 종속성</a></li></ul></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

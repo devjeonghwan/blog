@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4.7. 지연 로딩 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="지연 로딩은 CUDA 모듈을 필요할 때까지 로드를 기다림으로써 프로그램 초기화 시간을 줄입니다. 지연 로딩은 라이브러리를 사용할 때 흔히 그렇듯, 포함된 커널 중 소수만 사용하는 프로그램에 특히 효과적입니다. 지연 로딩은 CUDA 프로그래밍 모델을 따르면 사용자에게 보이지 않도록 설계되었습니다. 잠재적 위험 에서 이를 자세히 설명합니다. CUDA 12.3부터 지연 로딩은 모든 플랫폼에서 기본적으로 활성화되어 있지만, CUDA_MODULE_LOADING 환경 변수를 통해 제어할 수 있습니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part4.html">4. CUDA 기능</a></li><li>4.7. 지연 로딩</li></ul>
+          <h1 class="page-title">4.7. 지연 로딩</h1>
+          <article class="doc-article">
+<section id="lazy-loading">
+<span id="id1"></span>
+<section id="introduction">
+<span id="what-is-lazy-loading"></span><h2><span class="section-number">4.7.1. </span>소개<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>지연 로딩은 CUDA 모듈을 필요할 때까지 로드를 기다림으로써 프로그램 초기화 시간을 줄입니다. 지연 로딩은 라이브러리를 사용할 때 흔히 그렇듯, 포함된 커널 중 소수만 사용하는 프로그램에 특히 효과적입니다. 지연 로딩은 CUDA 프로그래밍 모델을 따르면 사용자에게 보이지 않도록 설계되었습니다. <a class="reference internal" href="#lazy-loading-potential-hazards"><span class="std std-ref">잠재적 위험</span></a>에서 이를 자세히 설명합니다. CUDA 12.3부터 지연 로딩은 모든 플랫폼에서 기본적으로 활성화되어 있지만, <code class="docutils literal notranslate"><span class="pre">CUDA_MODULE_LOADING</span></code> 환경 변수를 통해 제어할 수 있습니다.</p>
+</section>
+<section id="change-history">
+<span id="lazy-loading-change-history"></span><h2><span class="section-number">4.7.2. </span>변경 이력<a class="headerlink" href="#change-history" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container table-frame"><table class="table-no-stripes longtable table" id="lazy-loading-version-history">
+<caption><span class="caption-number">Table 17 </span><span class="caption-text">CUDA 버전별 선택된 지연 로딩 변경 사항</span><a class="headerlink" href="#lazy-loading-version-history" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%"/>
+<col style="width: 80.0%"/>
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>CUDA 버전</p></th>
+<th class="head"><p>변경 사항</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>12.3</p></td>
+<td><p>지연 로딩 성능이 개선되었습니다. 이제 Windows에서 기본적으로 활성화됩니다.</p></td>
+</tr>
+<tr class="row-odd"><td><p>12.2</p></td>
+<td><p>Linux에서 지연 로딩이 기본적으로 활성화됩니다.</p></td>
+</tr>
+<tr class="row-even"><td><p>11.7</p></td>
+<td><p>지연 로딩이 처음 도입되었으며, 기본적으로 비활성화되었습니다.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="requirements-for-lazy-loading">
+<span id="lazy-loading-system-requirements"></span><h2><span class="section-number">4.7.3. </span>지연 로딩을 위한 요구 사항<a class="headerlink" href="#requirements-for-lazy-loading" title="Link to this heading">#</a></h2>
+<p>지연 로딩은 CUDA 런타임과 드라이버의 공동 기능입니다. 지연 로딩은 런타임 및 드라이버 버전 요구 사항이 충족될 때만 사용할 수 있습니다.</p>
+<section id="cuda-runtime-version-requirement">
+<h3><span class="section-number">4.7.3.1. </span>CUDA 런타임 버전 요구 사항<a class="headerlink" href="#cuda-runtime-version-requirement" title="Link to this heading">#</a></h3>
+<p>지연 로딩은 CUDA 런타임 버전 11.7부터 사용할 수 있습니다. CUDA 런타임은 일반적으로 프로그램과 라이브러리에 정적으로 링크되므로, CUDA 11.7+ 툴킷으로 제공되거나 컴파일된 프로그램과 라이브러리만 지연 로딩의 이점을 누릴 수 있습니다. 더 오래된 CUDA 런타임 버전을 사용해 컴파일된 라이브러리는 모든 모듈을 즉시(eagerly) 로드합니다.</p>
+</section>
+<section id="cuda-driver-version-requirement">
+<h3><span class="section-number">4.7.3.2. </span>CUDA 드라이버 버전 요구 사항<a class="headerlink" href="#cuda-driver-version-requirement" title="Link to this heading">#</a></h3>
+<p>지연 로딩에는 드라이버 버전 515 이상이 필요합니다. CUDA 툴킷 11.7 이상을 사용하더라도, 515보다 오래된 드라이버 버전에서는 지연 로딩을 사용할 수 없습니다.</p>
+</section>
+<section id="compiler-requirements">
+<h3><span class="section-number">4.7.3.3. </span>컴파일러 요구 사항<a class="headerlink" href="#compiler-requirements" title="Link to this heading">#</a></h3>
+<p>지연 로딩에는 컴파일러 지원이 필요하지 않습니다. 11.7 이전 컴파일러로 컴파일된 SASS와 PTX 모두 지연 로딩이 활성화된 상태에서 로드될 수 있으며, 해당 기능의 모든 이점을 누릴 수 있습니다. 그러나 위에서 설명한 대로 11.7+ CUDA 런타임 버전은 여전히 필요합니다.</p>
+</section>
+<section id="kernel-requirements">
+<h3><span class="section-number">4.7.3.4. </span>커널 요구 사항<a class="headerlink" href="#kernel-requirements" title="Link to this heading">#</a></h3>
+<p>지연 로딩은 관리 변수를 포함하는 모듈에는 영향을 주지 않으며, 이러한 모듈은 여전히 즉시(eagerly) 로드됩니다.</p>
+</section>
+</section>
+<section id="usage">
+<span id="lazy-loading-controlling"></span><h2><span class="section-number">4.7.4. </span>사용법<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<section id="enabling-disabling">
+<h3><span class="section-number">4.7.4.1. </span>활성화 및 비활성화<a class="headerlink" href="#enabling-disabling" title="이 제목으로 연결">#</a></h3>
+<p>지연 로딩은 <code class="docutils literal notranslate"><span class="pre">CUDA_MODULE_LOADING</span></code> 환경 변수를 <code class="docutils literal notranslate"><span class="pre">LAZY</span></code>로 설정하여 활성화됩니다. 지연 로딩은 <code class="docutils literal notranslate"><span class="pre">CUDA_MODULE_LOADING</span></code> 환경 변수를 <code class="docutils literal notranslate"><span class="pre">EAGER</span></code>로 설정하여 비활성화할 수 있습니다. CUDA 12.3부터 지연 로딩은 모든 플랫폼에서 기본적으로 활성화되어 있습니다.</p>
+</section>
+<section id="checking-if-lazy-loading-is-enabled-at-runtime">
+<h3><span class="section-number">4.7.4.2. </span>런타임에서 지연 로딩이 활성화되어 있는지 확인<a class="headerlink" href="#checking-if-lazy-loading-is-enabled-at-runtime" title="이 제목으로 연결">#</a></h3>
+<p>CUDA 드라이버 API의 <code class="docutils literal notranslate"><span class="pre">cuModuleGetLoadingMode</span></code> API를 사용하여 지연 로딩이 활성화되어 있는지 확인할 수 있습니다. 이 함수를 실행하기 전에 CUDA를 초기화해야 한다는 점에 유의하십시오. 예시 사용법은 아래 스니펫에 나와 있습니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"&lt;cuda.h&gt;"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"&lt;assert.h&gt;"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"&lt;iostream&gt;"</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">CUmoduleLoadingMode</span><span class="w"> </span><span class="n">mode</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">assert</span><span class="p">(</span><span class="n">CUDA_SUCCESS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">cuInit</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="w">        </span><span class="n">assert</span><span class="p">(</span><span class="n">CUDA_SUCCESS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">cuModuleGetLoadingMode</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mode</span><span class="p">));</span>
+
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"CUDA Module Loading Mode is "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">((</span><span class="n">mode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CU_MODULE_LAZY_LOADING</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">"lazy"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">"eager"</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="forcing-a-module-to-load-eagerly-at-runtime">
+<h3><span class="section-number">4.7.4.3. </span>런타임에서 모듈을 즉시(eagerly) 로드하도록 강제<a class="headerlink" href="#forcing-a-module-to-load-eagerly-at-runtime" title="이 제목으로 연결">#</a></h3>
+<p>커널과 변수의 로딩은 명시적 로딩이 전혀 필요 없이 자동으로 수행됩니다. 커널은 다음을 수행하여 실행하지 않고도 명시적으로 로드할 수 있습니다:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cuModuleGetFunction()</span></code> 함수는 모듈이 디바이스 메모리에 로드되도록 합니다</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaFuncGetAttributes()</span></code> 함수는 커널이 디바이스 메모리에 로드되도록 합니다</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p><code class="docutils literal notranslate"><span class="pre">cuModuleLoad()</span></code>는 모듈이 즉시 로드된다는 것을 보장하지 않습니다.</p>
+</div>
+</section>
+</section>
+<section id="potential-hazards">
+<span id="lazy-loading-potential-hazards"></span><h2><span class="section-number">4.7.5. </span>잠재적 위험 요소<a class="headerlink" href="#potential-hazards" title="이 제목으로 연결">#</a></h2>
+<p>지연 로딩은 이를 사용하기 위해 애플리케이션에 어떤 수정도 필요하지 않도록 설계되었습니다. 그렇지만 아래에 설명된 것처럼, 특히 애플리케이션이 CUDA 프로그래밍 모델을 완전히 준수하지 않는 경우 몇 가지 주의사항이 있습니다.</p>
+<section id="impact-on-concurrent-kernel-execution">
+<h3><span class="section-number">4.7.5.1. </span>동시 커널 실행에 미치는 영향<a class="headerlink" href="#impact-on-concurrent-kernel-execution" title="이 제목으로 연결">#</a></h3>
+<p>일부 프로그램은 동시 커널 실행이 보장된다고 잘못 가정합니다. 커널 간 동기화가 필요하지만 커널 실행이 직렬화된 경우 데드락이 발생할 수 있습니다. 지연 로딩이 동시 커널 실행에 미치는 영향을 최소화하려면 다음을 수행하십시오:</p>
+<ul class="simple">
+<li><p>동시에 실행하기를 기대하는 모든 커널을 실행(launch)하기 전에 미리 로드하거나</p></li>
+<li><p>애플리케이션을 <code class="docutils literal notranslate"><span class="pre">CUDA_MODULE_LOADING</span> <span class="pre">=</span> <span class="pre">EAGER</span></code>와 함께 실행하여 각 함수가 즉시 로드되도록 강제하지 않으면서 데이터를 즉시(eagerly) 로드하도록 강제</p></li>
+</ul>
+</section>
+<section id="large-memory-allocations">
+<h3><span class="section-number">4.7.5.2. </span>대규모 메모리 할당<a class="headerlink" href="#large-memory-allocations" title="이 제목으로 연결">#</a></h3>
+<p>지연 로딩은 CUDA 모듈에 대한 메모리 할당을 프로그램 초기화 시점에서 실행 시점에 더 가까운 시점으로 지연시킵니다. 애플리케이션이 시작 시 전체 VRAM을 할당하면, CUDA가 런타임에 모듈을 위한 메모리 할당에 실패할 수 있습니다. 가능한 해결 방법:</p>
+<ul class="simple">
+<li><p>시작 시 전체 VRAM을 할당하는 할당자 대신 <code class="docutils literal notranslate"><span class="pre">cudaMallocAsync()</span></code>를 사용</p></li>
+<li><p>커널의 지연 로딩을 보상하기 위해 일부 버퍼를 추가</p></li>
+<li><p>할당자를 초기화하려고 시도하기 전에 프로그램에서 사용할 모든 커널을 미리 로드</p></li>
+</ul>
+</section>
+<section id="impact-on-performance-measurements">
+<h3><span class="section-number">4.7.5.3. </span>성능 측정에 미치는 영향<a class="headerlink" href="#impact-on-performance-measurements" title="이 제목으로 연결">#</a></h3>
+<p>지연 로딩은 CUDA 모듈 초기화를 측정된 실행 구간으로 이동시켜 성능 측정을 왜곡할 수 있습니다. 이를 피하려면:</p>
+<ul class="simple">
+<li><p>측정 전에 최소 한 번의 워밍업 반복을 수행</p></li>
+<li><p>벤치마크 대상 커널을 실행(launch)하기 전에 미리 로드</p></li>
+</ul>
+</section>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="error-log-management.html">4.8. 오류 로그 관리</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#introduction">4.7.1. 소개</a></li><li><a class="toc-link" href="#change-history">4.7.2. 변경 이력</a></li><li><a class="toc-link" href="#requirements-for-lazy-loading">4.7.3. 지연 로딩을 위한 요구 사항</a><ul><li><a class="toc-link" href="#cuda-runtime-version-requirement">4.7.3.1. CUDA 런타임 버전 요구 사항</a></li><li><a class="toc-link" href="#cuda-driver-version-requirement">4.7.3.2. CUDA 드라이버 버전 요구 사항</a></li><li><a class="toc-link" href="#compiler-requirements">4.7.3.3. 컴파일러 요구 사항</a></li><li><a class="toc-link" href="#kernel-requirements">4.7.3.4. 커널 요구 사항</a></li></ul></li><li><a class="toc-link" href="#usage">4.7.4. 사용법</a><ul><li><a class="toc-link" href="#enabling-disabling">4.7.4.1. 활성화 및 비활성화</a></li><li><a class="toc-link" href="#checking-if-lazy-loading-is-enabled-at-runtime">4.7.4.2. 런타임에서 지연 로딩이 활성화되어 있는지 확인</a></li><li><a class="toc-link" href="#forcing-a-module-to-load-eagerly-at-runtime">4.7.4.3. 런타임에서 모듈을 즉시(eagerly) 로드하도록 강제</a></li></ul></li><li><a class="toc-link" href="#potential-hazards">4.7.5. 잠재적 위험 요소</a><ul><li><a class="toc-link" href="#impact-on-concurrent-kernel-execution">4.7.5.1. 동시 커널 실행에 미치는 영향</a></li><li><a class="toc-link" href="#large-memory-allocations">4.7.5.2. 대규모 메모리 할당</a></li><li><a class="toc-link" href="#impact-on-performance-measurements">4.7.5.3. 성능 측정에 미치는 영향</a></li></ul></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4.12. 클러스터 런치 제어를 통한 워크 스틸링 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="가변적인 데이터 및 계산 크기 문제를 다루는 것은 CUDA 애플리케이션을 개발할 때 필수적입니다. 전통적으로 CUDA 개발자는 런치할 커널 스레드 블록의 수를 결정하기 위해 두 가지 주요 접근 방식을 사용해 왔습니다: 스레드 블록당 고정 작업량 과 고정된 스레드 블록 수 . 두 접근 방식 모두 장단점이 있습니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part4.html">4. CUDA 기능</a></li><li>4.12. 클러스터 런치 제어를 통한 워크 스틸링</li></ul>
+          <h1 class="page-title">4.12. 클러스터 런치 제어를 통한 워크 스틸링</h1>
+          <article class="doc-article">
+<section id="work-stealing-with-cluster-launch-control">
+<span id="cluster-launch-control"></span>
+<p>가변적인 데이터 및 계산 크기 문제를 다루는 것은 CUDA 애플리케이션을 개발할 때 필수적입니다. 전통적으로 CUDA 개발자는 런치할 커널 스레드 블록의 수를 결정하기 위해 두 가지 주요 접근 방식을 사용해 왔습니다: <em>스레드 블록당 고정 작업량</em>과 <em>고정된 스레드 블록 수</em>. 두 접근 방식 모두 장단점이 있습니다.</p>
+<p><strong>스레드 블록당 고정 작업량:</strong> 이 접근 방식에서는 스레드 블록의 수가 문제 크기에 의해 결정되며, 각 스레드 블록이 수행하는 작업량은 일정하게 유지됩니다.</p>
+<p>이 접근 방식의 핵심 장점:</p>
+<ul>
+<li><p><em>SM 간 로드 밸런싱</em></p>
+<p>스레드 블록 실행 시간이 가변적일 때
+그리고/또는 스레드 블록 수가 GPU가 동시에 실행할 수 있는 수보다 훨씬 클 때(로우-테일 효과를 유발),
+이 접근 방식은 GPU 스케줄러가 일부 SM에서는 다른 SM보다 더 많은 스레드 블록을 실행할 수 있게 합니다.</p>
+</li>
+<li><p><em>선점(Preemption)</em></p>
+<p>GPU 스케줄러는
+<a class="reference internal" href="../02-basics/asynchronous-execution.html"><span class="std std-ref">더 높은 우선순위의 커널</span></a>을,
+더 낮은 우선순위의 커널이 이미 실행을 시작한 뒤에 런치되었더라도,
+더 낮은 우선순위 커널의 스레드 블록이 완료되는 대로 해당 스레드 블록을 스케줄링함으로써 실행을 시작할 수 있습니다.
+그 후 더 높은 우선순위의 커널 실행이 끝나면 더 낮은 우선순위 커널의 실행을 재개할 수 있습니다.</p>
+</li>
+</ul>
+<p><strong>고정된 스레드 블록 수:</strong> 이 접근 방식은 흔히
+block-stride 또는 grid-stride 루프로 구현되며,
+스레드 블록 수는 문제 크기에 의존하지 않습니다. 대신 각 스레드 블록이 수행하는 작업량은
+문제 크기의 함수입니다. 일반적으로 스레드 블록 수는 커널이 실행되는 GPU의 SM 수와
+원하는 점유율(occupancy)에 기반합니다.</p>
+<p>이 접근 방식의 핵심 장점:</p>
+<ul>
+<li><p><em>스레드 블록 오버헤드 감소</em></p>
+<p>이 접근 방식은 스레드 블록 런치 지연 시간을 평균적으로 줄일 뿐만 아니라
+모든 스레드 블록 전반에 걸친 공유 연산과 관련된 계산 오버헤드도 최소화합니다.
+이러한 오버헤드는 런치 지연 오버헤드보다 훨씬 클 수 있습니다.</p>
+<p>예를 들어, 컨볼루션 커널에서는 컨볼루션 계수를 계산하기 위한 서두(prologue) — 스레드 블록 인덱스와 무관한 — 를
+고정된 스레드 블록 수 덕분에 더 적은 횟수로 계산할 수 있어,
+중복 계산을 줄일 수 있습니다.</p>
+</li>
+</ul>
+<p><strong>클러스터 런치 제어(Cluster Launch Control)</strong>는 NVIDIA Blackwell GPU 아키텍처(컴퓨트 기능 10.0)에 도입된 기능으로, 앞의 두 접근 방식의 이점을 결합하는 것을 목표로 합니다. 개발자가 스레드 블록 또는 스레드 블록 클러스터를 취소할 수 있도록 하여 스레드 블록 스케줄링에 대해 더 많은 제어를 제공합니다.
+이 메커니즘은 워크 스틸링을 가능하게 합니다. 워크 스틸링은 병렬 컴퓨팅에서의 동적 로드 밸런싱 기법으로,
+유휴 프로세서가 작업이 할당되기를 기다리는 대신,
+바쁜 프로세서의 작업 큐에서 작업을 적극적으로 “훔치는” 방식입니다.</p>
+<figure class="align-center" id="cluster-launch-control-diagram">
+<a class="reference internal image-reference" href="../_images/cluster_launch_control.png"><img alt="클러스터 런치 제어 흐름" loading="lazy" src="../_images/cluster_launch_control.png" style="width: 600px;"/>
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 51 </span><span class="caption-text">클러스터 런치 제어 흐름</span><a class="headerlink" href="#cluster-launch-control-diagram" title="이 이미지에 대한 링크">#</a></p>
+</figcaption>
+</figure>
+<p>클러스터 런치 제어를 사용하면, 스레드 블록은 아직 실행을 시작하지 않은
+다른 스레드 블록의 런치를 취소하려고 시도합니다. 취소 요청이
+성공하면, 해당 스레드 블록의 작업을 “훔쳐” 그
+인덱스를 사용해 작업을 수행합니다. 취소는 더 이상
+사용 가능한 스레드 블록 인덱스가 없거나,
+더 높은 우선순위의 커널이 스케줄링되는 것과 같은 다른 이유로 실패할 수 있습니다. 후자의 경우, 스레드 블록이
+취소 실패 후 종료하면, 스케줄러는
+더 높은 우선순위의 커널 실행을 시작할 수 있으며, 그 후 현재 커널의 남은
+스레드 블록을 계속 스케줄링하여 실행합니다.
+위의
+<a class="reference internal" href="#cluster-launch-control-diagram"><span class="std std-ref">그림</span></a>은 이 절차의 실행
+흐름을 보여줍니다.</p>
+<p>아래 표는 세 가지 접근 방식의 장점과 단점을 요약합니다:</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table-no-stripes table">
+<colgroup>
+<col style="width: 40.0%"/>
+<col style="width: 20.0%"/>
+<col style="width: 20.0%"/>
+<col style="width: 20.0%"/>
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p class="centered">
+<strong>스레드 블록당 고정 작업량</strong></p></th>
+<th class="head"><p class="centered">
+<strong>고정된 스레드 블록 수</strong></p></th>
+<th class="head"><p class="centered">
+<strong>클러스터 런치 제어</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>오버헤드 감소</p></td>
+<td><p class="centered">
+<strong><span class="math notranslate nohighlight">\(\textcolor{red}{\textbf{X}}\)</span></strong></p></td>
+<td><p class="centered">
+<strong><span class="math notranslate nohighlight">\(\textcolor{lime}{\textbf{V}}\)</span></strong></p></td>
+<td><p class="centered">
+<strong><span class="math notranslate nohighlight">\(\textcolor{lime}{\textbf{V}}\)</span></strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>선점</p></td>
+<td><p class="centered">
+<strong><span class="math notranslate nohighlight">\(\textcolor{lime}{\textbf{V}}\)</span></strong></p></td>
+<td><p class="centered">
+<strong><span class="math notranslate nohighlight">\(\textcolor{red}{\textbf{X}}\)</span></strong></p></td>
+<td><p class="centered">
+<strong><span class="math notranslate nohighlight">\(\textcolor{lime}{\textbf{V}}\)</span></strong></p></td>
+</tr>
+<tr class="row-even"><td><p>로드 밸런싱</p></td>
+<td><p class="centered">
+<strong><span class="math notranslate nohighlight">\(\textcolor{lime}{\textbf{V}}\)</span></strong></p></td>
+<td><p class="centered">
+<strong><span class="math notranslate nohighlight">\(\textcolor{red}{\textbf{X}}\)</span></strong></p></td>
+<td><p class="centered">
+<strong><span class="math notranslate nohighlight">\(\textcolor{lime}{\textbf{V}}\)</span></strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="api-details">
+<span id="advanced-kernels-clc-api-details"></span><h2><span class="section-number">4.12.1. </span>API 세부 정보<a class="headerlink" href="#api-details" title="이 제목에 대한 링크">#</a></h2>
+<p>클러스터 런치 제어 API를 통해 스레드 블록을 취소하는 작업은
+비동기적으로 수행되며 공유 메모리 배리어를 사용해 동기화되고,
+<a class="reference internal" href="../03-advanced/advanced-kernel-programming.html"><span class="std std-ref">비동기 데이터 복사</span></a>와 유사한 프로그래밍 패턴을 따릅니다.</p>
+<p><a class="reference external" href="https://nvidia.github.io/cccl/libcudacxx/ptx_api.html">libcu++</a>를 통해 사용할 수 있는 이 API는 다음을 제공합니다:</p>
+<ul class="simple">
+<li><p>인코딩된 취소 결과를 <code class="docutils literal notranslate"><span class="pre">__shared__</span></code> 변수에 기록하는 요청 명령.</p></li>
+<li><p>성공/실패 상태와 취소된 스레드 블록 인덱스를 추출하는 디코딩 명령.</p></li>
+</ul>
+<p>클러스터 런치 제어 연산은 async proxy 연산으로 모델링된다는 점에 유의하십시오( <a class="reference internal" href="../03-advanced/advanced-kernel-programming.html"><span class="std std-ref">Async Thread and Async Proxy</span></a> 참고).</p>
+<section id="thread-block-cancellation">
+<h3><span class="section-number">4.12.1.1. </span>스레드 블록 취소<a class="headerlink" href="#thread-block-cancellation" title="이 제목에 대한 링크">#</a></h3>
+<p>클러스터 런치 제어를 사용하는 바람직한 방법은 단일 스레드에서,
+즉 한 번에 하나의 요청을 수행하는 것입니다.</p>
+<p>취소 프로세스는 다섯 단계로 구성됩니다:</p>
+<ul class="simple">
+<li><p><strong>설정 단계</strong> (단계 1-2): 취소 결과 및 동기화 변수를 선언하고 초기화합니다.</p></li>
+<li><p><strong>워크 스틸링 루프</strong> (단계 3-5): 취소 결과를 요청, 동기화, 처리하기 위해 반복 실행합니다.</p></li>
+</ul>
+<ol class="arabic">
+<li><p>스레드 블록 취소를 위한 변수를 선언합니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">__shared__</span><span class="w"> </span><span class="n">uint4</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"> </span><span class="c1">// Request result.</span>
+<span class="n">__shared__</span><span class="w"> </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span><span class="w"> </span><span class="c1">// Synchronization barrier.</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">phase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">           </span><span class="c1">// Synchronization barrier phase.</span>
+</pre></div>
+</div>
+</li>
+<li><p>단일 도착 카운트로 공유 메모리 배리어를 초기화합니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cg</span><span class="o">::</span><span class="n">thread_block</span><span class="o">::</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="n">__syncthreads</span><span class="p">();</span>
+</pre></div>
+</div>
+</li>
+<li><p>단일 스레드로 비동기 취소 요청을 제출하고
+트랜잭션 카운트를 설정합니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cg</span><span class="o">::</span><span class="n">thread_block</span><span class="o">::</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cg</span><span class="o">::</span><span class="n">invoke_one</span><span class="p">(</span><span class="n">cg</span><span class="o">::</span><span class="n">coalesced_threads</span><span class="p">(),</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">](){</span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_try_cancel</span><span class="p">(</span><span class="o">&amp;</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar</span><span class="p">);});</span>
+<span class="w">    </span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_arrive_expect_tx</span><span class="p">(</span><span class="n">ptx</span><span class="o">::</span><span class="n">sem_relaxed</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">scope_cta</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">space_shared</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">uint4</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>스레드 블록 취소는 균일(uniform) 명령이므로,
+<a class="reference internal" href="cooperative-groups.html"><span class="std std-ref">invoke_one</span></a> 스레드 선택기 내부에서 제출하는 것을 권장합니다.
+이를 통해 컴파일러가 peeling 루프를 최적화로 제거할 수 있습니다.</p>
+</div>
+</li>
+<li><p>비동기 취소 요청을 동기화(완료)합니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_try_wait_parity</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">phase</span><span class="p">))</span>
+<span class="p">{}</span>
+<span class="n">phase</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</li>
+<li><p>취소 상태와 취소된 스레드 블록 인덱스를 가져옵니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_query_cancel_is_canceled</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Don't need all three for 1D/2D thread blocks:</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">bx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_query_cancel_get_first_ctaid_x</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_query_cancel_get_first_ctaid_y</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">bz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_query_cancel_get_first_ctaid_z</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>async 및 generic
+<a class="reference external" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html">proxies</a> 간의 공유 메모리 연산 가시성을 보장하고,
+워크 스틸링 루프 반복 간 데이터 레이스를 방지합니다.</p></li>
+</ol>
+</section>
+<section id="constraints-on-thread-block-cancellation">
+<h3><span class="section-number">4.12.1.2. </span>스레드 블록 취소에 대한 제약<a class="headerlink" href="#constraints-on-thread-block-cancellation" title="이 제목에 대한 링크">#</a></h3>
+<p>제약은 실패한 취소 요청과 관련이 있습니다:</p>
+<ul>
+<li><p>이전에 실패한 요청을 <strong>관찰(observing)</strong>한 후 다른 취소 요청을 제출하는 것은 <em>정의되지 않은 동작(undefined behavior)</em>입니다.</p>
+<p>아래 두 코드 예제에서 첫 번째 취소 요청이
+실패한다고 가정하면, 첫 번째 예제만 정의되지 않은 동작을 보입니다.
+두 번째 예제는 취소 요청들 사이에 관찰이 없으므로 올바릅니다:</p>
+<p><strong>잘못된 코드:</strong></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// First request:</span>
+<span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_try_cancel</span><span class="p">(</span><span class="o">&amp;</span><span class="n">result0</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar0</span><span class="p">);</span>
+
+<span class="c1">// First request query:</span>
+<span class="p">[</span><span class="n">Synchronize</span><span class="w"> </span><span class="n">bar0</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">here</span><span class="p">.]</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">success0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_query_cancel_is_canceled</span><span class="p">(</span><span class="n">result0</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="o">!</span><span class="n">success0</span><span class="p">);</span><span class="w"> </span><span class="c1">// Observed failure; second cancellation will be invalid.</span>
+
+<span class="c1">// Second request - next line is Undefined Behavior:</span>
+<span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_try_cancel</span><span class="p">(</span><span class="o">&amp;</span><span class="n">result1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>올바른 코드:</strong></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// First request:</span>
+<span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_try_cancel</span><span class="p">(</span><span class="o">&amp;</span><span class="n">result0</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar0</span><span class="p">);</span>
+
+<span class="c1">// Second request:</span>
+<span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_try_cancel</span><span class="p">(</span><span class="o">&amp;</span><span class="n">result1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar1</span><span class="p">);</span>
+
+<span class="c1">// First request query:</span>
+<span class="p">[</span><span class="n">Synchronize</span><span class="w"> </span><span class="n">bar0</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">here</span><span class="p">.]</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">success0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_query_cancel_is_canceled</span><span class="p">(</span><span class="n">result0</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="o">!</span><span class="n">success0</span><span class="p">);</span><span class="w"> </span><span class="c1">// Observed failure; second cancellation was valid.</span>
+</pre></div>
+</div>
+</li>
+<li><p>실패한 취소 요청의 스레드 블록 인덱스를 가져오는 것은
+정의되지 않은 동작(Undefined Behavior)입니다.</p></li>
+<li><p>여러 스레드에서 취소 요청을 제출하는 것은 권장되지 않습니다.
+이는 여러 스레드 블록의 취소를 초래하며
+신중한 처리가 필요합니다.
+예를 들어:</p>
+<ul class="simple">
+<li><p>제출하는 각 스레드는 데이터 레이스를 피하기 위해 고유한 <code class="docutils literal notranslate"><span class="pre">__shared__</span></code> 결과
+포인터를 제공해야 합니다.</p></li>
+<li><p>동기화에 동일한 배리어를 사용하는 경우, 도착 및
+트랜잭션 카운트를 그에 맞게 조정해야 합니다.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="example-vector-scalar-multiplication">
+<h2><span class="section-number">4.12.2. </span>예: 벡터-스칼라 곱셈<a class="headerlink" href="#example-vector-scalar-multiplication" title="이 제목에 대한 링크">#</a></h2>
+<p>다음 하위 섹션에서는 벡터-스칼라 곱셈 커널을 통해 클러스터 런치 제어를 사용한 워크 스틸링을 시연합니다. 동일한 문제의 두 가지 변형을 보여줍니다. 하나는 스레드 블록을 사용하고, 다른 하나는 스레드 블록 클러스터를 사용합니다.</p>
+<section id="use-case-thread-blocks">
+<h3><span class="section-number">4.12.2.1. </span>사용 사례: 스레드 블록<a class="headerlink" href="#use-case-thread-blocks" title="이 제목에 대한 링크">#</a></h3>
+<p>아래의 세 개 커널은 다음을 시연합니다 <em>스레드 블록당 고정 작업량</em>,
+<em>고정된 스레드 블록 수</em>, 그리고 <em>클러스터 런치 제어</em> 접근 방식
+벡터-스칼라 곱셈을 위한
+<span class="math notranslate nohighlight">\(\overline{v} := \alpha \overline{v}\)</span>.</p>
+<ul>
+<li><p>스레드 블록당 고정 작업량:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">__global__</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">kernel_fixed_work</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Prologue:</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">compute_scalar</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Computation:</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">alpha</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Launch: kernel_fixed_work&lt;&lt;&lt;1024, (n + 1023) / 1024&gt;&gt;&gt;(data, n);</span>
+</pre></div>
+</div>
+</li>
+<li><p>고정된 스레드 블록 수:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">__global__</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">kernel_fixed_blocks</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Prologue:</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">compute_scalar</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Computation:</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">alpha</span><span class="p">;</span>
+<span class="w">        </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">gridDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Launch: kernel_fixed_blocks&lt;&lt;&lt;1024, SM_COUNT&gt;&gt;&gt;(data, n);</span>
+</pre></div>
+</div>
+</li>
+<li><p>클러스터 런치 제어:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">cg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">cooperative_groups</span><span class="p">;</span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">ptx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">cuda</span><span class="o">::</span><span class="nn">ptx</span><span class="p">;</span>
+
+<span class="n">__global__</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">kernel_cluster_launch_control</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Cluster launch control initialization:</span>
+<span class="w">    </span><span class="n">__shared__</span><span class="w"> </span><span class="n">uint4</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">    </span><span class="n">__shared__</span><span class="w"> </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">phase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cg</span><span class="o">::</span><span class="n">thread_block</span><span class="o">::</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Prologue:</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">compute_scalar</span><span class="p">();</span><span class="w"> </span><span class="c1">// Device function not shown in this code snippet.</span>
+
+<span class="w">    </span><span class="c1">// Work-stealing loop:</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">bx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="c1">// Assuming 1D x-axis thread blocks.</span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Protect result from overwrite in the next iteration,</span>
+<span class="w">        </span><span class="c1">// (also ensure barrier initialization at 1st iteration):</span>
+<span class="w">        </span><span class="n">__syncthreads</span><span class="p">();</span>
+
+<span class="w">        </span><span class="c1">// Cancellation request:</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cg</span><span class="o">::</span><span class="n">thread_block</span><span class="o">::</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// Acquire write of result in the async proxy:</span>
+<span class="w">            </span><span class="n">ptx</span><span class="o">::</span><span class="n">fence_proxy_async_generic_sync_restrict</span><span class="p">(</span><span class="n">ptx</span><span class="o">::</span><span class="n">sem_acquire</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">space_cluster</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">scope_cluster</span><span class="p">);</span>
+
+<span class="w">            </span><span class="n">cg</span><span class="o">::</span><span class="n">invoke_one</span><span class="p">(</span><span class="n">cg</span><span class="o">::</span><span class="n">coalesced_threads</span><span class="p">(),</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">](){</span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_try_cancel</span><span class="p">(</span><span class="o">&amp;</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar</span><span class="p">);});</span>
+<span class="w">            </span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_arrive_expect_tx</span><span class="p">(</span><span class="n">ptx</span><span class="o">::</span><span class="n">sem_relaxed</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">scope_cta</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">space_shared</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">uint4</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Computation:</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bx</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="w">            </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">alpha</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1">// Cancellation request synchronization:</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_try_wait_parity</span><span class="p">(</span><span class="n">ptx</span><span class="o">::</span><span class="n">sem_acquire</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">scope_cta</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">phase</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{}</span>
+<span class="w">        </span><span class="n">phase</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1">// Cancellation request decoding:</span>
+<span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_query_cancel_is_canceled</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">success</span><span class="p">)</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">bx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_query_cancel_get_first_ctaid_x</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Release read of result to the async proxy:</span>
+<span class="w">        </span><span class="n">ptx</span><span class="o">::</span><span class="n">fence_proxy_async_generic_sync_restrict</span><span class="p">(</span><span class="n">ptx</span><span class="o">::</span><span class="n">sem_release</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">space_shared</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">scope_cluster</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Launch: kernel_cluster_launch_control&lt;&lt;&lt;1024, (n + 1023) / 1024&gt;&gt;&gt;(data, n);</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="use-case-thread-block-clusters">
+<h3><span class="section-number">4.12.2.2. </span>사용 사례: 스레드 블록 클러스터<a class="headerlink" href="#use-case-thread-block-clusters" title="이 제목에 대한 링크">#</a></h3>
+<p><a class="reference internal" href="../02-basics/intro-to-cuda-cpp.html"><span class="std std-ref">thread block clusters</span></a>의 경우,
+스레드 블록 취소 단계는 비클러스터(non-cluster) 설정에서와 동일하며,
+약간의 조정만 있습니다.
+비클러스터 경우와 마찬가지로, <strong>클러스터 내</strong> 여러 스레드에서 취소 요청을 제출하는 것은 권장되지 않는데,
+이는 여러 클러스터를 취소하려고 시도하게 되기 때문입니다.</p>
+<ul class="simple">
+<li><p>취소는 단일 클러스터 스레드가 제출합니다.</p></li>
+<li><p>각 클러스터의 스레드 블록에 대한 shared memory 결과는
+취소된 스레드 블록 인덱스의 동일한(인코딩된) 값을 받게 됩니다
+(즉, 결과 값이 멀티캐스트됩니다).
+모든 스레드 블록이 받는 결과는 클러스터 내 로컬
+블록 인덱스 <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">0,</span> <span class="pre">0}</span></code>에 해당합니다.
+따라서 클러스터 내 스레드 블록은
+로컬 블록 인덱스를 더해야 합니다.</p></li><li><p>동기화는 각 클러스터의 스레드 블록이 로컬을 사용하여 수행됩니다 <code class="docutils literal notranslate"><span class="pre">__shared__</span></code> 메모리 배리어. 배리어 연산은 수행되어야 합니다
+with the <code class="docutils literal notranslate"><span class="pre">ptx::scope_cluster</span></code> 스코프.</p></li>
+<li><p>클러스터 경우에서의 취소는 모든 스레드 블록이 존재해야 합니다.
+사용자는 다음을 사용하여 모든 스레드 블록이 실행 중임을 보장할 수 있습니다.
+<code class="docutils literal notranslate"><span class="pre">cg::cluster_group::sync()</span></code> 에서 <a class="reference internal" href="../05-appendices/device-callable-apis.html"><span class="std std-ref">동기화</span></a> API.</p></li>
+</ul>
+<p>아래 커널은 스레드 블록 클러스터를 사용한 클러스터 런치 제어 접근 방식을 보여줍니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">cg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">cooperative_groups</span><span class="p">;</span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">ptx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">cuda</span><span class="o">::</span><span class="nn">ptx</span><span class="p">;</span>
+
+<span class="n">__global__</span><span class="w"> </span><span class="nf">__cluster_dims__</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">kernel_cluster_launch_control</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Cluster launch control initialization:</span>
+<span class="w">    </span><span class="n">__shared__</span><span class="w"> </span><span class="n">uint4</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">    </span><span class="n">__shared__</span><span class="w"> </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">phase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cg</span><span class="o">::</span><span class="n">thread_block</span><span class="o">::</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">        </span><span class="n">ptx</span><span class="o">::</span><span class="n">fence_mbarrier_init</span><span class="p">(</span><span class="n">ptx</span><span class="o">::</span><span class="n">sem_release</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">scope_cluster</span><span class="p">);</span><span class="w"> </span><span class="c1">// CGA-level fence.</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Prologue:</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">compute_scalar</span><span class="p">();</span><span class="w"> </span><span class="c1">// Device function not shown in this code snippet.</span>
+
+<span class="w">    </span><span class="c1">// Work-stealing loop:</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">bx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="c1">// Assuming 1D x-axis thread blocks.</span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Protect result from overwrite in the next iteration,</span>
+<span class="w">        </span><span class="c1">// (also ensure all thread blocks have started at 1st iteration):</span>
+<span class="w">        </span><span class="n">cg</span><span class="o">::</span><span class="n">cluster_group</span><span class="o">::</span><span class="n">sync</span><span class="p">();</span>
+
+<span class="w">        </span><span class="c1">// Cancellation request by a single cluster thread:</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cg</span><span class="o">::</span><span class="n">cluster_group</span><span class="o">::</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// Acquire write of result in the async proxy:</span>
+<span class="w">            </span><span class="n">ptx</span><span class="o">::</span><span class="n">fence_proxy_async_generic_sync_restrict</span><span class="p">(</span><span class="n">ptx</span><span class="o">::</span><span class="n">sem_acquire</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">space_cluster</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">scope_cluster</span><span class="p">);</span>
+
+<span class="w">            </span><span class="n">cg</span><span class="o">::</span><span class="n">invoke_one</span><span class="p">(</span><span class="n">cg</span><span class="o">::</span><span class="n">coalesced_threads</span><span class="p">(),</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">](){</span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_try_cancel_multicast</span><span class="p">(</span><span class="o">&amp;</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar</span><span class="p">);});</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Cancellation completion tracked by each thread block:</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cg</span><span class="o">::</span><span class="n">thread_block</span><span class="o">::</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">            </span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_arrive_expect_tx</span><span class="p">(</span><span class="n">ptx</span><span class="o">::</span><span class="n">sem_relaxed</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">scope_cluster</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">space_shared</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">uint4</span><span class="p">));</span>
+
+<span class="w">        </span><span class="c1">// Computation:</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bx</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="w">            </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">alpha</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1">// Cancellation request synchronization:</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_try_wait_parity</span><span class="p">(</span><span class="n">ptx</span><span class="o">::</span><span class="n">sem_acquire</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">scope_cluster</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">phase</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{}</span>
+<span class="w">        </span><span class="n">phase</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1">// Cancellation request decoding:</span>
+<span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_query_cancel_is_canceled</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">success</span><span class="p">)</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">bx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">clusterlaunchcontrol_query_cancel_get_first_ctaid_x</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+<span class="w">        </span><span class="n">bx</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">cg</span><span class="o">::</span><span class="n">cluster_group</span><span class="o">::</span><span class="n">block_index</span><span class="p">().</span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="c1">// Add local offset.</span>
+
+<span class="w">        </span><span class="c1">// Release read of result to the async proxy:</span>
+<span class="w">        </span><span class="n">ptx</span><span class="o">::</span><span class="n">fence_proxy_async_generic_sync_restrict</span><span class="p">(</span><span class="n">ptx</span><span class="o">::</span><span class="n">sem_release</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">space_shared</span><span class="p">,</span><span class="w"> </span><span class="n">ptx</span><span class="o">::</span><span class="n">scope_cluster</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Launch: kernel_cluster_launch_control&lt;&lt;&lt;1024, (n + 1023) / 1024&gt;&gt;&gt;(data, n);</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="async-copies.html">4.11. 비동기 데이터 복사</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="l2-cache-control.html">4.13. L2 캐시 제어</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#api-details">4.12.1. API 세부 정보</a><ul><li><a class="toc-link" href="#thread-block-cancellation">4.12.1.1. 스레드 블록 취소</a></li><li><a class="toc-link" href="#constraints-on-thread-block-cancellation">4.12.1.2. 스레드 블록 취소에 대한 제약</a></li></ul></li><li><a class="toc-link" href="#example-vector-scalar-multiplication">4.12.2. 예: 벡터-스칼라 곱셈</a><ul><li><a class="toc-link" href="#use-case-thread-blocks">4.12.2.1. 사용 사례: 스레드 블록</a></li><li><a class="toc-link" href="#use-case-thread-block-clusters">4.12.2.2. 사용 사례: 스레드 블록 클러스터</a></li></ul></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

@@ -46,6 +46,10 @@ languages:
           name: About
           url: /ko/about/
           weight: 100
+        - identifier: cuda-programming-guide
+          name: CUDA 가이드
+          url: /ko/development/cuda-programming-guide/
+          weight: 60
 
   en:
     languageName: "English"
@@ -86,6 +90,10 @@ languages:
           name: About
           url: /en/about/
           weight: 100
+        - identifier: cuda-programming-guide
+          name: CUDA Guide
+          url: /en/development/cuda-programming-guide/
+          weight: 60
 
 taxonomies:
   tag: tags

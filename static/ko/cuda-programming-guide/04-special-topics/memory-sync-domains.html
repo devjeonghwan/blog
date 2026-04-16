@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4.14. 메모리 동기화 도메인 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="일부 CUDA 애플리케이션은 CUDA 메모리 일관성 모델에 의해 필요한 것보다 더 많은 트랜잭션을 기다리게 되면서, 메모리 펜스/플러시 작업으로 인해 성능이 저하될 수 있습니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part4.html">4. CUDA 기능</a></li><li>4.14. 메모리 동기화 도메인</li></ul>
+          <h1 class="page-title">4.14. 메모리 동기화 도메인</h1>
+          <article class="doc-article">
+<section id="memory-synchronization-domains">
+<span id="id1"></span>
+<section id="memory-fence-interference">
+<span id="id2"></span><h2><span class="section-number">4.14.1. </span>메모리 펜스 간섭<a class="headerlink" href="#memory-fence-interference" title="이 제목으로 연결">#</a></h2>
+<p>일부 CUDA 애플리케이션은 CUDA 메모리 일관성 모델에 의해 필요한 것보다 더 많은 트랜잭션을 기다리게 되면서, 메모리 펜스/플러시 작업으로 인해 성능이 저하될 수 있습니다.</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table-no-stripes table">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">__managed__</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">__device__</span><span class="w">  </span><span class="n">cuda</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_device</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="n">__managed__</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_system</span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>스레드 1 (SM)</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</td>
+<td><p>스레드 2 (SM)</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">;</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</td>
+<td><p>스레드 3 (CPU)</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">b</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">;</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>위의 예를 고려해 보십시오. CUDA 메모리 일관성 모델은 assert된 조건이 참이 되도록 보장하므로, 스레드 1에서 <code class="docutils literal notranslate"><span class="pre">x</span></code>에 대한 쓰기는 스레드 2에서 <code class="docutils literal notranslate"><span class="pre">b</span></code>에 대한 쓰기보다 먼저 스레드 3에 보이는(visible) 상태여야 합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">a</span></code>의 release 및 acquire가 제공하는 메모리 순서는 디바이스 범위(device-scope) 작업이므로, <code class="docutils literal notranslate"><span class="pre">x</span></code>을 스레드 2에는 보이게 만들기에만 충분하고 스레드 3에는 충분하지 않습니다. 따라서 <code class="docutils literal notranslate"><span class="pre">b</span></code>의 release 및 acquire가 제공하는 시스템 범위(system-scope) 순서는 스레드 2 자체에서 발행된 쓰기만 스레드 3에 보이도록 보장하는 것이 아니라, 스레드 2에 보이는 다른 스레드들의 쓰기 또한 스레드 3에 보이도록 보장해야 합니다. 이를 누적성(cumulativity)이라고 합니다. GPU는 실행 시점에 어떤 쓰기가 소스 수준에서 보이도록 보장되었는지, 그리고 어떤 쓰기가 우연한 타이밍에 의해서만 보이는지 알 수 없으므로, 비행 중(in-flight) 메모리 작업에 대해 보수적으로 넓은 범위를 대상으로 해야 합니다.</p>
+<p>이는 때때로 간섭으로 이어집니다. 즉, GPU가 소스 수준에서 요구되지 않는 메모리 작업까지 기다리기 때문에, 펜스/플러시가 필요 이상으로 오래 걸릴 수 있습니다.</p>
+<p>펜스는 예시처럼 인트린식(intrinsics)이나 원자 연산(atomic)으로 코드에서 명시적으로 발생할 수도 있고, 작업 경계(task boundaries)에서 <em>synchronizes-with</em> 관계를 구현하기 위해 암묵적으로 발생할 수도 있습니다.</p>
+<p>일반적인 예로, 한 커널이 로컬 GPU 메모리에서 계산을 수행하고, 병렬 커널(예: NCCL)이 피어와의 통신을 수행하는 경우가 있습니다. 완료 시점에 로컬 커널은 다운스트림 작업에 대한 어떤 <em>synchronizes-with</em> 관계라도 만족시키기 위해 자신의 쓰기를 암묵적으로 플러시합니다. 이 과정에서 통신 커널의 더 느린 nvlink 또는 PCIe 쓰기를 전체 또는 부분적으로 불필요하게 기다릴 수 있습니다.</p>
+</section>
+<section id="isolating-traffic-with-domains">
+<span id="id3"></span><h2><span class="section-number">4.14.2. </span>도메인으로 트래픽 격리<a class="headerlink" href="#isolating-traffic-with-domains" title="이 제목으로 연결">#</a></h2>
+<p>컴퓨트 기능 9.0(Hopper 아키텍처) GPU 및 CUDA 12.0부터, 메모리 동기화 도메인 기능은 이러한 간섭을 완화하는 방법을 제공합니다. 코드가 명시적으로 보조하는 대가로, GPU는 펜스 작업이 대상으로 삼는 범위를 줄일 수 있습니다. 각 커널 실행에는 도메인 ID가 부여됩니다. 쓰기와 펜스는 이 ID로 태그되며, 펜스는 펜스의 도메인과 일치하는 쓰기만 순서화(order)합니다. 동시 계산 대 통신 예시에서는, 통신 커널을 다른 도메인에 배치할 수 있습니다.</p>
+<p>도메인을 사용할 때 코드는 <strong>동일 GPU에서 서로 다른 도메인 간의 순서화 또는 동기화에는 시스템 범위(system-scope) 펜싱이 필요하다</strong>는 규칙을 준수해야 합니다. 도메인 내에서는 디바이스 범위(device-scope) 펜싱으로도 충분합니다. 이는 한 커널의 쓰기가 다른 도메인의 커널에서 발행된 펜스에 포함되지 않기 때문에, 누적성(cumulativity)을 위해 필요합니다. 본질적으로, 교차 도메인 트래픽이 미리 시스템 범위로 플러시되도록 보장함으로써 누적성이 충족됩니다.</p>
+<p>이는 <code class="docutils literal notranslate"><span class="pre">thread_scope_device</span></code>의 정의를 수정한다는 점에 유의하십시오. 하지만 아래에서 설명하듯 커널은 기본적으로 도메인 0을 사용하므로, 하위 호환성은 유지됩니다.</p>
+</section>
+<section id="using-domains-in-cuda">
+<span id="id4"></span><h2><span class="section-number">4.14.3. </span>CUDA에서 도메인 사용<a class="headerlink" href="#using-domains-in-cuda" title="이 제목으로 연결">#</a></h2>
+<p>도메인은 새로운 런치 속성(launch attributes) <code class="docutils literal notranslate"><span class="pre">cudaLaunchAttributeMemSyncDomain</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cudaLaunchAttributeMemSyncDomainMap</span></code>을 통해 접근할 수 있습니다. 전자는 논리 도메인(logical domains) <code class="docutils literal notranslate"><span class="pre">cudaLaunchMemSyncDomainDefault</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cudaLaunchMemSyncDomainRemote</span></code> 사이에서 선택하며, 후자는 논리 도메인에서 물리 도메인(physical domains)으로의 매핑(mapping)을 제공합니다. 원격 도메인(remote domain)은 원격 메모리 접근을 수행하는 커널이 로컬 커널과 메모리 트래픽을 분리(isolate)할 수 있도록 의도된 것입니다. 다만, 특정 도메인을 선택하더라도 커널이 합법적으로 수행할 수 있는 메모리 접근에는 영향을 주지 않습니다.</p>
+<p>도메인 개수는 디바이스 속성(device attribute) <code class="docutils literal notranslate"><span class="pre">cudaDevAttrMemSyncDomainCount</span></code>을 통해 조회할 수 있습니다. 컴퓨트 기능(Compute Capability) 9.0(Hopper) 디바이스에는 4개의 도메인이 있습니다. 이식 가능한 코드(portable code)를 용이하게 하기 위해, 도메인 기능은 모든 디바이스에서 사용할 수 있으며 CUDA는 컴퓨트 기능 9.0 이전 디바이스에서는 개수를 1로 보고합니다.</p>
+<p>논리 도메인을 두면 애플리케이션 구성(composition)이 쉬워집니다. NCCL에서처럼 스택의 낮은 수준에서 이루어지는 개별 커널 런치는 주변 애플리케이션 아키텍처에 대한 고려 없이 의미론적(semantic) 논리 도메인을 선택할 수 있습니다. 더 높은 수준에서는 이 매핑을 사용해 논리 도메인을 조정(steer)할 수 있습니다. 논리 도메인을 설정하지 않은 경우의 기본값은 기본 도메인(default domain)이며, 기본 매핑은 기본 도메인을 0에, 원격 도메인을 1에 매핑하는 것입니다(도메인이 1개보다 많은 GPU에서). 특정 라이브러리는 CUDA 12.0 이상에서 런치에 원격 도메인 태그를 붙일 수 있는데, 예를 들어 NCCL 2.16이 그렇게 합니다. 이를 통해 다른 컴포넌트, 프레임워크 또는 애플리케이션 수준에서 코드 변경 없이도, 일반적인 애플리케이션에 유익한 사용 패턴을 기본 제공(out of the box)합니다. 대체 사용 패턴으로는, 예를 들어 NVSHMEM을 사용하는 애플리케이션이거나 커널 유형이 명확히 분리되지 않은 경우, 병렬 스트림을 분할(partition)하는 방법이 있을 수 있습니다. 스트림 A는 두 논리 도메인을 모두 물리 도메인 0에 매핑하고, 스트림 B는 1에 매핑하는 식으로 계속 이어갈 수 있습니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Example of launching a kernel with the remote logical domain</span>
+<span class="n">cudaLaunchAttribute</span><span class="w"> </span><span class="n">domainAttr</span><span class="p">;</span>
+<span class="n">domainAttr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaLaunchAttrMemSyncDomain</span><span class="p">;</span>
+<span class="n">domainAttr</span><span class="p">.</span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaLaunchMemSyncDomainRemote</span><span class="p">;</span>
+<span class="n">cudaLaunchConfig_t</span><span class="w"> </span><span class="n">config</span><span class="p">;</span>
+<span class="c1">// Fill out other config fields</span>
+<span class="n">config</span><span class="p">.</span><span class="n">attrs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">domainAttr</span><span class="p">;</span>
+<span class="n">config</span><span class="p">.</span><span class="n">numAttrs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="n">cudaLaunchKernelEx</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="n">myKernel</span><span class="p">,</span><span class="w"> </span><span class="n">kernelArg1</span><span class="p">,</span><span class="w"> </span><span class="n">kernelArg2</span><span class="p">...);</span>
+</pre></div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Example of setting a mapping for a stream</span>
+<span class="c1">// (This mapping is the default for streams starting on compute capability 9.0 (Hopper) or later if not</span>
+<span class="c1">// explicitly set, and provided for illustration)</span>
+<span class="n">cudaLaunchAttributeValue</span><span class="w"> </span><span class="n">mapAttr</span><span class="p">;</span>
+<span class="n">mapAttr</span><span class="p">.</span><span class="n">memSyncDomainMap</span><span class="p">.</span><span class="n">default_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">mapAttr</span><span class="p">.</span><span class="n">memSyncDomainMap</span><span class="p">.</span><span class="n">remote</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="n">cudaStreamSetAttribute</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span><span class="w"> </span><span class="n">cudaLaunchAttributeMemSyncDomainMap</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mapAttr</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Example of mapping different streams to different physical domains, ignoring</span>
+<span class="c1">// logical domain settings</span>
+<span class="n">cudaLaunchAttributeValue</span><span class="w"> </span><span class="n">mapAttr</span><span class="p">;</span>
+<span class="n">mapAttr</span><span class="p">.</span><span class="n">memSyncDomainMap</span><span class="p">.</span><span class="n">default_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">mapAttr</span><span class="p">.</span><span class="n">memSyncDomainMap</span><span class="p">.</span><span class="n">remote</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">cudaStreamSetAttribute</span><span class="p">(</span><span class="n">streamA</span><span class="p">,</span><span class="w"> </span><span class="n">cudaLaunchAttributeMemSyncDomainMap</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mapAttr</span><span class="p">);</span>
+<span class="n">mapAttr</span><span class="p">.</span><span class="n">memSyncDomainMap</span><span class="p">.</span><span class="n">default_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="n">mapAttr</span><span class="p">.</span><span class="n">memSyncDomainMap</span><span class="p">.</span><span class="n">remote</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="n">cudaStreamSetAttribute</span><span class="p">(</span><span class="n">streamB</span><span class="p">,</span><span class="w"> </span><span class="n">cudaLaunchAttributeMemSyncDomainMap</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mapAttr</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>다른 런치 속성과 마찬가지로, 이는 CUDA 스트림에서, <code class="docutils literal notranslate"><span class="pre">cudaLaunchKernelEx</span></code>을 사용하는 개별 런치에서, 그리고 CUDA 그래프의 커널 노드(kernel nodes)에서 일관되게(uniformly) 노출됩니다. 일반적인 사용 방식은 앞서 설명한 바와 같이, 스트림 수준에서 매핑을 설정하고 런치 수준에서(또는 스트림 사용의 일부 구간을 감싸는 형태로) 논리 도메인을 설정하는 것입니다.</p>
+<p>두 속성 모두 스트림 캡처(stream capture) 중에 그래프 노드로 복사됩니다. 그래프는 두 속성을 노드 자체로부터 가져오며, 이는 본질적으로 물리 도메인을 간접적으로 지정하는 방식입니다. 그래프가 런치되는 스트림에 설정된 도메인 관련 속성은 그래프 실행에서는 사용되지 않습니다.</p>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="l2-cache-control.html">4.13. L2 캐시 제어</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="inter-process-communication.html">4.15. 프로세스 간 통신</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#memory-fence-interference">4.14.1. 메모리 펜스 간섭</a></li><li><a class="toc-link" href="#isolating-traffic-with-domains">4.14.2. 도메인으로 트래픽 격리</a></li><li><a class="toc-link" href="#using-domains-in-cuda">4.14.3. CUDA에서 도메인 사용</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

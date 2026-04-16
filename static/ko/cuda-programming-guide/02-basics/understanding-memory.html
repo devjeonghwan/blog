@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2.4. 통합 메모리 및 시스템 메모리 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="이기종 시스템에는 데이터를 저장할 수 있는 여러 물리 메모리가 있습니다. 호스트 CPU에는 DRAM이 연결되어 있고, 시스템의 각 GPU에는 자체적으로 연결된 DRAM이 있습니다. 성능은 데이터가 이를 액세스하는 프로세서의 메모리에 상주할 때 가장 좋습니다. CUDA는 명시적으로 메모리 배치를 관리 하기 위한 API를 제공하지만, 이는 장황할 수 있고 소프트웨어 설계를 복잡하게 만들 수 있습니다. CUDA는 서로 다른 물리 메모리 간 데이터의 할당, 배치 및 마이그레이션을 용이하게 하는 것을 목표로 하는 기능과 역량을 제공합니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></li><li>2.4. 통합 메모리 및 시스템 메모리</li></ul>
+          <h1 class="page-title">2.4. 통합 메모리 및 시스템 메모리</h1>
+          <article class="doc-article">
+<section id="unified-and-system-memory">
+<span id="id1"></span>
+<p>이기종 시스템에는 데이터를 저장할 수 있는 여러 물리 메모리가 있습니다. 호스트 CPU에는 DRAM이 연결되어 있고, 시스템의 각 GPU에는 자체적으로 연결된 DRAM이 있습니다. 성능은 데이터가 이를 액세스하는 프로세서의 메모리에 상주할 때 가장 좋습니다. CUDA는 <a class="reference internal" href="intro-to-cuda-cpp.html"><span class="std std-ref">명시적으로 메모리 배치를 관리</span></a>하기 위한 API를 제공하지만, 이는 장황할 수 있고 소프트웨어 설계를 복잡하게 만들 수 있습니다. CUDA는 서로 다른 물리 메모리 간 데이터의 할당, 배치 및 마이그레이션을 용이하게 하는 것을 목표로 하는 기능과 역량을 제공합니다.</p>
+<p>이 장의 목적은 이러한 기능을 소개하고 설명하며, 기능과 성능 측면에서 애플리케이션 개발자에게 그것들이 무엇을 의미하는지 설명하는 것입니다. 통합 메모리는 OS, 드라이버 버전, 사용되는 GPU에 따라 여러 가지 서로 다른 형태로 나타납니다. 이 장에서는 어떤 통합 메모리 패러다임이 적용되는지와 각 패러다임에서 통합 메모리의 기능이 어떻게 동작하는지를 확인하는 방법을 보여줍니다. 이후의 <a class="reference internal" href="../04-special-topics/unified-memory.html"><span class="std std-ref">통합 메모리 장</span></a>에서는 통합 메모리를 더 자세히 설명합니다.</p>
+<p>이 장에서는 다음 개념을 정의하고 설명합니다:</p>
+<ul>
+<li><p><a class="reference internal" href="#memory-unified-virtual-address-space"><span class="std std-ref">통합 가상 주소 공간</span></a> - CPU 메모리와 각 GPU의 메모리는 단일 가상 주소 공간 내에서 서로 구별되는 범위를 가집니다</p></li>
+<li><p><a class="reference internal" href="#memory-unified-memory"><span class="std std-ref">통합 메모리</span></a> - CPU와 GPU 간에 자동으로 마이그레이션될 수 있는 관리형 메모리를 가능하게 하는 CUDA 기능</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="#memory-limited-unified-memory-support"><span class="std std-ref">제한된 통합 메모리</span></a> - 일부 제약이 있는 통합 메모리 패러다임</p></li>
+<li><p><a class="reference internal" href="#memory-unified-memory-full"><span class="std std-ref">완전한 통합 메모리</span></a> - 통합 메모리 기능에 대한 완전한 지원</p></li>
+<li><p><a class="reference internal" href="#memory-unified-address-translation-services"><span class="std std-ref">하드웨어 일관성을 갖춘 완전한 통합 메모리</span></a> - 하드웨어 역량을 사용한 통합 메모리의 완전한 지원</p></li>
+<li><p><a class="reference internal" href="#memory-mem-advise-prefetch"><span class="std std-ref">통합 메모리 힌트</span></a> - 특정 할당에 대해 통합 메모리 동작을 안내하는 API</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><a class="reference internal" href="#memory-page-locked-host-memory"><span class="std std-ref">페이지 고정 호스트 메모리</span></a> - 페이지 아웃할 수 없는 시스템 메모리로, 일부 CUDA 작업에 필요합니다</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="#memory-mapped-memory"><span class="std std-ref">매핑된 메모리</span></a> - 커널에서 호스트 메모리에 직접 액세스하기 위한 메커니즘(통합 메모리와는 다름)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>또한, 통합 메모리 및 시스템 메모리를 논의할 때 사용되는 다음 용어를 여기에서 소개합니다:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#memory-heterogeneous-memory-management"><span class="std std-ref">이기종 관리형 메모리</span></a> (HMM) - 완전한 통합 메모리를 위한 소프트웨어 일관성을 가능하게 하는 Linux 커널 기능</p></li>
+<li><p><a class="reference internal" href="#memory-unified-address-translation-services"><span class="std std-ref">주소 변환 서비스</span></a> (ATS) - GPU가 NVLink 칩-투-칩(C2C) 인터커넥트로 CPU에 연결될 때 사용할 수 있는 하드웨어 기능으로, 완전한 통합 메모리를 위한 하드웨어 일관성을 제공합니다</p></li>
+</ul>
+<section id="unified-virtual-address-space">
+<span id="memory-unified-virtual-address-space"></span><h2><span class="section-number">2.4.1. </span>통합 가상 주소 공간<a class="headerlink" href="#unified-virtual-address-space" title="Link to this heading">#</a></h2>
+<p>단일 OS 프로세스 내에서 시스템의 모든 호스트 메모리와 모든 GPU의 모든 전역 메모리에 대해 단일 가상 주소 공간이 사용됩니다. 호스트와 모든 디바이스에서의 모든 메모리 할당은 이 가상 주소 공간에 속합니다. 이는 할당이 CUDA API(예: <code class="docutils literal notranslate"><span class="pre">cudaMalloc</span></code>, <code class="docutils literal notranslate"><span class="pre">cudaMallocHost</span></code>) 또는 시스템 할당 API(예: <code class="docutils literal notranslate"><span class="pre">new</span></code>, <code class="docutils literal notranslate"><span class="pre">malloc</span></code>, <code class="docutils literal notranslate"><span class="pre">mmap</span></code>). CPU와 각 GPU는 통합 가상 주소 공간 내에서 고유한 범위를 가집니다.</p>
+<p>이는 다음을 의미합니다:</p>
+<ul class="simple">
+<li><p>어떤 메모리의 위치(즉, CPU인지 또는 어느 GPU의 메모리에 있는지)는 포인터 값으로부터 다음을 사용하여 결정할 수 있습니다 <code class="docutils literal notranslate"><span class="pre">cudaPointerGetAttributes()</span></code></p></li>
+<li><p>이 <code class="docutils literal notranslate"><span class="pre">cudaMemcpyKind</span></code> 의 매개변수 <code class="docutils literal notranslate"><span class="pre">cudaMemcpy*()</span></code> 로 설정할 수 있습니다 <code class="docutils literal notranslate"><span class="pre">cudaMemcpyDefault</span></code> 포인터로부터 복사 유형을 자동으로 결정하기 위해</p></li>
+</ul>
+</section>
+<section id="unified-memory">
+<span id="memory-unified-memory"></span><h2><span class="section-number">2.4.2. </span>통합 메모리<a class="headerlink" href="#unified-memory" title="Link to this heading">#</a></h2>
+<p><em>통합 메모리</em>는 <em>관리형 메모리</em>라고 불리는 메모리 할당을 CPU 또는 GPU에서 실행되는 코드 어느 쪽에서든 액세스할 수 있게 해주는 CUDA 메모리 기능입니다. 통합 메모리는 <a class="reference internal" href="intro-to-cuda-cpp.html"><span class="std std-ref">C++의 CUDA 소개</span></a>에서 보여주었습니다. 통합 메모리는 CUDA가 지원하는 모든 시스템에서 사용할 수 있습니다.</p>
+<p>일부 시스템에서는 관리형 메모리를 명시적으로 할당해야 합니다. 관리형 메모리는 CUDA에서 몇 가지 서로 다른 방법으로 명시적으로 할당할 수 있습니다:</p>
+<ul class="simple">
+<li><p>CUDA API <code class="docutils literal notranslate"><span class="pre">cudaMallocManaged</span></code></p></li><li><p>CUDA API <code class="docutils literal notranslate"><span class="pre">cudaMallocFromPoolAsync</span></code> (을)를 사용하되, <code class="docutils literal notranslate"><span class="pre">allocType</span></code> 이(가) <code class="docutils literal notranslate"><span class="pre">cudaMemAllocationTypeManaged</span></code> 로 설정된 풀로 생성된 경우</p></li><li><p><code class="docutils literal notranslate"><span class="pre">__managed__</span></code> 지정자(specifier)를 사용하는 전역 변수(자세한 내용은 <a class="reference internal" href="../05-appendices/cpp-language-extensions.html"><span class="std std-ref">메모리 공간 지정자</span></a> 참조)</p></li>
+</ul><p><a class="reference internal" href="#memory-heterogeneous-memory-management"><span class="std std-ref">HMM</span></a> 또는 <a class="reference internal" href="#memory-unified-address-translation-services"><span class="std std-ref">ATS</span></a>가 있는 시스템에서는, 할당 방식과 관계없이 모든 시스템 메모리가 암묵적으로 관리형 메모리입니다. 특별한 할당은 필요하지 않습니다.</p>
+<section id="unified-memory-paradigms">
+<h3><span class="section-number">2.4.2.1. </span>통합 메모리 패러다임<a class="headerlink" href="#unified-memory-paradigms" title="Link to this heading">#</a></h3>
+<p>통합 메모리의 기능과 동작은 운영 체제, Linux의 커널 버전, GPU 하드웨어, 그리고 GPU-CPU 인터커넥트에 따라 달라집니다. 사용 가능한 통합 메모리의 형태는 <code class="docutils literal notranslate"><span class="pre">cudaDeviceGetAttribute</span></code>를 사용하여 몇 가지 속성을 조회함으로써 결정할 수 있습니다:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaDevAttrConcurrentManagedAccess</span></code> - 완전한 통합 메모리 지원은 1, 제한된 지원은 0</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaDevAttrPageableMemoryAccess</span></code> - 1은 모든 시스템 메모리가 완전히 지원되는 통합 메모리임을 의미하고, 0은 관리형 메모리로 명시적으로 할당된 메모리만 완전히 지원되는 통합 메모리임을 의미합니다</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaDevAttrPageableMemoryAccessUsesHostPageTables</span></code> - CPU/GPU 일관성(coherence) 메커니즘을 나타냅니다: 1은 하드웨어, 0은 소프트웨어입니다.</p></li>
+</ul>
+<p><a class="reference internal" href="#unified-memory-flow-chart"><span class="std std-numref">그림 18</span></a>은 통합 메모리 패러다임을 시각적으로 결정하는 방법을 보여주며, 동일한 로직을 구현한 <a class="reference internal" href="#memory-unified-querying-code"><span class="std std-ref">코드 샘플</span></a>이 뒤따릅니다.</p>
+<p>통합 메모리 동작에는 네 가지 패러다임이 있습니다:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#memory-unified-memory-full"><span class="std std-ref">명시적 관리형 메모리 할당에 대한 완전한 지원</span></a></p></li>
+<li><p><a class="reference internal" href="#memory-unified-memory-full"><span class="std std-ref">소프트웨어 일관성을 갖춘 모든 할당에 대한 완전한 지원</span></a></p></li>
+<li><p><a class="reference internal" href="#memory-unified-address-translation-services"><span class="std std-ref">하드웨어 일관성을 갖춘 모든 할당에 대한 완전한 지원</span></a></p></li>
+<li><p><a class="reference internal" href="#memory-limited-unified-memory-support"><span class="std std-ref">제한된 통합 메모리 지원</span></a></p></li>
+</ul>
+<p>완전한 지원이 제공되는 경우, 명시적 할당이 필요할 수도 있고 모든 시스템 메모리가 암묵적으로 통합 메모리일 수도 있습니다. 모든 메모리가 암묵적으로 통합되는 경우, 일관성 메커니즘은 소프트웨어 또는 하드웨어일 수 있습니다. Windows와 일부 Tegra 디바이스는 통합 메모리에 대해 제한된 지원을 제공합니다.</p>
+<figure class="align-center" id="unified-memory-flow-chart">
+<a class="reference internal image-reference" href="../_images/unified-memory-explainer.png"><img alt="통합 메모리 패러다임 흐름도" loading="lazy" src="../_images/unified-memory-explainer.png" style="width: 90%;"/>
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 18 </span><span class="caption-text">현재의 모든 GPU는 통합 가상 주소 공간을 사용하며 통합 메모리를 사용할 수 있습니다. <code class="docutils literal notranslate"><span class="pre">cudaDevAttrConcurrentManagedAccess</span></code>이 1이면 완전한 통합 메모리 지원을 사용할 수 있으며, 그렇지 않으면 제한된 지원만 사용할 수 있습니다. 완전한 지원이 제공되는 경우, <code class="docutils literal notranslate"><span class="pre">cudaDevAttrPageableMemoryAccess</span></code> 역시 1이면 모든 시스템 메모리가 통합 메모리입니다. 그렇지 않으면 <code class="docutils literal notranslate"><span class="pre">cudaMallocManaged</span></code>과 같은 CUDA API로 할당된 메모리만 통합 메모리입니다. 모든 시스템 메모리가 통합된 경우, <code class="docutils literal notranslate"><span class="pre">cudaDevAttrPageableMemoryAccessUsesHostPageTables</span></code>은 일관성이 하드웨어(값이 1인 경우)로 제공되는지 또는 소프트웨어(값이 0인 경우)로 제공되는지를 나타냅니다.</span><a class="headerlink" href="#unified-memory-flow-chart" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p><a class="reference internal" href="#table-unified-memory-levels"><span class="std std-numref">표 3</span></a>은(는) <a class="reference internal" href="#unified-memory-flow-chart"><span class="std std-numref">그림 18</span></a>과 동일한 정보를 표 형태로 보여주며, 이 장의 관련 섹션과 이 가이드의 이후 섹션에 있는 더 완전한 문서로 연결되는 링크를 포함합니다.</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-unified-memory-levels">
+<caption><span class="caption-number">Table 3 </span><span class="caption-text">통합 메모리 패러다임 개요</span><a class="headerlink" href="#table-unified-memory-levels" title="Link to this table">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>통합 메모리 패러다임</p></th>
+<th class="head"><p>디바이스 속성</p></th>
+<th class="head"><p>전체 문서</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="#memory-limited-unified-memory-support"><span class="std std-ref">제한된 통합 메모리 지원</span></a></p></td>
+<td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">cudaDevAttrConcurrentManagedAccess</span></code> is 0</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line"><a class="reference internal" href="../04-special-topics/unified-memory.html"><span class="std std-ref">Windows, WSL 및 Tegra에서의 통합 메모리</span></a></div>
+<div class="line"><a class="reference external" href="https://docs.nvidia.com/cuda/cuda-for-tegra-appnote/index.html">Tegra 메모리 관리를 위한 CUDA</a></div>
+<div class="line"><a class="reference external" href="https://docs.nvidia.com/cuda/cuda-for-tegra-appnote/index.html">Tegra에서의 통합 메모리</a></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#memory-unified-memory-full"><span class="std std-ref">명시적 관리형 메모리 할당에 대한 완전한 지원</span></a></p></td>
+<td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">cudaDevAttrPageableMemoryAccess</span></code> is 0</div>
+<div class="line">and <code class="docutils literal notranslate"><span class="pre">cudaDevAttrConcurrentManagedAccess</span></code> is 1</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line"><a class="reference internal" href="../04-special-topics/unified-memory.html"><span class="std std-ref">CUDA 관리형 메모리 지원만 있는 디바이스에서의 통합 메모리</span></a></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#memory-unified-memory-full"><span class="std std-ref">소프트웨어 일관성을 갖춘 모든 할당에 대한 완전한 지원</span></a></p></td>
+<td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">cudaDevAttrPageableMemoryAccessUsesHostPageTables</span></code> is 0</div>
+<div class="line">and <code class="docutils literal notranslate"><span class="pre">cudaDevAttrPageableMemoryAccess</span></code> is 1</div>
+<div class="line">and <code class="docutils literal notranslate"><span class="pre">cudaDevAttrConcurrentManagedAccess</span></code> is 1</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line"><a class="reference internal" href="../04-special-topics/unified-memory.html"><span class="std std-ref">완전한 CUDA 통합 메모리 지원이 있는 디바이스에서의 통합 메모리</span></a></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#memory-unified-address-translation-services"><span class="std std-ref">하드웨어 일관성을 갖춘 모든 할당에 대한 완전한 지원</span></a></p></td>
+<td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">cudaDevAttrPageableMemoryAccessUsesHostPageTables</span></code> is 1</div>
+<div class="line">and <code class="docutils literal notranslate"><span class="pre">cudaDevAttrPageableMemoryAccess</span></code> is 1</div>
+<div class="line">and <code class="docutils literal notranslate"><span class="pre">cudaDevAttrConcurrentManagedAccess</span></code> is 1</div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line"><a class="reference internal" href="../04-special-topics/unified-memory.html"><span class="std std-ref">완전한 CUDA 통합 메모리 지원이 있는 디바이스에서의 통합 메모리</span></a></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="unified-memory-paradigm-code-example">
+<span id="memory-unified-querying-code"></span><h4><span class="section-number">2.4.2.1.1. </span>통합 메모리 패러다임: 코드 예제<a class="headerlink" href="#unified-memory-paradigm-code-example" title="Link to this heading">#</a></h4>
+<p>다음 코드 예제는 시스템의 각 GPU에 대해 <a class="reference internal" href="#unified-memory-flow-chart"><span class="std std-numref">그림 18</span></a>의 로직을 따라, 디바이스 속성을 조회하고 통합 메모리 패러다임을 결정하는 과정을 보여줍니다.</p>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">queryDevices</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numDevices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cudaGetDeviceCount</span><span class="p">(</span><span class="o">&amp;</span><span class="n">numDevices</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="n">numDevices</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cudaSetDevice</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="w">        </span><span class="n">cudaInitDevice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">deviceId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">concurrentManagedAccess</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w">     </span>
+<span class="w">        </span><span class="n">cudaDeviceGetAttribute</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="n">concurrentManagedAccess</span><span class="p">,</span><span class="w"> </span><span class="n">cudaDevAttrConcurrentManagedAccess</span><span class="p">,</span><span class="w"> </span><span class="n">deviceId</span><span class="p">);</span><span class="w">    </span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">pageableMemoryAccess</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">cudaDeviceGetAttribute</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="n">pageableMemoryAccess</span><span class="p">,</span><span class="w"> </span><span class="n">cudaDevAttrPageableMemoryAccess</span><span class="p">,</span><span class="w"> </span><span class="n">deviceId</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">pageableMemoryAccessUsesHostPageTables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">cudaDeviceGetAttribute</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="n">pageableMemoryAccessUsesHostPageTables</span><span class="p">,</span><span class="w"> </span><span class="n">cudaDevAttrPageableMemoryAccessUsesHostPageTables</span><span class="p">,</span><span class="w"> </span><span class="n">deviceId</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"Device %d has "</span><span class="p">,</span><span class="w"> </span><span class="n">deviceId</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">concurrentManagedAccess</span><span class="p">){</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">pageableMemoryAccess</span><span class="p">){</span>
+<span class="w">                </span><span class="n">printf</span><span class="p">(</span><span class="s">"full unified memory support"</span><span class="p">);</span>
+<span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">pageableMemoryAccessUsesHostPageTables</span><span class="p">)</span>
+<span class="w">                    </span><span class="p">{</span><span class="w"> </span><span class="n">printf</span><span class="p">(</span><span class="s">" with hardware coherency</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span><span class="w">  </span><span class="p">}</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="w">                    </span><span class="p">{</span><span class="w"> </span><span class="n">printf</span><span class="p">(</span><span class="s">" with software coherency</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="p">{</span><span class="w"> </span><span class="n">printf</span><span class="p">(</span><span class="s">"full unified memory support for CUDA-made managed allocations</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">        </span><span class="p">{</span><span class="w">   </span><span class="n">printf</span><span class="p">(</span><span class="s">"limited unified memory support: Windows, WSL, or Tegra</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span><span class="w">  </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="full-unified-memory-feature-support">
+<span id="memory-unified-memory-full"></span><h3><span class="section-number">2.4.2.2. </span>완전한 통합 메모리 기능 지원<a class="headerlink" href="#full-unified-memory-feature-support" title="Link to this heading">#</a></h3>
+<p>대부분의 Linux 시스템은 완전한 통합 메모리 지원을 제공합니다. 디바이스 속성 <code class="docutils literal notranslate"><span class="pre">cudaDevAttrPageableMemoryAccess</span></code>이 1이면, CUDA API 또는 시스템 API로 할당되었는지 여부와 관계없이 모든 시스템 메모리가 완전한 기능 지원을 갖춘 통합 메모리로 동작합니다. 여기에는 <code class="docutils literal notranslate"><span class="pre">mmap</span></code>로 생성된 파일 백드(file-backed) 메모리 할당도 포함됩니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cudaDevAttrPageableMemoryAccess</span></code>이 0이면, CUDA에서 관리형 메모리로 할당된 메모리만 통합 메모리로 동작합니다. 시스템 API로 할당된 메모리는 관리되지 않으며, 반드시 GPU 커널에서 접근 가능하다고 보장되지도 않습니다.</p>
+<p>일반적으로, 완전한 지원이 있는 통합 할당의 경우:</p>
+<ul class="simple">
+<li><p>관리형 메모리는 일반적으로 처음 접근되는 프로세서의 메모리 공간에 할당됩니다</p></li>
+<li><p>관리형 메모리는 일반적으로 현재 상주해 있는 프로세서가 아닌 다른 프로세서에서 사용될 때 마이그레이션됩니다</p></li>
+<li><p>관리형 메모리는 메모리 페이지 단위(소프트웨어 일관성) 또는 캐시 라인 단위(하드웨어 일관성)로 마이그레이션되거나 접근됩니다</p></li>
+<li><p>오버서브스크립션이 허용됩니다: 애플리케이션은 GPU에서 물리적으로 사용 가능한 양보다 더 많은 관리형 메모리를 할당할 수 있습니다</p></li>
+</ul>
+<p>할당 및 마이그레이션 동작은 위 내용과 달라질 수 있습니다. 이는 프로그래머가 <a class="reference internal" href="#memory-mem-advise-prefetch"><span class="std std-ref">힌트 및 프리페치</span></a>를 사용하여 영향을 줄 수 있습니다. 완전한 통합 메모리 지원에 대한 전체 내용은 <a class="reference internal" href="../04-special-topics/unified-memory.html"><span class="std std-ref">완전한 CUDA 통합 메모리 지원이 있는 디바이스에서의 통합 메모리</span></a>에서 확인할 수 있습니다.</p>
+<section id="full-unified-memory-with-hardware-coherency">
+<span id="memory-unified-address-translation-services"></span><h4><span class="section-number">2.4.2.2.1. </span>하드웨어 일관성을 갖춘 완전한 통합 메모리<a class="headerlink" href="#full-unified-memory-with-hardware-coherency" title="Link to this heading">#</a></h4>
+<p>Grace Hopper 및 Grace Blackwell과 같이 NVIDIA CPU가 사용되고 CPU와 GPU 간의 인터커넥트가 NVLink 칩-투-칩(C2C)인 하드웨어에서는 주소 변환 서비스(ATS)를 사용할 수 있습니다. ATS를 사용할 수 있을 때 <code class="docutils literal notranslate"><span class="pre">cudaDevAttrPageableMemoryAccessUsesHostPageTables</span></code>는 1입니다.</p>
+<p>ATS를 사용하면, 모든 호스트 할당에 대한 완전한 통합 메모리 지원 외에도:</p>
+<ul class="simple">
+<li><p>GPU 할당(예: <code class="docutils literal notranslate"><span class="pre">cudaMalloc</span></code>)은 CPU에서 접근할 수 있습니다(<code class="docutils literal notranslate"><span class="pre">cudaDevAttrDirectManagedMemAccessFromHost</span></code>는 1이 됩니다)</p></li>
+<li><p>CPU와 GPU 간 링크는 네이티브 원자 연산(atomic)을 지원합니다(<code class="docutils literal notranslate"><span class="pre">cudaDevAttrHostNativeAtomicSupported</span></code>는 1이 됩니다)</p></li>
+<li><p>일관성에 대한 하드웨어 지원은 소프트웨어 일관성에 비해 성능을 향상시킬 수 있습니다</p></li>
+</ul>
+<p>ATS는 <a class="reference internal" href="#memory-heterogeneous-memory-management"><span class="std std-ref">HMM</span></a>의 모든 기능을 제공합니다. ATS를 사용할 수 있으면 HMM은 자동으로 비활성화됩니다. 하드웨어 일관성과 소프트웨어 일관성 비교에 대한 추가 논의는 <a class="reference internal" href="../04-special-topics/unified-memory.html"><span class="std std-ref">CPU 및 GPU 페이지 테이블: 하드웨어 일관성 vs. 소프트웨어 일관성</span></a>에서 확인할 수 있습니다.</p>
+</section>
+<section id="hmm-full-unified-memory-with-software-coherency">
+<span id="memory-heterogeneous-memory-management"></span><h4><span class="section-number">2.4.2.2.2. </span>HMM - 소프트웨어 일관성을 갖춘 완전한 통합 메모리<a class="headerlink" href="#hmm-full-unified-memory-with-software-coherency" title="Link to this heading">#</a></h4>
+<p><em>이기종 메모리 관리</em>(HMM)는 (적절한 커널 버전이 있는) Linux 운영체제에서 사용할 수 있는 기능으로, 소프트웨어 일관성을 갖춘 <a class="reference internal" href="#memory-unified-memory-full"><span class="std std-ref">완전한 통합 메모리 지원</span></a>을 가능하게 합니다. 이기종 메모리 관리는 ATS가 제공하는 일부 기능과 편의성을 PCIe로 연결된 GPU에 제공합니다.</p>
+<p>Linux 커널 6.1.24, 6.2.11 또는 6.3 이상이 설치된 Linux에서는 이기종 메모리 관리(HMM)를 사용할 수 있을 수 있습니다. 다음 명령을 사용하여 주소 지정 모드가 <code class="docutils literal notranslate"><span class="pre">HMM</span></code>인지 확인할 수 있습니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">$</span><span class="w"> </span><span class="n">nvidia</span><span class="o">-</span><span class="n">smi</span><span class="w"> </span><span class="o">-</span><span class="n">q</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">grep</span><span class="w"> </span><span class="n">Addressing</span>
+<span class="n">Addressing</span><span class="w"> </span><span class="n">Mode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">HMM</span>
+</pre></div>
+</div>
+<p>HMM을 사용할 수 있으면 <a class="reference internal" href="#memory-unified-memory-full"><span class="std std-ref">완전한 통합 메모리</span></a>가 지원되며 모든 시스템 할당은 암묵적으로 통합 메모리입니다. 또한 시스템에 <a class="reference internal" href="#memory-unified-address-translation-services"><span class="std std-ref">ATS</span></a>도 있으면, ATS가 HMM의 모든 기능과 그 이상을 제공하므로 HMM은 비활성화되고 ATS가 사용됩니다.</p>
+</section>
+</section>
+<section id="limited-unified-memory-support">
+<span id="memory-limited-unified-memory-support"></span><h3><span class="section-number">2.4.2.3. </span>제한된 통합 메모리 지원<a class="headerlink" href="#limited-unified-memory-support" title="Link to this heading">#</a></h3>
+<p>Linux용 Windows 하위 시스템(WSL)을 포함한 Windows와 일부 Tegra 시스템에서는 통합 메모리 기능의 제한된 하위 집합을 사용할 수 있습니다. 이러한 시스템에서는 관리형 메모리를 사용할 수 있지만, CPU와 GPU 간 마이그레이션 동작이 다르게 동작합니다.</p>
+<ul class="simple">
+<li><p>관리형 메모리는 처음에 CPU의 물리 메모리에 할당됩니다</p></li>
+<li><p>관리형 메모리는 가상 메모리 페이지보다 더 큰 단위로 마이그레이션됩니다</p></li>
+<li><p>관리형 메모리는 GPU가 실행을 시작할 때 GPU로 마이그레이션됩니다</p></li>
+<li><p>GPU가 활성 상태인 동안 CPU는 관리형 메모리에 접근해서는 안 됩니다</p></li>
+<li><p>GPU가 동기화되면 관리형 메모리는 CPU로 다시 마이그레이션됩니다</p></li>
+<li><p>GPU 메모리 오버서브스크립션은 허용되지 않습니다</p></li>
+<li><p>CUDA가 관리형 메모리로 명시적으로 할당한 메모리만 통합됩니다</p></li>
+</ul>
+<p>이 패러다임에 대한 전체 내용은 <a class="reference internal" href="../04-special-topics/unified-memory.html"><span class="std std-ref">Windows, WSL 및 Tegra에서의 통합 메모리</span></a>에서 확인할 수 있습니다.</p>
+</section>
+<section id="memory-advise-and-prefetch">
+<span id="memory-mem-advise-prefetch"></span><h3><span class="section-number">2.4.2.4. </span>메모리 어드바이스 및 프리페치<a class="headerlink" href="#memory-advise-and-prefetch" title="Link to this heading">#</a></h3>
+<p>프로그래머는 통합 메모리를 관리하는 NVIDIA 드라이버에 힌트를 제공하여 애플리케이션 성능을 최대화하도록 도울 수 있습니다. CUDA API <code class="docutils literal notranslate"><span class="pre">cudaMemAdvise</span></code>를 사용하면 프로그래머가 할당의 속성을 지정할 수 있으며, 이는 메모리가 어디에 배치되는지와 다른 디바이스에서 접근될 때 메모리가 마이그레이션되는지 여부에 영향을 줍니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cudaMemPrefetchAsync</span></code>를 사용하면 프로그래머가 특정 할당을 다른 위치로 비동기 마이그레이션하도록 시작할 것을 제안할 수 있습니다. 일반적인 사용 사례는 커널이 런치되기 전에 커널이 사용할 데이터의 전송을 시작하는 것입니다. 이를 통해 다른 GPU 커널이 실행되는 동안 데이터 복사가 발생할 수 있습니다.</p>
+<p><a class="reference internal" href="../04-special-topics/unified-memory.html"><span class="std std-ref">성능 힌트</span></a> 섹션에서는 <code class="docutils literal notranslate"><span class="pre">cudaMemAdvise</span></code>에 전달할 수 있는 다양한 힌트를 다루고, <code class="docutils literal notranslate"><span class="pre">cudaMemPrefetchAsync</span></code>를 사용하는 예제를 보여줍니다.</p>
+</section>
+</section>
+<section id="page-locked-host-memory">
+<span id="memory-page-locked-host-memory"></span><h2><span class="section-number">2.4.3. </span>페이지 고정 호스트 메모리<a class="headerlink" href="#page-locked-host-memory" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="intro-to-cuda-cpp.html"><span class="std std-ref">C++의 CUDA 소개 코드 예제</span></a>에서는 CPU에서 메모리를 할당하기 위해 <code class="docutils literal notranslate"><span class="pre">cudaMallocHost</span></code>를 사용했습니다. 이는 호스트에서 <em>페이지 고정</em> 메모리(또는 <em>pinned</em> 메모리라고도 함)를 할당합니다. <code class="docutils literal notranslate"><span class="pre">malloc</span></code>, <code class="docutils literal notranslate"><span class="pre">new</span></code>, 또는 <code class="docutils literal notranslate"><span class="pre">mmap</span></code> 같은 전통적인 할당 메커니즘으로 이루어진 호스트 할당은 페이지 고정이 아니며, 이는 운영체제가 디스크로 스왑하거나 물리적으로 재배치할 수 있음을 의미합니다.</p>
+<p>페이지 고정 호스트 메모리는 <a class="reference internal" href="asynchronous-execution.html"><span class="std std-ref">CPU와 GPU 간 비동기 복사</span></a>에 필요합니다. 또한 페이지 고정 호스트 메모리는 동기 복사의 성능도 향상시킵니다. 페이지 고정 메모리는 GPU 커널에서 직접 접근할 수 있도록 GPU에 <a class="reference internal" href="#memory-mapped-memory"><span class="std std-ref">매핑</span></a>될 수 있습니다.</p>
+<p>CUDA 런타임은 페이지 고정 호스트 메모리를 할당하거나 기존 할당을 페이지 고정하기 위한 API를 제공합니다:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaMallocHost</span></code>는 페이지 고정 호스트 메모리를 할당합니다</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaHostAlloc</span></code>는 기본적으로 <code class="docutils literal notranslate"><span class="pre">cudaMallocHost</span></code>와 동일하게 동작하지만, 다른 메모리 매개변수를 지정하기 위한 플래그도 받습니다</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaFreeHost</span></code>는 <code class="docutils literal notranslate"><span class="pre">cudaMallocHost</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">cudaHostAlloc</span></code>로 할당된 메모리를 해제합니다</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaHostRegister</span></code>는 <code class="docutils literal notranslate"><span class="pre">malloc</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">mmap</span></code>와 같이 CUDA API 외부에서 할당된 기존 메모리 범위를 페이지 고정합니다</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">cudaHostRegister</span></code>를 사용하면 제3자 라이브러리 또는 개발자가 제어할 수 없는 다른 코드에 의해 할당된 호스트 메모리를 페이지 고정하여, 비동기 복사에 사용하거나 매핑할 수 있습니다.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>페이지 고정 호스트 메모리는 시스템의 모든 GPU에서 비동기 복사 및 매핑된 메모리에 사용할 수 있습니다.</p>
+<p>페이지 고정 호스트 메모리는 I/O 비일관성 Tegra 디바이스에서는 캐시되지 않습니다. 또한 I/O 비일관성 Tegra 디바이스에서는 <code class="docutils literal notranslate"><span class="pre">cudaHostRegister()</span></code>가 지원되지 않습니다.</p>
+</div>
+<section id="mapped-memory">
+<span id="memory-mapped-memory"></span><h3><span class="section-number">2.4.3.1. </span>매핑된 메모리<a class="headerlink" href="#mapped-memory" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="#memory-heterogeneous-memory-management"><span class="std std-ref">HMM</span></a> 또는 <a class="reference internal" href="#memory-unified-address-translation-services"><span class="std std-ref">ATS</span></a>가 있는 시스템에서는 모든 호스트 메모리에 호스트 포인터를 사용하여 GPU에서 직접 접근할 수 있습니다. ATS 또는 HMM을 사용할 수 없는 경우, 호스트 할당은 해당 메모리를 GPU의 메모리 공간으로 <em>매핑</em>하여 GPU에서 접근 가능하게 만들 수 있습니다. 매핑된 메모리는 항상 페이지 고정입니다.</p>
+<p>다음 코드 예제에서는 매핑된 호스트 메모리에서 직접 동작하는 다음 배열 복사 커널을 설명합니다.</p>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">copyKernel</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">        </span><span class="n">a</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">idx</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>매핑된 메모리는 GPU로 복사되지 않는 특정 데이터를 커널에서 접근해야 하는 일부 경우에 유용할 수 있지만, 커널에서 매핑된 메모리에 접근하려면 CPU-GPU 인터커넥트, PCIe 또는 NVLink C2C를 가로지르는 트랜잭션이 필요합니다. 이러한 동작은 디바이스 메모리에 접근하는 것에 비해 더 높은 지연 시간과 더 낮은 대역폭을 가집니다. 매핑된 메모리는 커널의 대부분의 메모리 요구에 대해 <a class="reference internal" href="#memory-unified-memory"><span class="std std-ref">통합 메모리</span></a> 또는 <a class="reference internal" href="intro-to-cuda-cpp.html"><span class="std std-ref">명시적 메모리 관리</span></a>의 성능 좋은 대안으로 간주되어서는 안 됩니다.</p>
+<section id="cudamallochost-and-cudahostalloc">
+<h4><span class="section-number">2.4.3.1.1. </span>cudaMallocHost 및 cudaHostAlloc<a class="headerlink" href="#cudamallochost-and-cudahostalloc" title="Link to this heading">#</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">cudaHostMalloc</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">cudaHostAlloc</span></code>로 할당된 호스트 메모리는 자동으로 매핑됩니다. 이러한 API에서 반환된 포인터는 호스트의 메모리에 접근하기 위해 커널 코드에서 직접 사용할 수 있습니다. 호스트 메모리는 CPU-GPU 인터커넥트를 통해 접근됩니다.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-0">
+cudaMallocHost</label><div class="sd-tab-content docutils">
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">usingMallocHost</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nullptr</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nullptr</span><span class="p">;</span>
+<span class="w">  </span>
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaMallocHost</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">vLen</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">)));</span>
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaMallocHost</span><span class="p">(</span><span class="o">&amp;</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">vLen</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">)));</span>
+
+<span class="w">  </span><span class="n">initVector</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">vLen</span><span class="p">);</span>
+<span class="w">  </span><span class="n">memset</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">vLen</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vLen</span><span class="o">/</span><span class="n">threads</span><span class="p">;</span>
+<span class="w">  </span><span class="n">copyKernel</span><span class="o">&lt;&lt;&lt;</span><span class="n">blocks</span><span class="p">,</span><span class="w"> </span><span class="n">threads</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaGetLastError</span><span class="p">());</span>
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaDeviceSynchronize</span><span class="p">());</span>
+
+<span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">"Using cudaMallocHost: "</span><span class="p">);</span>
+<span class="w">  </span><span class="n">checkAnswer</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div><input id="sd-tab-item-1" name="sd-tab-set-0" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-1">
+cudaAllocHost</label><div class="sd-tab-content docutils">
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">usingCudaHostAlloc</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nullptr</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nullptr</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaHostAlloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">vLen</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span><span class="w"> </span><span class="n">cudaHostAllocMapped</span><span class="p">));</span>
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaHostAlloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">vLen</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span><span class="w"> </span><span class="n">cudaHostAllocMapped</span><span class="p">));</span>
+
+<span class="w">  </span><span class="n">initVector</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">vLen</span><span class="p">);</span>
+<span class="w">  </span><span class="n">memset</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">vLen</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vLen</span><span class="o">/</span><span class="n">threads</span><span class="p">;</span>
+<span class="w">  </span><span class="n">copyKernel</span><span class="o">&lt;&lt;&lt;</span><span class="n">blocks</span><span class="p">,</span><span class="w"> </span><span class="n">threads</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaGetLastError</span><span class="p">());</span>
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaDeviceSynchronize</span><span class="p">());</span>
+
+<span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">"Using cudaAllocHost: "</span><span class="p">);</span>
+<span class="w">  </span><span class="n">checkAnswer</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="cudahostregister">
+<h4><span class="section-number">2.4.3.1.2. </span>cudaHostRegister<a class="headerlink" href="#cudahostregister" title="Link to this heading">#</a></h4>
+<p>ATS와 HMM을 사용할 수 없는 경우에도, 시스템 할당자가 만든 할당은 <code class="docutils literal notranslate"><span class="pre">cudaHostRegister</span></code>을 사용하여 GPU 커널에서 직접 접근할 수 있도록 매핑할 수 있습니다. 그러나 CUDA API로 생성된 메모리와는 달리, 이 메모리는 호스트 포인터를 사용하여 커널에서 접근할 수 없습니다. <code class="docutils literal notranslate"><span class="pre">cudaHostGetDevicePointer()</span></code>을 사용해 디바이스의 메모리 영역에 있는 포인터를 얻어야 하며, 커널 코드에서의 접근에는 그 포인터를 사용해야 합니다.</p>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">usingRegister</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nullptr</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nullptr</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">devA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nullptr</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">devB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nullptr</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="n">vLen</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+<span class="w">  </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="n">vLen</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaHostRegister</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">vLen</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">));</span>
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaHostRegister</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">vLen</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="w">  </span><span class="p">));</span>
+
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaHostGetDevicePointer</span><span class="p">((</span><span class="kt">void</span><span class="o">**</span><span class="p">)</span><span class="o">&amp;</span><span class="n">devA</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaHostGetDevicePointer</span><span class="p">((</span><span class="kt">void</span><span class="o">**</span><span class="p">)</span><span class="o">&amp;</span><span class="n">devB</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+
+<span class="w">  </span><span class="n">initVector</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">vLen</span><span class="p">);</span>
+<span class="w">  </span><span class="n">memset</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">vLen</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vLen</span><span class="o">/</span><span class="n">threads</span><span class="p">;</span>
+<span class="w">  </span><span class="n">copyKernel</span><span class="o">&lt;&lt;&lt;</span><span class="n">blocks</span><span class="p">,</span><span class="w"> </span><span class="n">threads</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">devA</span><span class="p">,</span><span class="w"> </span><span class="n">devB</span><span class="p">);</span>
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaGetLastError</span><span class="p">());</span>
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="n">cudaDeviceSynchronize</span><span class="p">());</span>
+
+<span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">"Using cudaHostRegister: "</span><span class="p">);</span>
+<span class="w">  </span><span class="n">checkAnswer</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="comparing-unified-memory-and-mapped-memory">
+<span id="um-difference-with-mapped-memory"></span><h4><span class="section-number">2.4.3.1.3. </span>통합 메모리와 매핑된 메모리 비교<a class="headerlink" href="#comparing-unified-memory-and-mapped-memory" title="Link to this heading">#</a></h4>
+<p>매핑된 메모리는 CPU 메모리에 GPU에서 접근할 수 있게 해주지만, 예를 들어 원자 연산(atomic)과 같은 모든 유형의 접근이 모든 시스템에서 지원된다고 보장하지는 않습니다. 통합 메모리는 모든 접근 유형이 지원됨을 보장합니다.</p>
+<p>매핑된 메모리는 CPU 메모리에 그대로 남아 있으므로, 모든 GPU 접근은 CPU와 GPU 간의 연결(PCIe 또는 NVLink)을 통해야 합니다. 이러한 링크를 가로질러 수행되는 접근의 지연 시간은 GPU 메모리에 대한 접근보다 훨씬 높고, 사용 가능한 총 대역폭은 더 낮습니다. 따라서 커널의 모든 메모리 접근에 매핑된 메모리를 사용하는 것은 GPU 컴퓨팅 자원을 완전히 활용하기 어렵습니다.</p>
+<p>통합 메모리는 대부분 접근하는 프로세서의 물리 메모리로 마이그레이션됩니다. 첫 번째 마이그레이션 이후에는, 커널이 동일한 메모리 페이지 또는 캐시 라인에 반복해서 접근할 때 GPU 메모리의 전체 대역폭을 활용할 수 있습니다.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>매핑된 메모리는 이전 문서에서 <em>제로-카피(zero-copy)</em> 메모리로도 불렸습니다.</p>
+<p>모든 CUDA 애플리케이션이 <a class="reference internal" href="#memory-unified-virtual-address-space"><span class="std std-ref">통합 가상 주소 공간</span></a>을 사용하기 이전에는, 메모리 매핑을 활성화하기 위해 추가 API가 필요했습니다([[J<code class="docutils literal notranslate"><span class="pre">cudaSetDeviceFlags</span></code> with <code class="docutils literal notranslate"><span class="pre">cudaDeviceMapHost</span></code>).  These APIs are no longer needed.</p>
+<p>매핑된 호스트 메모리에서 동작하는 원자(atomic) 함수( <a class="reference internal" href="../05-appendices/cpp-language-extensions.html"><span class="std std-ref">Atomic Functions</span></a> 참조)는 호스트 또는 다른 GPU의 관점에서는 원자적이지 않습니다.</p>
+<p>CUDA 런타임은 디바이스에서 시작되어 호스트 메모리에 대해 수행되는 1바이트, 2바이트, 4바이트, 8바이트 및 16바이트 자연 정렬된 로드(load)와 스토어(store)가 호스트와 다른 디바이스의 관점에서 단일 접근으로 보존되도록 요구합니다. 일부 플랫폼에서는, 메모리에 대한 원자 연산(atomic)이 하드웨어에 의해 별도의 로드 및 스토어 연산으로 분해될 수 있습니다. 이러한 구성 로드 및 스토어 연산은 자연 정렬된 접근의 보존에 대해 동일한 요구 사항을 갖습니다. CUDA 런타임은 PCI Express 브리지가 8바이트 자연 정렬 연산을 분할하는 PCI Express 버스 토폴로지는 지원하지 않으며, NVIDIA는 16바이트 자연 정렬 연산을 분할하는 어떤 토폴로지도 알지 못합니다.</p>
+</div>
+</section>
+</section>
+</section>
+<section id="summary">
+<h2><span class="section-number">2.4.4. </span>요약<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<ul>
+<li><p>이기종 메모리 관리(HMM) 또는 주소 변환 서비스(ATS)가 있는 Linux 플랫폼에서는, 시스템이 할당한 모든 메모리는 관리형 메모리입니다</p></li>
+<li><p>HMM 또는 ATS가 없는 Linux 플랫폼, Tegra 프로세서, 그리고 모든 Windows 플랫폼에서는, 관리형 메모리를 CUDA를 사용하여 할당해야 합니다:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaMallocManaged</span></code> 또는</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaMallocFromPoolAsync</span></code> (단, <code class="docutils literal notranslate"><span class="pre">allocType=cudaMemAllocationTypeManaged</span></code>으로 생성된 풀과 함께)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__managed__</span></code> 지정자(specifier)가 있는 전역 변수</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Windows 및 Tegra 프로세서에서는 통합 메모리에 제한이 있습니다</p></li>
+<li><p>ATS가 있는 NVLINK C2C 연결 시스템에서는 <code class="docutils literal notranslate"><span class="pre">cudaMalloc</span></code>로 할당된 디바이스 메모리에 CPU 또는 다른 GPU에서 직접 접근할 수 있습니다</p></li>
+</ul>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="asynchronous-execution.html">2.3. 비동기 실행</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#unified-virtual-address-space">2.4.1. 통합 가상 주소 공간</a></li><li><a class="toc-link" href="#unified-memory">2.4.2. 통합 메모리</a><ul><li><a class="toc-link" href="#unified-memory-paradigms">2.4.2.1. 통합 메모리 패러다임</a><ul><li><a class="toc-link" href="#unified-memory-paradigm-code-example">2.4.2.1.1. 통합 메모리 패러다임: 코드 예제</a></li></ul></li><li><a class="toc-link" href="#full-unified-memory-feature-support">2.4.2.2. 완전한 통합 메모리 기능 지원</a><ul><li><a class="toc-link" href="#full-unified-memory-with-hardware-coherency">2.4.2.2.1. 하드웨어 일관성을 갖춘 완전한 통합 메모리</a></li><li><a class="toc-link" href="#hmm-full-unified-memory-with-software-coherency">2.4.2.2.2. HMM - 소프트웨어 일관성을 갖춘 완전한 통합 메모리</a></li></ul></li><li><a class="toc-link" href="#limited-unified-memory-support">2.4.2.3. 제한된 통합 메모리 지원</a></li><li><a class="toc-link" href="#memory-advise-and-prefetch">2.4.2.4. 메모리 어드바이스 및 프리페치</a></li></ul></li><li><a class="toc-link" href="#page-locked-host-memory">2.4.3. 페이지 고정 호스트 메모리</a><ul><li><a class="toc-link" href="#mapped-memory">2.4.3.1. 매핑된 메모리</a><ul><li><a class="toc-link" href="#cudamallochost-and-cudahostalloc">2.4.3.1.1. cudaMallocHost 및 cudaHostAlloc</a></li><li><a class="toc-link" href="#cudahostregister">2.4.3.1.2. cudaHostRegister</a></li><li><a class="toc-link" href="#comparing-unified-memory-and-mapped-memory">2.4.3.1.3. 통합 메모리와 매핑된 메모리 비교</a></li></ul></li></ul></li><li><a class="toc-link" href="#summary">2.4.4. 요약</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

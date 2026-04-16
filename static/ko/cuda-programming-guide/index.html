@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CUDA 프로그래밍 가이드 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="CUDA 및 CUDA 프로그래밍 가이드">
+  <link rel="stylesheet" href="./assets/site.css">
+  <link rel="stylesheet" href="./assets/vendor/pygments.css">
+  <link rel="stylesheet" href="./assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="./assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="./assets/vendor/design-tabs.js"></script>
+  <script defer src="./assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="contents.html">목차</a>
+      <a href="genindex.html">색인</a>
+      <a href="notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary class="is-active"><a data-sidebar-close class="sidebar-group__summary-link is-active" href="index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="04-special-topics/driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li>홈</li></ul>
+          <h1 class="page-title">CUDA 프로그래밍 가이드</h1>
+          <article class="doc-article">
+<section id="cuda-programming-guide">
+
+<p><strong>CUDA 및 CUDA 프로그래밍 가이드</strong></p>
+<p>CUDA는 GPU의 성능을 활용하여 컴퓨팅 성능을 획기적으로 향상시키는 NVIDIA에서 개발한 병렬 컴퓨팅 플랫폼 및 프로그래밍 모델입니다. 개발자는 이를 통해 연산 집약적인 애플리케이션을 가속할 수 있으며, 딥러닝, 과학 컴퓨팅, 고성능 컴퓨팅(HPC) 등의 분야에서 널리 사용됩니다.</p>
+<p>이 CUDA 프로그래밍 가이드는 CUDA 프로그래밍 모델과 CUDA 플랫폼을 사용하여 GPU에서 실행되는 코드를 작성하는 방법에 대한 공식적이고 포괄적인 자료입니다. 이 가이드는 CUDA 프로그래밍 모델과 CUDA 플랫폼부터 언어 확장에 대한 세부 사항까지 모든 내용을 다루며, 특정 하드웨어 및 소프트웨어 기능을 활용하는 방법을 설명합니다. 또한 CUDA가 처음인 개발자가 CUDA를 학습할 수 있는 경로를 제공하며, CUDA를 사용해 애플리케이션을 구축하는 개발자에게 필수적인 자료를 제공합니다.</p>
+<p id="organization-of-this-guide"><strong>이 가이드의 구성</strong></p>
+<p>주로 라이브러리, 프레임워크 또는 DSL을 사용하는 개발자에게도 CUDA 프로그래밍 모델과 GPU가 코드를 실행하는 방식에 대한 이해는 추상화 계층 뒤에서 무엇이 일어나는지를 파악하는 데 가치가 있습니다.
+이 가이드는 특정 프로그래밍 언어와 무관하게 CUDA가 어떻게 동작하는지 이해하려는 누구에게나(개발자가 아닌 사람에게도) 적용 가능한 <a class="reference internal" href="01-introduction/programming-model.html"><span class="std std-ref">CUDA 프로그래밍 모델</span></a>에 대한 장으로 시작합니다.</p>
+<p>이 가이드는 다섯 개의 주요 파트로 구성되어 있습니다:</p>
+<ul class="simple">
+<li><p>파트 1: 소개 및 프로그래밍 모델 개요</p>
+<ul>
+<li><p>CUDA 프로그래밍 모델에 대한 언어 독립적인 개요와 CUDA 플랫폼에 대한 간단한 둘러보기.</p></li>
+<li><p>이 섹션은 개발자가 아니더라도 GPU와 GPU에서 코드를 실행하는 개념을 이해하려는 모든 사람이 읽도록 작성되었습니다.</p></li>
+</ul>
+</li>
+<li><p>파트 2: CUDA에서의 GPU 프로그래밍</p>
+<ul>
+<li><p>CUDA C++를 사용한 GPU 프로그래밍의 기초.</p></li>
+<li><p>이 섹션은 GPU 프로그래밍을 시작하려는 모든 사람이 읽도록 작성되었습니다.</p></li>
+<li><p>이 섹션은 완전한 설명이 아니라 학습용이며, 몇 가지 일반적인 성능 고려 사항을 포함해 CUDA 프로그래밍에서 가장 중요하고 흔히 사용되는 부분을 가르칩니다.</p></li>
+</ul>
+</li>
+<li><p>파트 3: 고급 CUDA</p>
+<ul>
+<li><p>단일 애플리케이션에서 여러 GPU를 사용하는 것을 포함하여, 미세한 제어를 가능하게 하고 성능을 극대화할 기회를 더 많이 제공하는 CUDA의 더 고급 기능을 소개합니다.</p></li>
+<li><p>이 섹션은 각 기능이 언제, 왜 유용한지에 따라 정렬하여 각 기능의 목적과 기능을 간단히 소개하는 <a class="reference internal" href="03-advanced/feature-survey.html"><span class="std std-ref">파트 4에서 다루는 기능 둘러보기</span></a>로 마무리됩니다.</p></li>
+</ul>
+</li>
+<li><p>파트 4: CUDA 기능</p>
+<ul>
+<li><p>이 섹션에는 CUDA 그래프, 동적 병렬 처리, 그래픽 API와의 상호운용성, 통합 메모리 등 특정 CUDA 기능에 대한 완전한 설명이 포함되어 있습니다.</p></li>
+<li><p>특정 CUDA 기능의 전체 그림을 아는 것이 필요할 때 이 섹션을 참고해야 합니다. 가능한 경우, 이 섹션에서 다루는 기능을 앞선 섹션에서 소개하고 동기를 부여하도록 주의를 기울였습니다.</p></li>
+</ul>
+</li>
+<li><p>파트 5: 기술 부록</p>
+<ul>
+<li><p>기술 부록은 CUDA의 C++ 고수준 언어 지원, 하드웨어별 사양 및 기타 기술 사양에 대한 일부 레퍼런스 문서를 제공합니다.</p></li>
+<li><p>이 섹션은 CUDA 요소의 구문, 의미론 및 기술적 동작에 대한 구체적인 설명을 위한 기술 참조로서 작성되었습니다.</p></li>
+</ul>
+</li>
+</ul>
+<p>파트 1-3은 CUDA를 처음 접하는 개발자에게 안내형 학습 경험을 제공하지만, 어떤 경험 수준의 CUDA 개발자에게도 유용한 통찰과 최신 정보도 제공합니다.</p>
+<p>파트 4와 5는 특정 기능과 상세 주제에 대한 풍부한 정보를 제공하며, CUDA 애플리케이션을 작성하면서 더 많은 세부 사항을 알아야 하는 개발자를 위해 선별되고 잘 구성된 참고 자료를 제공하는 것을 목표로 합니다.</p>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</article>
+          <div class="page-actions is-only-next"><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="contents.html">목차</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="search-empty">이 페이지에는 별도의 섹션 목차가 없습니다.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

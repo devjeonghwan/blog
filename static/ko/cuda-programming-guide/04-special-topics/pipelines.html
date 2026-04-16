@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4.10. 파이프라인 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="고급 동기화 프리미티브 에서 소개된 파이프라인은 작업을 스테이징하고 다중 버퍼 생산자–소비자 패턴을 조정하기 위한 메커니즘으로, 일반적으로 비동기 데이터 복사 와 연산을 오버랩하는 데 사용됩니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part4.html">4. CUDA 기능</a></li><li>4.10. 파이프라인</li></ul>
+          <h1 class="page-title">4.10. 파이프라인</h1>
+          <article class="doc-article">
+<section id="pipelines">
+<span id="id1"></span>
+<p><a class="reference internal" href="../03-advanced/advanced-kernel-programming.html"><span class="std std-ref">고급 동기화 프리미티브</span></a>에서 소개된 파이프라인은 작업을 스테이징하고 다중 버퍼 생산자–소비자 패턴을 조정하기 위한 메커니즘으로, 일반적으로 <a class="reference internal" href="../03-advanced/advanced-kernel-programming.html"><span class="std std-ref">비동기 데이터 복사</span></a>와 연산을 오버랩하는 데 사용됩니다.</p>
+<p>이 섹션에서는 주로 <code class="docutils literal notranslate"><span class="pre">cuda::pipeline</span></code> API를 통해 파이프라인을 사용하는 방법에 대한 세부 사항을 제공합니다(해당되는 경우 프리미티브에 대한 안내 포함).</p>
+<section id="initialization">
+<span id="pipelines-init"></span><h2><span class="section-number">4.10.1. </span>초기화<a class="headerlink" href="#initialization" title="이 제목으로 연결">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">cuda::pipeline</span></code>는 서로 다른 스레드 범위에서 생성할 수 있습니다. <code class="docutils literal notranslate"><span class="pre">cuda::thread_scope_thread</span></code> 이외의 범위에서는, 참여하는 스레드들을 조정하기 위해 <code class="docutils literal notranslate"><span class="pre">cuda::pipeline_shared_state&lt;scope,</span> <span class="pre">count&gt;</span></code> 객체가 필요합니다. 이 상태는 파이프라인이 최대 <code class="docutils literal notranslate"><span class="pre">count</span></code>개의 동시 스테이지를 처리할 수 있게 하는 유한한 리소스를 캡슐화합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Create a pipeline at thread scope</span>
+<span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_thread</span><span class="p">;</span>
+<span class="n">cuda</span><span class="o">::</span><span class="n">pipeline</span><span class="o">&lt;</span><span class="n">scope</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pipeline</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">make_pipeline</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Create a pipeline at block scope</span>
+<span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_block</span><span class="p">;</span>
+<span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">stages_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="n">__shared__</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">pipeline_shared_state</span><span class="o">&lt;</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">stages_count</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shared_state</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">pipeline</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">make_pipeline</span><span class="p">(</span><span class="n">group</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">shared_state</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>파이프라인은 <em>통합(unified)</em> 또는 <em>분할(partitioned)</em>일 수 있습니다. 통합 파이프라인에서는 참여하는 모든 스레드가 생산자이자 소비자입니다. 분할 파이프라인에서는 각 참여 스레드가 생산자 또는 소비자 중 하나이며, 그 역할은 파이프라인 객체의 생애 동안 변경될 수 없습니다. 스레드-로컬 파이프라인은 분할될 수 없습니다. 분할 파이프라인을 생성하려면, <code class="docutils literal notranslate"><span class="pre">cuda::make_pipeline()</span></code>에 생산자 수 또는 스레드의 역할 중 하나를 제공해야 합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Create a partitioned pipeline at block scope where only thread 0 is a producer</span>
+<span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_block</span><span class="p">;</span>
+<span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">stages_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="n">__shared__</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">pipeline_shared_state</span><span class="o">&lt;</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">stages_count</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shared_state</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">thread_role</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">group</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">pipeline_role</span><span class="o">::</span><span class="n">producer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">pipeline_role</span><span class="o">::</span><span class="n">consumer</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">pipeline</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">make_pipeline</span><span class="p">(</span><span class="n">group</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">shared_state</span><span class="p">,</span><span class="w"> </span><span class="n">thread_role</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>분할을 지원하기 위해, 공유 <code class="docutils literal notranslate"><span class="pre">cuda::pipeline</span></code> 추가 오버헤드가 발생하며, 여기에는 동기화를 위해 단계(stage)당 공유 메모리 배리어(barrier) 세트를 사용하는 것이 포함됩니다. 이는 파이프라인이 통합(unified)되어 있고 사용할 수 있는 경우에도 사용됩니다. <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code> 대신. 따라서 가능하다면 이러한 오버헤드를 피할 수 있는 스레드-로컬 파이프라인을 사용하는 것이 바람직합니다.</p>
+</section>
+<section id="submitting-work">
+<span id="pipelines-submit"></span><h2><span class="section-number">4.10.2. </span>작업 제출<a class="headerlink" href="#submitting-work" title="Link to this heading">#</a></h2>
+<p>파이프라인 단계에 작업을 커밋하는 데에는 다음이 포함됩니다:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>집합적으로 <em>획득</em> 파이프라인 <em>헤드</em> 생산자 스레드 집합에서 다음을 사용하여 <code class="docutils literal notranslate"><span class="pre">pipeline.producer_acquire()</span></code>.</p></li>
+<li><p>비동기 작업을 제출하는 것(예: <code class="docutils literal notranslate"><span class="pre">memcpy_async</span></code>, 파이프라인 헤드에.</p></li>
+<li><p>집합적으로 <em>커밋</em> (전진시키며) 다음을 사용하여 파이프라인 헤드를 <code class="docutils literal notranslate"><span class="pre">pipeline.producer_commit()</span></code>.</p></li>
+</ul>
+</div></blockquote>
+<p>모든 리소스가 사용 중이면, <code class="docutils literal notranslate"><span class="pre">pipeline.producer_acquire()</span></code> 소비자 스레드가 다음 파이프라인 단계의 리소스를 해제할 때까지 생산자 스레드를 블록합니다.</p>
+</section>
+<section id="consuming-work">
+<span id="pipelines-consume"></span><h2><span class="section-number">4.10.3. </span>작업 소비<a class="headerlink" href="#consuming-work" title="Link to this heading">#</a></h2>
+<p>이전에 커밋된 단계(stage)에서 작업을 소비하는 데에는 다음이 포함됩니다:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>집합적으로 단계(stage)가 완료될 때까지 대기하는 것(예: 다음을 사용하는 경우) <code class="docutils literal notranslate"><span class="pre">pipeline.consumer_wait()</span></code> 소비자 스레드 집합에서 테일(가장 오래된) 단계에서 대기하기 위해.</p></li>
+<li><p>집합적으로 <em>해제</em> 다음을 사용하여 단계를 <code class="docutils literal notranslate"><span class="pre">pipeline.consumer_release()</span></code>.</p></li>
+</ul>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">cuda::pipeline&lt;cuda:thread_scope_thread&gt;</span></code>를 사용하면 <code class="docutils literal notranslate"><span class="pre">cuda::pipeline_consumer_wait_prior&lt;N&gt;()</span></code> friend 함수도 사용하여 마지막 N개 단계를 제외한 모든 단계가 완료될 때까지 대기할 수 있으며, 이는 프리미티브 API의 <code class="docutils literal notranslate"><span class="pre">__pipeline_wait_prior(N)</span></code>과 유사합니다.</p></section><section id="warp-entanglement">
+<span id="pipelines-entanglement"></span><h2><span class="section-number">4.10.4. </span>워프 얽힘<a class="headerlink" href="#warp-entanglement" title="이 제목으로 연결">#</a></h2>
+<p>파이프라인 메커니즘은 동일한 워프 내의 CUDA 스레드들 사이에서 공유됩니다. 이러한 공유로 인해 제출된 작업 시퀀스가 워프 내부에서 얽히게 되며, 특정 상황에서는 성능에 영향을 미칠 수 있습니다.</p>
+<p><strong>커밋</strong>. 커밋 작업은 병합(coalesced)되어, 커밋 작업을 호출하는 모든 수렴(converged)된 스레드에 대해 파이프라인의 시퀀스가 한 번만 증가하고, 이들이 제출한 작업들이 함께 배치됩니다. 워프가 완전히 수렴되어 있다면 시퀀스는 1만큼 증가하고 제출된 모든 작업은 파이프라인의 동일한 스테이지에 배치됩니다. 워프가 완전히 발산(diverged)되어 있다면 시퀀스는 32만큼 증가하고 제출된 모든 작업은 서로 다른 스테이지로 분산됩니다.</p>
+<ul>
+<li><p><em>PB</em>를 워프 공유 파이프라인의 <em>실제</em> 작업 시퀀스라고 하겠습니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">PB</span> <span class="pre">=</span> <span class="pre">{BP0,</span> <span class="pre">BP1,</span> <span class="pre">BP2,</span> <span class="pre">…,</span> <span class="pre">BPL}</span></code></p>
+</li>
+<li><p><em>TB</em>를 스레드의 <em>인지된</em> 작업 시퀀스라고 하겠습니다. 이는 시퀀스가 이 스레드의 커밋 작업 호출에 의해서만 증가하는 것처럼 간주한 것입니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">TB</span> <span class="pre">=</span> <span class="pre">{BT0,</span> <span class="pre">BT1,</span> <span class="pre">BT2,</span> <span class="pre">…,</span> <span class="pre">BTL}</span></code></p>
+</li>
+</ul>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">pipeline::producer_commit()</span></code>의 반환 값은 스레드의 <em>인지된</em> 배치 시퀀스에서 가져온 것입니다.</p>
+</div></blockquote>
+<ul>
+<li><p>스레드의 인지된 시퀀스에서의 인덱스는 항상 실제 워프 공유 시퀀스에서의 동일하거나 더 큰 인덱스에 정렬됩니다. 시퀀스가 동일해지는 경우는 모든 커밋 작업이 완전히 수렴된 스레드들에서 호출될 때뿐입니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">BTn</span> <span class="pre">≡</span> <span class="pre">BPm</span></code> 여기서 <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">&lt;=</span> <span class="pre">m</span></code></p>
+</li>
+</ul>
+<p>예를 들어, 워프가 완전히 발산되어 있을 때:</p>
+<ul class="simple">
+<li><p>워프 공유 파이프라인의 실제 시퀀스는 다음과 같습니다: <code class="docutils literal notranslate"><span class="pre">PB</span> <span class="pre">=</span> <span class="pre">{0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">...,</span> <span class="pre">31}</span></code> (<code class="docutils literal notranslate"><span class="pre">PL=31</span></code>).</p></li>
+<li><p>이 워프의 각 스레드에 대한 인지된 시퀀스는 다음과 같습니다:</p>
+<ul>
+<li><p>스레드 0: <code class="docutils literal notranslate"><span class="pre">TB</span> <span class="pre">=</span> <span class="pre">{0}</span></code> (<code class="docutils literal notranslate"><span class="pre">TL=0</span></code>)</p></li>
+<li><p>스레드 1: <code class="docutils literal notranslate"><span class="pre">TB</span> <span class="pre">=</span> <span class="pre">{0}</span></code> (<code class="docutils literal notranslate"><span class="pre">TL=0</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">…</span></code></p></li>
+<li><p>스레드 31: <code class="docutils literal notranslate"><span class="pre">TB</span> <span class="pre">=</span> <span class="pre">{0}</span></code> (<code class="docutils literal notranslate"><span class="pre">TL=0</span></code>)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>대기</strong>. CUDA 스레드가 호출합니다 <code class="docutils literal notranslate"><span class="pre">pipeline::consumer_wait()</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">pipeline_consumer_wait_prior&lt;N&gt;()</span></code> 배치들이 다음에서 대기하도록 <em>인지된</em> 시퀀스 <code class="docutils literal notranslate"><span class="pre">TB</span></code> 완료될 때까지. 유의하십시오 <code class="docutils literal notranslate"><span class="pre">pipeline::consumer_wait()</span></code> 와 동등합니다 <code class="docutils literal notranslate"><span class="pre">pipeline_consumer_wait_prior&lt;N&gt;()</span></code>, 여기서 <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">PL</span></code>.</p>
+<p><em>wait prior</em> 변형은 <em>실제</em> 시퀀스에서 최소한 <code class="docutils literal notranslate"><span class="pre">PL-N</span></code>까지(이를 포함하여) 배치들을 기다립니다. <code class="docutils literal notranslate"><span class="pre">TL</span> <span class="pre">&lt;=</span> <span class="pre">PL</span></code>이므로, <code class="docutils literal notranslate"><span class="pre">PL-N</span></code>까지(이를 포함하여) 배치를 기다리는 것은 배치 <code class="docutils literal notranslate"><span class="pre">TL-N</span></code>을 기다리는 것까지 포함합니다. 따라서 <code class="docutils literal notranslate"><span class="pre">TL</span> <span class="pre">&lt;</span> <span class="pre">PL</span></code>일 때, 스레드는 의도치 않게 추가적인, 더 최근의 배치들을 기다리게 됩니다. 위의 극단적인 완전 발산 워프 예시에서는, 각 스레드가 32개 배치 전체를 기다릴 수 있습니다.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p><p>실제 시퀀스와 스레드들이 인지하는 배치 시퀀스를 정렬된 상태로 유지하여 과도하게 기다리지 않도록, 커밋 호출은 수렴(converged)된 스레드들에 의해 이루어지는 것이 권장됩니다.</p>
+<p>이러한 작업에 앞선 코드가 스레드들을 발산(diverge)시키는 경우, 커밋 작업을 호출하기 전에 <code class="docutils literal notranslate"><span class="pre">__syncwarp</span></code>를 통해 워프를 다시 수렴(re-converge)시켜야 합니다.</p>
+</div>
+</section>
+<section id="early-exit">
+<span id="pipelines-early-exit"></span><h2><span class="section-number">4.10.5. </span>조기 종료<a class="headerlink" href="#early-exit" title="이 제목으로 연결">#</a></h2>
+<p>파이프라인에 참여하는 스레드가 조기에 종료해야 하는 경우, 해당 스레드는 <code class="docutils literal notranslate"><span class="pre">cuda::pipeline::quit()</span></code>를 사용하여 종료하기 전에 참여를 명시적으로 중단(drop out)해야 합니다. 남아 있는 참여 스레드들은 이후 작업을 정상적으로 진행할 수 있습니다.</p>
+</section><section id="tracking-asynchronous-memory-operations">
+<span id="pipelines-tracking"></span><h2><span class="section-number">4.10.6. </span>비동기 메모리 작업 추적<a class="headerlink" href="#tracking-asynchronous-memory-operations" title="이 제목으로 연결">#</a></h2>
+<p>다음 예제는 복사 작업을 추적하기 위해 파이프라인을 사용하여 비동기 메모리 복사를 통해 전역 메모리에서 공유 메모리로 데이터를 집합적으로 복사하는 방법을 보여줍니다. 각 스레드는 자체 파이프라인을 사용하여 메모리 복사를 독립적으로 제출한 다음, 완료될 때까지 대기하고 데이터를 소비합니다. 비동기 데이터 복사에 대한 자세한 내용은 <a class="reference internal" href="../03-advanced/advanced-kernel-programming.html"><span class="std std-numref">섹션 3.2.5</span></a>를 참조하십시오.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-0">
+CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::pipeline</span></code></label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-example-pipelines-std">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/pipeline&gt;</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">example_kernel</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">block_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">128</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">__shared__</span><span class="w"> </span><span class="nf">__align__</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">))</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">buffer</span><span class="p">[</span><span class="mi">4</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">block_size</span><span class="p">];</span>
+
+<span class="w">    </span><span class="c1">// Create a unified pipeline per thread</span>
+<span class="w">    </span><span class="n">cuda</span><span class="o">::</span><span class="n">pipeline</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_thread</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pipeline</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">make_pipeline</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// First stage of memory copies</span>
+<span class="w">    </span><span class="n">pipeline</span><span class="p">.</span><span class="n">producer_acquire</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Every thread fetches one element of the first block</span>
+<span class="w">    </span><span class="n">cuda</span><span class="o">::</span><span class="n">memcpy_async</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span><span class="w"> </span><span class="n">pipeline</span><span class="p">);</span>
+<span class="w">    </span><span class="n">pipeline</span><span class="p">.</span><span class="n">producer_commit</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Second stage of memory copies</span>
+<span class="w">    </span><span class="n">pipeline</span><span class="p">.</span><span class="n">producer_acquire</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Every thread fetches one element of the second and third block</span>
+<span class="w">    </span><span class="n">cuda</span><span class="o">::</span><span class="n">memcpy_async</span><span class="p">(</span><span class="n">buffer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">block_size</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">block_size</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span><span class="w"> </span><span class="n">pipeline</span><span class="p">);</span>
+<span class="w">    </span><span class="n">cuda</span><span class="o">::</span><span class="n">memcpy_async</span><span class="p">(</span><span class="n">buffer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">block_size</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">block_size</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span><span class="w"> </span><span class="n">pipeline</span><span class="p">);</span>
+<span class="w">    </span><span class="n">pipeline</span><span class="p">.</span><span class="n">producer_commit</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Third stage of memory copies</span>
+<span class="w">    </span><span class="n">pipeline</span><span class="p">.</span><span class="n">producer_acquire</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Every thread fetches one element of the last block</span>
+<span class="w">    </span><span class="n">cuda</span><span class="o">::</span><span class="n">memcpy_async</span><span class="p">(</span><span class="n">buffer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">block_size</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">block_size</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span><span class="w"> </span><span class="n">pipeline</span><span class="p">);</span>
+<span class="w">    </span><span class="n">pipeline</span><span class="p">.</span><span class="n">producer_commit</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Wait for the oldest stage (waits for first stage)</span>
+<span class="w">    </span><span class="n">pipeline</span><span class="p">.</span><span class="n">consumer_wait</span><span class="p">();</span>
+<span class="w">    </span><span class="n">pipeline</span><span class="p">.</span><span class="n">consumer_release</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// __syncthreads();</span>
+<span class="w">    </span><span class="c1">// Use data from the first stage</span>
+
+<span class="w">    </span><span class="c1">// Wait for the oldest stage (waits for second stage)</span>
+<span class="w">    </span><span class="n">pipeline</span><span class="p">.</span><span class="n">consumer_wait</span><span class="p">();</span>
+<span class="w">    </span><span class="n">pipeline</span><span class="p">.</span><span class="n">consumer_release</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// __syncthreads();</span>
+<span class="w">    </span><span class="c1">// Use data from the second stage</span>
+
+<span class="w">    </span><span class="c1">// Wait for the oldest stage (waits for third stage)</span>
+<span class="w">    </span><span class="n">pipeline</span><span class="p">.</span><span class="n">consumer_wait</span><span class="p">();</span>
+<span class="w">    </span><span class="n">pipeline</span><span class="p">.</span><span class="n">consumer_release</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// __syncthreads();</span>
+<span class="w">    </span><span class="c1">// Use data from the third stage</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-1">
+CUDA C 프리미티브</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-example-pipelines-primitives">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_pipeline.h&gt;</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">example_kernel</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">block_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">128</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">__shared__</span><span class="w"> </span><span class="nf">__align__</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">))</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">buffer</span><span class="p">[</span><span class="mi">4</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">block_size</span><span class="p">];</span>
+
+<span class="w">    </span><span class="c1">// First batch of memory copies</span>
+<span class="w">    </span><span class="c1">// Every thread fetches one element of the first block</span>
+<span class="w">    </span><span class="n">__pipeline_memcpy_async</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+<span class="w">    </span><span class="n">__pipeline_commit</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Second batch of memory copies</span>
+<span class="w">    </span><span class="c1">// Every thread fetches one element of the second and third block</span>
+<span class="w">    </span><span class="n">__pipeline_memcpy_async</span><span class="p">(</span><span class="n">buffer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">block_size</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">block_size</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+<span class="w">    </span><span class="n">__pipeline_memcpy_async</span><span class="p">(</span><span class="n">buffer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">block_size</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">block_size</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+<span class="w">    </span><span class="n">__pipeline_commit</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Third batch of memory copies</span>
+<span class="w">    </span><span class="c1">// Every thread fetches one element of the last block</span>
+<span class="w">    </span><span class="n">__pipeline_memcpy_async</span><span class="p">(</span><span class="n">buffer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">block_size</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">block_size</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+<span class="w">    </span><span class="n">__pipeline_commit</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Wait for all except the last two batches of memory copies (waits for first batch)</span>
+<span class="w">    </span><span class="n">__pipeline_wait_prior</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// __syncthreads();</span>
+<span class="w">    </span><span class="c1">// Use data from the first batch</span>
+
+<span class="w">    </span><span class="c1">// Wait for all except the last batch of memory copies (waits for second batch)</span>
+<span class="w">    </span><span class="n">__pipeline_wait_prior</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// __syncthreads();</span>
+<span class="w">    </span><span class="c1">// Use data from the second batch</span>
+
+<span class="w">    </span><span class="c1">// Wait for all batches of memory copies (waits for third batch)</span>
+<span class="w">    </span><span class="n">__pipeline_wait_prior</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// __syncthreads();</span>
+<span class="w">    </span><span class="c1">// Use data from the last batch</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="producer-consumer-pattern-using-pipelines">
+<span id="pipelines-producer-consumer"></span><h2><span class="section-number">4.10.7. </span>파이프라인을 사용한 프로듀서-컨슈머 패턴<a class="headerlink" href="#producer-consumer-pattern-using-pipelines" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="async-barriers.html"><span class="std std-numref">섹션 4.9.7</span></a>에서는 <a class="reference internal" href="async-barriers.html"><span class="std std-ref">비동기 배리어</span></a>를 사용하여 프로듀서-컨슈머 패턴을 구현할 수 있도록 스레드 블록을 공간적으로 분할하는 방법을 보여주었습니다. <code class="docutils literal notranslate"><span class="pre">cuda::pipeline</span></code>를 사용하면, 버퍼당 두 개의 비동기 배리어 대신 데이터 버퍼당 하나의 스테이지를 갖는 단일 분할(partitioned) 파이프라인을 사용하여 이를 단순화할 수 있습니다.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-2">
+CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::pipeline</span></code></label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-pipeline-basic-std">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/pipeline&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+
+<span class="cp">#pragma nv_diag_suppress static_var_with_dynamic_init</span>
+
+<span class="n">using</span><span class="w"> </span><span class="n">pipeline</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">pipeline</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_block</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">produce</span><span class="p">(</span><span class="n">pipeline</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pipe</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_stages</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_batches</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">batch</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">batch</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">num_batches</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">pipe</span><span class="p">.</span><span class="n">producer_acquire</span><span class="p">();</span>
+<span class="w">    </span><span class="cm">/* copy data from in(batch) to buffer(stage) using asynchronous memory copies */</span>
+<span class="w">    </span><span class="n">pipe</span><span class="p">.</span><span class="n">producer_commit</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">consume</span><span class="p">(</span><span class="n">pipeline</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pipe</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_stages</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_batches</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">batch</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">pipe</span><span class="p">.</span><span class="n">consumer_wait</span><span class="p">();</span>
+<span class="w">  </span><span class="cm">/* consume buffer(stage) and update out(batch) */</span>
+<span class="w">  </span><span class="n">pipe</span><span class="p">.</span><span class="n">consumer_release</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">producer_consumer_pattern</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="o">::</span><span class="n">this_thread_block</span><span class="p">();</span>
+
+<span class="w">  </span><span class="cm">/* Shared memory buffer declared below is of size 2 * buffer_len</span>
+<span class="cm">     so that we can alternatively work between two buffers.</span>
+<span class="cm">     buffer_0 = buffer and buffer_1 = buffer + buffer_len */</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">buffer</span><span class="p">[];</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_batches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Create a partitioned pipeline with 2 stages where half the threads are producers and the other half are consumers.</span>
+<span class="w">  </span><span class="n">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_block</span><span class="p">;</span>
+<span class="w">  </span><span class="n">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num_stages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">  </span><span class="n">cuda</span><span class="o">::</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">producer_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">pipeline_shared_state</span><span class="o">&lt;</span><span class="n">scope</span><span class="p">,</span><span class="w"> </span><span class="n">num_stages</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shared_state</span><span class="p">;</span>
+<span class="w">  </span><span class="n">pipeline</span><span class="w"> </span><span class="n">pipe</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">make_pipeline</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">shared_state</span><span class="p">,</span><span class="w"> </span><span class="n">producer_count</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// Fill the pipeline</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">producer_count</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">num_stages</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">s</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="n">produce</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span><span class="w"> </span><span class="n">num_stages</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">num_batches</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Process the batches</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">num_batches</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">b</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">producer_count</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Prefetch the next batch</span>
+<span class="w">      </span><span class="n">produce</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span><span class="w"> </span><span class="n">num_stages</span><span class="p">,</span><span class="w"> </span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="n">num_batches</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">num_stages</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Consume the oldest batch</span>
+<span class="w">      </span><span class="n">consume</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span><span class="w"> </span><span class="n">num_stages</span><span class="p">,</span><span class="w"> </span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="n">num_batches</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">stage</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">num_stages</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>이 예제에서는 스레드 블록 내 스레드의 절반을 프로듀서로, 나머지 절반을 컨슈머로 사용합니다. 첫 번째 단계로, 우리는 생성해야 합니다 <code class="docutils literal notranslate"><span class="pre">cuda::pipeline</span></code> 객체를 생성해야 합니다. 일부 스레드를 프로듀서로, 일부 스레드를 컨슈머로 사용하려고 하므로, 우리는 사용해야 합니다 <strong>분할(partitioned)</strong> 파이프라인을 사용하여 <code class="docutils literal notranslate"><span class="pre">cuda::thread_scope_block</span></code>. 분할(partitioned) 파이프라인에는 <code class="docutils literal notranslate"><span class="pre">cuda::pipeline_shared_state</span></code> 참여 스레드들을 조정하기 위해. 스레드 블록 범위에서 2-스테이지 파이프라인의 상태를 초기화한 다음 호출합니다 <code class="docutils literal notranslate"><span class="pre">cuda::make_pipeline()</span></code>. 다음으로, 프로듀서 스레드들은 다음으로부터의 비동기 복사를 제출하여 파이프라인을 채웁니다 <code class="docutils literal notranslate"><span class="pre">in</span></code> 로 <code class="docutils literal notranslate"><span class="pre">buffer</span></code>. 이 시점에서 모든 데이터 복사 작업이 진행 중입니다. 마지막으로, 메인 루프에서 모든 데이터 배치를 순회하며, 스레드가 프로듀서인지 컨슈머인지에 따라 미래 배치를 위한 또 다른 비동기 복사를 제출하거나 현재 배치를 소비합니다.</p>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="async-barriers.html">4.9. 비동기 배리어</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="async-copies.html">4.11. 비동기 데이터 복사</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#initialization">4.10.1. 초기화</a></li><li><a class="toc-link" href="#submitting-work">4.10.2. 작업 제출</a></li><li><a class="toc-link" href="#consuming-work">4.10.3. 작업 소비</a></li><li><a class="toc-link" href="#warp-entanglement">4.10.4. 워프 얽힘</a></li><li><a class="toc-link" href="#early-exit">4.10.5. 조기 종료</a></li><li><a class="toc-link" href="#tracking-asynchronous-memory-operations">4.10.6. 비동기 메모리 작업 추적</a></li><li><a class="toc-link" href="#producer-consumer-pattern-using-pipelines">4.10.7. 파이프라인을 사용한 프로듀서-컨슈머 패턴</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

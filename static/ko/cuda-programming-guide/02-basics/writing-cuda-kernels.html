@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2.2. CUDA SIMT 커널 작성 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="CUDA C++ 커널은 대체로 주어진 문제에 대해 기존 CPU 코드를 작성하는 것과 같은 방식으로 작성할 수 있습니다. 하지만 성능을 개선하는 데 사용할 수 있는 GPU의 몇 가지 고유한 기능이 있습니다. 또한 GPU에서 스레드가 어떻게 스케줄링되는지, 메모리에 어떻게 접근하는지, 그리고 실행이 어떻게 진행되는지를 어느 정도 이해하면 개발자가 사용 가능한 컴퓨팅 리소스의 활용도를 최대화하는 커널을 작성하는 데 도움이 될 수 있습니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></li><li>2.2. CUDA SIMT 커널 작성</li></ul>
+          <h1 class="page-title">2.2. CUDA SIMT 커널 작성</h1>
+          <article class="doc-article">
+<section id="writing-cuda-simt-kernels">
+<span id="writing-cuda-kernels"></span>
+<p>CUDA C++ 커널은 대체로 주어진 문제에 대해 기존 CPU 코드를 작성하는 것과 같은 방식으로 작성할 수 있습니다. 하지만 성능을 개선하는 데 사용할 수 있는 GPU의 몇 가지 고유한 기능이 있습니다. 또한 GPU에서 스레드가 어떻게 스케줄링되는지, 메모리에 어떻게 접근하는지, 그리고 실행이 어떻게 진행되는지를 어느 정도 이해하면 개발자가 사용 가능한 컴퓨팅 리소스의 활용도를 최대화하는 커널을 작성하는 데 도움이 될 수 있습니다.</p>
+<section id="basics-of-simt">
+<span id="writing-cuda-kernels-basics-of-simt"></span><h2><span class="section-number">2.2.1. </span>SIMT의 기초<a class="headerlink" href="#basics-of-simt" title="Link to this heading">#</a></h2>
+<p>개발자의 관점에서 CUDA 스레드는 병렬성의 기본 단위입니다.  <a class="reference internal" href="../01-introduction/programming-model.html"><span class="std std-ref">워프와 SIMT</span></a>에서는 GPU 실행의 기본 SIMT 모델을 설명하고, <a class="reference internal" href="../03-advanced/advanced-kernel-programming.html"><span class="std std-ref">SIMT 실행 모델</span></a>에서는 SIMT 모델의 추가 세부 정보를 제공합니다.  SIMT 모델을 통해 각 스레드는 자체 상태와 제어 흐름을 유지할 수 있습니다. 기능적 관점에서 각 스레드는 별도의 코드 경로를 실행할 수 있습니다.  그러나 동일한 워프 내 스레드들이 분기된 코드 경로를 취하는 상황을 커널 코드가 최소화하도록 주의를 기울이면 상당한 성능 개선을 달성할 수 있습니다.</p>
+</section>
+<section id="thread-hierarchy">
+<span id="writing-cuda-kernels-thread-hierarchy-review"></span><h2><span class="section-number">2.2.2. </span>스레드 계층 구조<a class="headerlink" href="#thread-hierarchy" title="Link to this heading">#</a></h2>
+<p>스레드는 스레드 블록으로 구성되며, 스레드 블록은 다시 그리드로 구성됩니다.  그리드는 1, 2 또는 3차원일 수 있으며, 그리드의 크기는 커널 내부에서 <code class="docutils literal notranslate"><span class="pre">gridDim</span></code> 빌트인 변수를 통해 조회할 수 있습니다.  스레드 블록 역시 1, 2 또는 3차원일 수 있습니다. 스레드 블록의 크기는 커널 내부에서 <code class="docutils literal notranslate"><span class="pre">blockDim</span></code> 빌트인 변수를 통해 조회할 수 있습니다. 스레드 블록의 인덱스는 <code class="docutils literal notranslate"><span class="pre">blockIdx</span></code> 빌트인 변수로 조회할 수 있습니다.  스레드 블록 내에서 스레드의 인덱스는 <code class="docutils literal notranslate"><span class="pre">threadIdx</span></code> 빌트인 변수를 사용해 얻습니다.  이러한 빌트인 변수는 각 스레드에 대해 고유한 전역 스레드 인덱스를 계산하는 데 사용되며, 이를 통해 각 스레드가 전역 메모리에서 특정 데이터를 로드/스토어하고 필요에 따라 고유한 코드 경로를 실행할 수 있게 됩니다.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gridDim.[x|y|z]</span></code>: <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">z</span></code> 차원에서 각각 그리드의 크기입니다.  이 값들은 커널 런치 시 설정됩니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blockDim.[x|y|z]</span></code>: <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">z</span></code> 차원에서 각각 블록의 크기입니다.  이 값들은 커널 런치 시 설정됩니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blockIdx.[x|y|z]</span></code>: <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">z</span></code> 차원에서 각각 블록의 인덱스입니다.  이 값들은 어떤 블록이 실행 중인지에 따라 변경됩니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">threadIdx.[x|y|z]</span></code>: <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">z</span></code> 차원에서 각각 스레드의 인덱스입니다.  이 값들은 어떤 스레드가 실행 중인지에 따라 변경됩니다.</p></li>
+</ul><p>다차원 스레드 블록과 그리드의 사용은 편의성을 위한 것일 뿐이며 성능에는 영향을 미치지 않습니다. 블록의 스레드는 예측 가능한 방식으로 선형화됩니다. 첫 번째 인덱스인 <code class="docutils literal notranslate"><span class="pre">x</span></code>이 가장 빠르게 변하고, 그다음 <code class="docutils literal notranslate"><span class="pre">y</span></code>, 그리고 <code class="docutils literal notranslate"><span class="pre">z</span></code> 순입니다. 이는 스레드 인덱스를 선형화했을 때, <code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code>의 연속 값이 연속 스레드를 나타내고, <code class="docutils literal notranslate"><span class="pre">threadIdx.y</span></code>의 스트라이드는 <code class="docutils literal notranslate"><span class="pre">blockDim.x</span></code>, <code class="docutils literal notranslate"><span class="pre">threadIdx.z</span></code>의 스트라이드는 <code class="docutils literal notranslate"><span class="pre">blockDim.x</span> <span class="pre">*</span> <span class="pre">blockDim.y</span></code>임을 의미합니다. 이는 <a class="reference internal" href="../03-advanced/advanced-kernel-programming.html"><span class="std std-ref">하드웨어 멀티스레딩</span></a>에서 자세히 설명하듯이 스레드가 워프에 할당되는 방식에 영향을 미칩니다.</p>
+<p><a class="reference internal" href="#writing-cuda-kernels-thread-hierarchy-review-grid-of-thread-blocks"><span class="std std-numref">그림 9</span></a>는 1D 스레드 블록을 사용하는 2D 그리드의 간단한 예를 보여줍니다.</p>
+<figure class="align-center" id="writing-cuda-kernels-thread-hierarchy-review-grid-of-thread-blocks">
+<a class="reference internal image-reference" href="../_images/grid-of-thread-blocks.png"><img alt="스레드 블록 그리드" loading="lazy" src="../_images/grid-of-thread-blocks.png" style="width: 454px;"/>
+</a>
+<figcaption>
+<p><span class="caption-number">그림 9 </span><span class="caption-text">스레드 블록 그리드</span><a class="headerlink" href="#writing-cuda-kernels-thread-hierarchy-review-grid-of-thread-blocks" title="이 이미지로의 링크">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="gpu-device-memory-spaces">
+<span id="writing-cuda-kernels-gpu-device-memory-spaces"></span><h2><span class="section-number">2.2.3. </span>GPU 디바이스 메모리 공간<a class="headerlink" href="#gpu-device-memory-spaces" title="이 제목으로의 링크">#</a></h2>
+<p>CUDA 디바이스에는 커널 내의 CUDA 스레드가 접근할 수 있는 여러 메모리 공간이 있습니다. <a class="reference internal" href="#writing-cuda-kernels-memory-types-scopes-lifetimes"><span class="std std-numref">표 1</span></a>은 일반적인 메모리 유형, 해당 스레드 범위, 그리고 수명의 요약을 보여줍니다. 다음 섹션에서는 이러한 각 메모리 유형을 더 자세히 설명합니다.</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table-no-stripes table" id="writing-cuda-kernels-memory-types-scopes-lifetimes">
+<caption><span class="caption-number">표 1 </span><span class="caption-text">메모리 유형, 범위 및 수명</span><a class="headerlink" href="#writing-cuda-kernels-memory-types-scopes-lifetimes" title="이 표로의 링크">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>메모리 유형</p></th>
+<th class="head"><p>범위</p></th>
+<th class="head"><p>수명</p></th>
+<th class="head"><p>위치</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>전역</p></td>
+<td><p>그리드</p></td>
+<td><p>애플리케이션</p></td>
+<td><p>디바이스</p></td>
+</tr>
+<tr class="row-odd"><td><p>상수</p></td>
+<td><p>그리드</p></td>
+<td><p>애플리케이션</p></td>
+<td><p>디바이스</p></td>
+</tr>
+<tr class="row-even"><td><p>공유</p></td>
+<td><p>블록</p></td>
+<td><p>커널</p></td>
+<td><p>SM</p></td>
+</tr>
+<tr class="row-odd"><td><p>로컬</p></td>
+<td><p>스레드</p></td>
+<td><p>커널</p></td>
+<td><p>디바이스</p></td>
+</tr>
+<tr class="row-even"><td><p>레지스터</p></td>
+<td><p>스레드</p></td>
+<td><p>커널</p></td>
+<td><p>SM</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="global-memory">
+<span id="writing-cuda-kernels-global-memory"></span><h3><span class="section-number">2.2.3.1. </span>전역 메모리<a class="headerlink" href="#global-memory" title="이 제목으로의 링크">#</a></h3>
+<p>전역 메모리(디바이스 메모리라고도 함)는 커널의 모든 스레드가 접근할 수 있는 데이터를 저장하기 위한 기본 메모리 공간입니다. 이는 CPU 시스템의 RAM과 유사합니다. GPU에서 실행되는 커널은 CPU에서 실행되는 코드가 시스템 메모리에 접근하는 것과 같은 방식으로 전역 메모리에 직접 접근할 수 있습니다.</p>
+<p>전역 메모리는 지속적(persistent)입니다. 즉, 전역 메모리에서 이루어진 할당과 그 안에 저장된 데이터는 해당 할당이 해제되거나 애플리케이션이 종료될 때까지 유지됩니다. <code class="docutils literal notranslate"><span class="pre">cudaDeviceReset</span></code> 또한 모든 할당을 해제합니다.</p>
+<p>전역 메모리는 <code class="docutils literal notranslate"><span class="pre">cudaMalloc</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cudaMallocManaged</span></code> 같은 CUDA API 호출로 할당됩니다. 데이터는 <code class="docutils literal notranslate"><span class="pre">cudaMemcpy</span></code> 같은 CUDA 런타임 API 호출을 사용하여 CPU 메모리에서 전역 메모리로 복사할 수 있습니다. CUDA API로 만들어진 전역 메모리 할당은 <code class="docutils literal notranslate"><span class="pre">cudaFree</span></code>를 사용하여 해제됩니다.</p>
+<p>커널 런치 전에 전역 메모리는 CUDA API 호출로 할당 및 초기화됩니다. 커널 실행 중에는 CUDA 스레드가 전역 메모리에서 데이터를 읽을 수 있으며, CUDA 스레드가 수행한 연산의 결과를 전역 메모리에 다시 쓸 수 있습니다. 커널 실행이 완료되면, 전역 메모리에 기록된 결과를 호스트로 다시 복사하거나 GPU의 다른 커널에서 사용할 수 있습니다.</p>
+<p>전역 메모리는 그리드의 모든 스레드가 접근할 수 있으므로, 스레드 간 데이터 레이스를 피하도록 주의해야 합니다. 호스트에서 런치된 CUDA 커널은 반환 타입이 <code class="docutils literal notranslate"><span class="pre">void</span></code>이므로, 커널이 계산한 수치 결과를 호스트로 반환하는 유일한 방법은 그 결과를 전역 메모리에 쓰는 것입니다.</p>
+<p>전역 메모리 사용을 보여주는 간단한 예는 아래의 <code class="docutils literal notranslate"><span class="pre">vecAdd</span></code> 커널로, 여기서 세 배열 <code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">C</span></code>은 전역 메모리에 있으며 이 벡터 더하기 커널이 이에 접근합니다.</p>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">vecAdd</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">vectorLength</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">workIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="o">*</span><span class="nb">blockDim</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">workIndex</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">vectorLength</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">C</span><span class="p">[</span><span class="n">workIndex</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">workIndex</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">B</span><span class="p">[</span><span class="n">workIndex</span><span class="p">];</span>
+</pre></div>
+</div>
+</section>
+<section id="shared-memory">
+<span id="writing-cuda-kernels-shared-memory"></span><h3><span class="section-number">2.2.3.2. </span>공유 메모리<a class="headerlink" href="#shared-memory" title="이 제목으로의 링크">#</a></h3>
+<p>공유 메모리는 스레드 블록의 모든 스레드가 접근할 수 있는 메모리 공간입니다. 이는 각 SM에 물리적으로 위치하며 L1 캐시, 즉 통합 데이터 캐시와 동일한 물리적 자원을 사용합니다. 공유 메모리의 데이터는 커널 실행 전체에 걸쳐 유지됩니다. 공유 메모리는 커널 실행 중 사용하기 위한 사용자 관리 스크래치패드로 볼 수 있습니다. 전역 메모리에 비해 크기는 작지만, 공유 메모리는 각 SM에 위치하므로 대역폭은 더 높고 지연 시간은 전역 메모리에 접근하는 것보다 더 낮습니다.</p>
+<p>공유 메모리는 스레드 블록의 모든 스레드가 접근할 수 있으므로, 동일한 스레드 블록 내 스레드 간 데이터 레이스를 피하도록 주의해야 합니다. 동일한 스레드 블록 내 스레드 간 동기화는 <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code> 함수를 사용하여 달성할 수 있습니다. 이 함수는 모든 스레드가 <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code> 호출 지점에 도달할 때까지 스레드 블록의 모든 스레드를 블록합니다.</p>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="c1">// assuming blockDim.x is 128</span>
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">example_syncthreads</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">input_data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">output_data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">__shared__</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">shared_data</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
+<span class="w">    </span><span class="c1">// Every thread writes to a distinct element of 'shared_data':</span>
+<span class="w">    </span><span class="n">shared_data</span><span class="p">[</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">input_data</span><span class="p">[</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">];</span>
+
+<span class="w">    </span><span class="c1">// All threads synchronize, guaranteeing all writes to 'shared_data' are ordered </span>
+<span class="w">    </span><span class="c1">// before any thread is unblocked from '__syncthreads()':</span>
+<span class="w">    </span><span class="nf">__syncthreads</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// A single thread safely reads 'shared_data':</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">shared_data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">output_data</span><span class="p">[</span><span class="nb">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>공유 메모리의 크기는 사용 중인 GPU 아키텍처에 따라 달라집니다. 공유 메모리와 L1 캐시는 동일한 물리적 공간을 공유하므로, 공유 메모리를 사용하면 커널에서 사용할 수 있는 L1 캐시 크기가 줄어듭니다. 또한 커널이 공유 메모리를 전혀 사용하지 않으면, 전체 물리적 공간이 L1 캐시에 의해 사용됩니다. CUDA 런타임 API는 <code class="docutils literal notranslate"><span class="pre">cudaGetDeviceProperties</span></code> 함수를 사용하고 <code class="docutils literal notranslate"><span class="pre">cudaDeviceProp.sharedMemPerMultiprocessor</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cudaDeviceProp.sharedMemPerBlock</span></code> 디바이스 속성을 조사하여, SM별 및 스레드 블록별로 공유 메모리 크기를 질의하는 함수를 제공합니다.</p>
+<p>CUDA 런타임 API는 공유 메모리에 더 많은 공간을 할당할지, 또는 L1 캐시에 더 많은 공간을 할당할지를 런타임에 알려주는 함수 <code class="docutils literal notranslate"><span class="pre">cudaFuncSetCacheConfig</span></code>를 제공합니다. 이 함수는 런타임에 선호도를 지정하지만, 반드시 반영된다고 보장되지는 않습니다. 런타임은 사용 가능한 자원과 커널의 요구 사항에 따라 자유롭게 결정을 내릴 수 있습니다.</p>
+<p>공유 메모리는 정적 및 동적으로 모두 할당할 수 있습니다.</p>
+<section id="static-allocation-of-shared-memory">
+<span id="writing-cuda-kernels-static-allocation-shared-memory"></span><h4><span class="section-number">2.2.3.2.1. </span>공유 메모리의 정적 할당<a class="headerlink" href="#static-allocation-of-shared-memory" title="이 제목으로의 링크">#</a></h4>
+<p>공유 메모리를 정적으로 할당하려면, 프로그래머는 <code class="docutils literal notranslate"><span class="pre">__shared__</span></code> 지정자를 사용하여 커널 내부에 변수를 선언해야 합니다. 해당 변수는 공유 메모리에 할당되며 커널 실행 기간 동안 유지됩니다. 이렇게 선언되는 공유 메모리의 크기는 컴파일 시점에 지정되어야 합니다. 예를 들어, 커널 본문에 위치한 다음 코드 스니펫은 1024개 요소를 갖는 <code class="docutils literal notranslate"><span class="pre">float</span></code> 타입의 공유 메모리 배열을 선언합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">__shared__</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">sharedArray</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>이 선언 이후에는 스레드 블록의 모든 스레드가 이 공유 메모리 배열에 접근할 수 있습니다. 동일한 스레드 블록 내 스레드 간 데이터 레이스를 피하도록 주의해야 하며, 일반적으로 <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code>를 사용합니다.</p>
+</section>
+<section id="dynamic-allocation-of-shared-memory">
+<span id="writing-cuda-kernels-dynamic-allocation-shared-memory"></span><h4><span class="section-number">2.2.3.2.2. </span>공유 메모리의 동적 할당<a class="headerlink" href="#dynamic-allocation-of-shared-memory" title="이 제목으로의 링크">#</a></h4>
+<p>공유 메모리를 동적으로 할당하려면, 프로그래머는 트리플 셰브론 표기법에서 커널 런치의 세 번째(선택적) 인자로 스레드 블록당 원하는 공유 메모리 크기를 바이트 단위로 지정할 수 있으며, 이는 <code class="docutils literal notranslate"><span class="pre">functionName&lt;&lt;&lt;grid,</span> <span class="pre">block,</span> <span class="pre">sharedMemoryBytes&gt;&gt;&gt;()</span></code>와 같습니다.</p>
+<p>그런 다음 커널 내부에서 프로그래머는 <code class="docutils literal notranslate"><span class="pre">extern</span> <span class="pre">__shared__</span></code> 지정자를 사용하여 커널 런치 시 동적으로 할당될 변수를 선언할 수 있습니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">extern</span><span class="w"> </span><span class="n">__shared__</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">sharedArray</span><span class="p">[];</span>
+</pre></div>
+</div>
+<p>한 가지 주의할 점은, 동적으로 할당된 공유 메모리 배열을 여러 개 원한다면 단일 <code class="docutils literal notranslate"><span class="pre">extern</span> <span class="pre">__shared__</span></code>을 포인터 연산을 사용해 수동으로 분할해야 한다는 것입니다. 예를 들어, 다음과 동등한 것을 원한다면,</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">short</span><span class="w"> </span><span class="n">array0</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
+<span class="kt">float</span><span class="w"> </span><span class="n">array1</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+<span class="kt">int</span><span class="w">   </span><span class="n">array2</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>동적으로 할당된 공유 메모리에서 배열을 다음과 같은 방식으로 선언하고 초기화할 수 있습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">extern</span><span class="w"> </span><span class="n">__shared__</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">array</span><span class="p">[];</span>
+
+<span class="kt">short</span><span class="o">*</span><span class="w"> </span><span class="n">array0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">short</span><span class="o">*</span><span class="p">)</span><span class="n">array</span><span class="p">;</span>
+<span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">array1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">array0</span><span class="p">[</span><span class="mi">128</span><span class="p">];</span>
+<span class="kt">int</span><span class="o">*</span><span class="w">   </span><span class="n">array2</span><span class="w"> </span><span class="o">=</span><span class="w">   </span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">array1</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>포인터는 가리키는 타입에 맞게 정렬(aligned)되어야 하므로, 예를 들어 다음 코드는 <code class="docutils literal notranslate"><span class="pre">array1</span></code>이 4바이트로 정렬되어 있지 않기 때문에 동작하지 않습니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">extern</span><span class="w"> </span><span class="n">__shared__</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">array</span><span class="p">[];</span>
+<span class="kt">short</span><span class="o">*</span><span class="w"> </span><span class="n">array0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">short</span><span class="o">*</span><span class="p">)</span><span class="n">array</span><span class="p">;</span>
+<span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">array1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">array0</span><span class="p">[</span><span class="mi">127</span><span class="p">];</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="registers">
+<span id="writing-cuda-kernels-registers"></span><h3><span class="section-number">2.2.3.3. </span>레지스터<a class="headerlink" href="#registers" title="이 제목으로의 링크">#</a></h3>
+<p>레지스터는 SM에 위치하며 스레드 로컬 범위를 가집니다. 레지스터 사용은 컴파일러가 관리하며, 레지스터는 커널 실행 동안 스레드 로컬 저장소로 사용됩니다. SM당 레지스터 수와 스레드 블록당 레지스터 수는 다음을 사용하여 조회할 수 있습니다 <code class="docutils literal notranslate"><span class="pre">regsPerMultiprocessor</span></code> 및 <code class="docutils literal notranslate"><span class="pre">regsPerBlock</span></code> GPU의 디바이스 속성입니다.</p>
+<p>NVCC는 개발자가 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">최대 레지스터 수를 지정할 수 있도록 합니다</a> 커널에서 사용될 최대 레지스터 수를 다음을 통해 <code class="docutils literal notranslate"><span class="pre">-maxrregcount</span></code> 옵션입니다. 이 옵션을 사용해 커널이 사용할 수 있는 레지스터 수를 줄이면 SM에서 더 많은 스레드 블록이 동시에 스케줄링될 수 있지만, 레지스터 스필링이 더 많이 발생할 수도 있습니다.</p>
+</section>
+<section id="local-memory">
+<span id="writing-cuda-kernels-local-memory"></span><h3><span class="section-number">2.2.3.4. </span>로컬 메모리<a class="headerlink" href="#local-memory" title="Link to this heading">#</a></h3>
+<p>로컬 메모리는 레지스터와 유사한 스레드 로컬 저장소이며 NVCC가 관리하지만, 로컬 메모리의 물리적 위치는 전역 메모리 공간에 있습니다. ‘로컬’이라는 레이블은 물리적 위치가 아니라 논리적 범위를 의미합니다. 로컬 메모리는 커널 실행 동안 스레드 로컬 저장소로 사용됩니다. 컴파일러가 로컬 메모리에 배치할 가능성이 높은 자동 변수는 다음과 같습니다:</p>
+<ul class="simple">
+<li><p>상수 값으로 인덱싱된다는 것을 판단할 수 없는 배열은</p></li>
+<li><p>레지스터 공간을 너무 많이 소비하게 되는 큰 구조체 또는 배열은</p></li>
+<li><p>커널이 사용 가능한 레지스터보다 더 많은 레지스터를 사용할 경우, 어떤 변수든 레지스터 스필링이 발생합니다.</p></li>
+</ul><p>로컬 메모리 공간은 디바이스 메모리에 상주하므로, 로컬 메모리 접근은 전역 메모리 접근과 동일한 지연 시간과 대역폭을 가지며 <a class="reference internal" href="#writing-cuda-kernels-coalesced-global-memory-access"><span class="std std-ref">병합된 전역 메모리 접근</span></a>에 설명된 것과 동일한 메모리 병합(coalescing) 요구 사항이 적용됩니다. 그러나 로컬 메모리는 연속적인 32비트 워드가 연속적인 스레드 ID에 의해 접근되도록 구성되어 있습니다. 따라서 워프(warp) 내 모든 스레드가 배열 변수의 동일한 인덱스나 구조체 변수의 동일한 멤버와 같이 동일한 상대 주소에 접근하는 한, 접근은 완전히 병합됩니다.</p>
+</section>
+<section id="constant-memory">
+<span id="writing-cuda-kernels-constant-memory"></span><h3><span class="section-number">2.2.3.5. </span>상수 메모리<a class="headerlink" href="#constant-memory" title="이 제목으로의 링크">#</a></h3>
+<p>상수 메모리는 그리드 범위를 가지며 애플리케이션의 수명 동안 접근할 수 있습니다. 상수 메모리는 디바이스에 상주하며 커널에서 읽기 전용입니다. 따라서 어떤 함수 밖에서 <code class="docutils literal notranslate"><span class="pre">__constant__</span></code> 지정자를 사용하여 호스트에서 선언하고 초기화해야 합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">__constant__</span></code> 메모리 공간 지정자는 다음과 같은 변수를 선언합니다:</p>
+<ul class="simple">
+<li><p>상수 메모리 공간에 상주하며,</p></li>
+<li><p>생성된 CUDA 컨텍스트의 수명을 가지며,</p></li>
+<li><p>디바이스마다 고유한 객체를 가지며,</p></li>
+<li><p>그리드 내의 모든 스레드에서, 그리고 런타임 라이브러리(<code class="docutils literal notranslate"><span class="pre">cudaGetSymbolAddress()</span></code> / <code class="docutils literal notranslate"><span class="pre">cudaGetSymbolSize()</span></code> / <code class="docutils literal notranslate"><span class="pre">cudaMemcpyToSymbol()</span></code> / <code class="docutils literal notranslate"><span class="pre">cudaMemcpyFromSymbol()</span></code>)를 통해 호스트에서 접근할 수 있습니다.</p></li>
+</ul>
+<p>상수 메모리의 총량은 <code class="docutils literal notranslate"><span class="pre">totalConstMem</span></code> 디바이스 속성 요소로 조회할 수 있습니다.</p>
+<p>상수 메모리는 각 스레드가 읽기 전용 방식으로 사용할 소량의 데이터에 유용합니다. 상수 메모리는 다른 메모리에 비해 작으며, 일반적으로 디바이스당 64KB입니다.</p>
+<p>상수 메모리를 선언하고 사용하는 예시 스니펫은 다음과 같습니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// In your .cu file</span>
+<span class="n">__constant__</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">coeffs</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+
+<span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">compute</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="n">out</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">coeffs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">coeffs</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="c1">// In your host code</span>
+<span class="kt">float</span><span class="w"> </span><span class="n">h_coeffs</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">4.0f</span><span class="p">};</span>
+<span class="n">cudaMemcpyToSymbol</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span><span class="w"> </span><span class="n">h_coeffs</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">h_coeffs</span><span class="p">));</span>
+<span class="n">compute</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">device_out</span><span class="p">);</span>
+</pre></div>
+</div>
+</section><section id="caches">
+<span id="writing-cuda-kernels-caches"></span><h3><span class="section-number">2.2.3.6. </span>캐시<a class="headerlink" href="#caches" title="Link to this heading">#</a></h3>
+<p>GPU 디바이스에는 L2 및 L1 캐시를 포함하는 다단계 캐시 구조가 있습니다.</p>
+<p>L2 캐시는 디바이스에 위치하며 모든 SM 간에 공유됩니다. L2 캐시의 크기는 다음을 통해 조회할 수 있습니다 <code class="docutils literal notranslate"><span class="pre">l2CacheSize</span></code> 함수의 디바이스 속성 요소 <code class="docutils literal notranslate"><span class="pre">cudaGetDeviceProperties</span></code>.</p>
+<p>위에서 설명한 바와 같이 <a class="reference internal" href="#writing-cuda-kernels-shared-memory"><span class="std std-ref">공유 메모리</span></a>, L1 캐시는 각 SM에 물리적으로 위치하며 공유 메모리가 사용하는 것과 동일한 물리적 공간을 사용합니다. 커널에서 공유 메모리를 사용하지 않는 경우, 전체 물리적 공간이 L1 캐시에 의해 사용됩니다.</p>
+<p>L2 및 L1 캐시는 개발자가 다양한 캐싱 동작을 지정할 수 있도록 하는 함수를 통해 제어할 수 있습니다. 이러한 함수의 자세한 내용은 <a class="reference internal" href="../03-advanced/advanced-kernel-programming.html"><span class="std std-ref">L1/공유 메모리 균형 구성</span></a>, <a class="reference internal" href="../04-special-topics/l2-cache-control.html"><span class="std std-ref">L2 캐시 제어</span></a>, 및 <a class="reference internal" href="../05-appendices/cpp-language-extensions.html"><span class="std std-ref">저수준 로드 및 스토어 함수</span></a>에서 확인할 수 있습니다.</p>
+<p>이러한 힌트를 사용하지 않으면, 컴파일러와 런타임이 캐시를 효율적으로 활용하기 위해 최선을 다할 것입니다.</p>
+</section>
+<section id="texture-and-surface-memory">
+<span id="writing-cuda-kernels-texture-surface"></span><h3><span class="section-number">2.2.3.7. </span>텍스처 및 서피스 메모리<a class="headerlink" href="#texture-and-surface-memory" title="Link to this heading">#</a></h3>
+<div class="admonition note">
+<p class="admonition-title">참고</p><p>일부 오래된 CUDA 코드는 텍스처 메모리를 사용할 수 있는데, 이는 이전 NVIDIA GPU에서 일부 시나리오에서 성능 이점을 제공했기 때문입니다. 현재 지원되는 모든 GPU에서 이러한 시나리오는 직접 로드 및 스토어 명령을 사용하여 처리할 수 있으며, 텍스처 및 서피스 메모리 명령을 사용해도 더 이상 어떤 성능 이점도 제공되지 않습니다.</p>
+</div><p>GPU에는 3D 렌더링에서 텍스처로 사용될 이미지로부터 데이터를 로드하기 위한 특수 명령이 있을 수 있습니다. CUDA는 이러한 명령과 이를 사용하기 위한 메커니즘을 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TEXTURE__OBJECT.html">텍스처 오브젝트 API</a> 및 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__SURFACE__OBJECT.html">서피스 오브젝트 API</a>로 제공합니다.</p>
+<p>현재 지원되는 어떤 NVIDIA GPU에서도 CUDA에서 텍스처 및 서피스 메모리를 사용하는 데 이점이 없으므로, 이 가이드에서는 더 이상 다루지 않습니다. CUDA 개발자는 이러한 API를 자유롭게 무시해도 됩니다. 기존 코드베이스에서 여전히 이를 사용하고 있는 개발자의 경우, 이러한 API에 대한 설명은 레거시 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html">CUDA C++ 프로그래밍 가이드</a>에서 여전히 찾아볼 수 있습니다.</p>
+</section>
+<section id="distributed-shared-memory">
+<span id="writing-cuda-kernels-distributed-shared-memory"></span><h3><span class="section-number">2.2.3.8. </span>분산 공유 메모리<a class="headerlink" href="#distributed-shared-memory" title="Link to this heading">#</a></h3>
+<p>컴퓨트 기능 9.0에서 도입되고 <a class="reference internal" href="../04-special-topics/cooperative-groups.html"><span class="std std-ref">코오퍼러티브 그룹(Cooperative Groups)</span></a>에 의해 지원되는 <a class="reference internal" href="../01-introduction/programming-model.html"><span class="std std-ref">스레드 블록 클러스터</span></a>는 스레드 블록 클러스터 내 스레드가 해당 클러스터에 참여하는 모든 스레드 블록의 공유 메모리에 접근할 수 있는 기능을 제공합니다. 이렇게 분할된 공유 메모리를 <em>분산 공유 메모리</em>라고 하며, 이에 대응하는 주소 공간을 분산 공유 메모리 주소 공간이라고 합니다. 스레드 블록 클러스터에 속한 스레드는 주소가 로컬 스레드 블록에 속하든 원격 스레드 블록에 속하든 상관없이, 분산 주소 공간에서 읽기, 쓰기 또는 아토믹 연산을 수행할 수 있습니다. 커널이 분산 공유 메모리를 사용하든 사용하지 않든, 정적 또는 동적 공유 메모리 크기 지정은 여전히 스레드 블록당입니다. 분산 공유 메모리의 크기는 클러스터당 스레드 블록 수에 스레드 블록당 공유 메모리 크기를 곱한 값일 뿐입니다.</p>
+<p>분산 공유 메모리에서 데이터에 접근하려면 모든 스레드 블록이 존재해야 합니다. 사용자는 다음을 사용하여 모든 스레드 블록이 실행을 시작했음을 보장할 수 있습니다 <code class="docutils literal notranslate"><span class="pre">cluster.sync()</span></code> 에서 <a class="reference internal" href="../05-appendices/device-callable-apis.html"><span class="std std-ref">class cluster_group</span></a>. 또한 사용자는 모든 분산 공유 메모리 연산이 스레드 블록이 종료되기 전에 발생하도록 보장해야 합니다. 예를 들어 원격 스레드 블록이 특정 스레드 블록의 공유 메모리를 읽으려고 하는 경우, 프로그램은 원격 스레드 블록이 읽는 공유 메모리 읽기가 완료된 후에야 해당 스레드 블록이 종료할 수 있도록 보장해야 합니다.</p>
+<p>스레드 블록 클러스터를 사용하여 GPU에서 이를 최적화하는 방법과 함께 간단한 히스토그램 계산을 살펴보겠습니다. 히스토그램을 계산하는 표준적인 방법은 각 스레드 블록의 공유 메모리에서 계산을 수행한 다음 전역 메모리 아토믹 연산을 수행하는 것입니다. 이 접근 방식의 한계는 공유 메모리 용량입니다. 히스토그램 bin이 더 이상 공유 메모리에 들어가지 않으면, 사용자는 히스토그램을 직접 계산해야 하며 따라서 전역 메모리에서 아토믹 연산을 수행해야 합니다. 분산 공유 메모리를 사용하면 CUDA는 중간 단계를 제공하며, 히스토그램 bin 크기에 따라 히스토그램을 공유 메모리, 분산 공유 메모리 또는 전역 메모리에서 직접 계산할 수 있습니다.</p>
+<p>아래의 CUDA 커널 예제는 히스토그램 bin 수에 따라 공유 메모리 또는 분산 공유 메모리에서 히스토그램을 계산하는 방법을 보여줍니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+
+<span class="c1">// Distributed Shared memory histogram kernel</span>
+<span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">clusterHist_kernel</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">bins</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">nbins</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">bins_per_block</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">__restrict__</span><span class="w"> </span><span class="n">input</span><span class="p">,</span>
+<span class="w">                                   </span><span class="kt">size_t</span><span class="w"> </span><span class="n">array_size</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">extern</span><span class="w"> </span><span class="n">__shared__</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">smem</span><span class="p">[];</span>
+<span class="w">  </span><span class="k">namespace</span><span class="w"> </span><span class="nn">cg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">cooperative_groups</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">tid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cg</span><span class="o">::</span><span class="n">this_grid</span><span class="p">().</span><span class="n">thread_rank</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Cluster initialization, size and calculating local bin offsets.</span>
+<span class="w">  </span><span class="n">cg</span><span class="o">::</span><span class="n">cluster_group</span><span class="w"> </span><span class="n">cluster</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cg</span><span class="o">::</span><span class="n">this_cluster</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">clusterBlockRank</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cluster</span><span class="p">.</span><span class="n">block_rank</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">cluster_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cluster</span><span class="p">.</span><span class="n">dim_blocks</span><span class="p">().</span><span class="n">x</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">bins_per_block</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">smem</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">//Initialize shared memory histogram to zeros</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// cluster synchronization ensures that shared memory is initialized to zero in</span>
+<span class="w">  </span><span class="c1">// all thread blocks in the cluster. It also ensures that all thread blocks</span>
+<span class="w">  </span><span class="c1">// have started executing and they exist concurrently.</span>
+<span class="w">  </span><span class="n">cluster</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tid</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">array_size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">gridDim</span><span class="p">.</span><span class="n">x</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ldata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+
+<span class="w">    </span><span class="c1">//Find the right histogram bin.</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">binid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ldata</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ldata</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">      </span><span class="n">binid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ldata</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">nbins</span><span class="p">)</span>
+<span class="w">      </span><span class="n">binid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nbins</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">//Find destination block rank and offset for computing</span>
+<span class="w">    </span><span class="c1">//distributed shared memory histogram</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">dst_block_rank</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)(</span><span class="n">binid</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">bins_per_block</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">dst_offset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binid</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">bins_per_block</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">//Pointer to target block shared memory</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">dst_smem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cluster</span><span class="p">.</span><span class="n">map_shared_rank</span><span class="p">(</span><span class="n">smem</span><span class="p">,</span><span class="w"> </span><span class="n">dst_block_rank</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">//Perform atomic update of the histogram bin</span>
+<span class="w">    </span><span class="n">atomicAdd</span><span class="p">(</span><span class="n">dst_smem</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dst_offset</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// cluster synchronization is required to ensure all distributed shared</span>
+<span class="w">  </span><span class="c1">// memory operations are completed and no thread block exits while</span>
+<span class="w">  </span><span class="c1">// other thread blocks are still accessing distributed shared memory</span>
+<span class="w">  </span><span class="n">cluster</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Perform global memory histogram, using the local distributed memory histogram</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">lbins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bins</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cluster</span><span class="p">.</span><span class="n">block_rank</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">bins_per_block</span><span class="p">;</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">bins_per_block</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">atomicAdd</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lbins</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">smem</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div><p>위의 커널은 필요한 분산 공유 메모리의 양에 따라 클러스터 크기를 런타임에 설정하여 런치할 수 있습니다. 히스토그램이 한 블록의 공유 메모리에 들어갈 만큼 충분히 작다면, 사용자는 클러스터 크기 1로 커널을 런치할 수 있습니다. 아래 코드 스니펫은 공유 메모리 요구 사항에 따라 클러스터 커널을 동적으로 런치하는 방법을 보여줍니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Launch via extensible launch</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">cudaLaunchConfig_t</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">  </span><span class="n">config</span><span class="p">.</span><span class="n">gridDim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">array_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">threads_per_block</span><span class="p">;</span>
+<span class="w">  </span><span class="n">config</span><span class="p">.</span><span class="n">blockDim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">threads_per_block</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// cluster_size depends on the histogram size.</span>
+<span class="w">  </span><span class="c1">// ( cluster_size == 1 ) implies no distributed shared memory, just thread block local shared memory</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">cluster_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="c1">// size 2 is an example here</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">nbins_per_block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nbins</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">cluster_size</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">//dynamic shared memory size is per block.</span>
+<span class="w">  </span><span class="c1">//Distributed shared memory size =  cluster_size * nbins_per_block * sizeof(int)</span>
+<span class="w">  </span><span class="n">config</span><span class="p">.</span><span class="n">dynamicSmemBytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nbins_per_block</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">CUDA_CHECK</span><span class="p">(</span><span class="o">::</span><span class="n">cudaFuncSetAttribute</span><span class="p">((</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">clusterHist_kernel</span><span class="p">,</span><span class="w"> </span><span class="n">cudaFuncAttributeMaxDynamicSharedMemorySize</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="n">dynamicSmemBytes</span><span class="p">));</span>
+
+<span class="w">  </span><span class="n">cudaLaunchAttribute</span><span class="w"> </span><span class="n">attribute</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">  </span><span class="n">attribute</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaLaunchAttributeClusterDimension</span><span class="p">;</span>
+<span class="w">  </span><span class="n">attribute</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">val</span><span class="p">.</span><span class="n">clusterDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cluster_size</span><span class="p">;</span>
+<span class="w">  </span><span class="n">attribute</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">val</span><span class="p">.</span><span class="n">clusterDim</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">  </span><span class="n">attribute</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">val</span><span class="p">.</span><span class="n">clusterDim</span><span class="p">.</span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">config</span><span class="p">.</span><span class="n">numAttrs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">  </span><span class="n">config</span><span class="p">.</span><span class="n">attrs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">attribute</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">cudaLaunchKernelEx</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="n">clusterHist_kernel</span><span class="p">,</span><span class="w"> </span><span class="n">bins</span><span class="p">,</span><span class="w"> </span><span class="n">nbins</span><span class="p">,</span><span class="w"> </span><span class="n">nbins_per_block</span><span class="p">,</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">array_size</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="memory-performance">
+<span id="writing-cuda-kernels-memory-performance"></span><h2><span class="section-number">2.2.4. </span>메모리 성능<a class="headerlink" href="#memory-performance" title="Link to this heading">#</a></h2><p>적절한 메모리 사용을 보장하는 것은 CUDA 커널에서 높은 성능을 달성하는 데 핵심입니다. 이 절에서는 CUDA 커널에서 높은 메모리 처리량을 달성하기 위한 몇 가지 일반 원칙과 예제를 다룹니다.</p>
+<section id="coalesced-global-memory-access">
+<span id="writing-cuda-kernels-coalesced-global-memory-access"></span><h3><span class="section-number">2.2.4.1. </span>병합된 전역 메모리 접근<a class="headerlink" href="#coalesced-global-memory-access" title="이 제목으로의 링크">#</a></h3>
+<p>전역 메모리는 32바이트 메모리 트랜잭션을 통해 접근됩니다. CUDA 스레드가 전역 메모리에서 데이터 워드 하나를 요청하면, 해당 워프(warp)는 그 워프 내 모든 스레드의 메모리 요청을, 각 스레드가 접근하는 워드의 크기와 스레드들에 걸친 메모리 주소 분포에 따라, 요청을 만족시키는 데 필요한 수의 메모리 트랜잭션으로 병합(coalesce)합니다. 예를 들어 스레드가 4바이트 워드를 요청하는 경우, 워프가 전역 메모리에 대해 생성하는 실제 메모리 트랜잭션은 총 32바이트가 됩니다. 메모리 시스템을 가장 효율적으로 사용하려면, 워프는 단일 메모리 트랜잭션에서 가져온 모든 메모리를 사용해야 합니다. 즉, 스레드가 전역 메모리에서 4바이트 워드를 요청하고 트랜잭션 크기가 32바이트일 때, 해당 워프의 다른 스레드들이 그 32바이트 요청에 포함된 다른 4바이트 데이터 워드를 사용할 수 있다면, 이는 메모리 시스템을 가장 효율적으로 사용하는 결과가 됩니다.</p>
+<p>간단한 예로, 워프 내 연속된 스레드들이 메모리에서 연속된 4바이트 워드를 요청한다면, 워프는 총 128바이트의 메모리를 요청하게 되며, 필요한 이 128바이트는 32바이트 메모리 트랜잭션 4번으로 가져오게 됩니다. 이는 메모리 시스템 활용률 100%를 의미합니다. 즉, 메모리 트래픽의 100%가 워프에 의해 활용됩니다. <a class="reference internal" href="#writing-cuda-kernels-128-byte-coalesced-access"><span class="std std-numref">그림 10</span></a>은 완벽하게 병합된 메모리 접근의 이 예를 보여줍니다.</p>
+<figure class="align-center" id="writing-cuda-kernels-128-byte-coalesced-access">
+<img alt="병합된 메모리 접근" loading="lazy" src="../_images/perfect_coalescing_32byte_segments.png"/>
+<figcaption>
+<p><span class="caption-number">그림 10 </span><span class="caption-text">병합된 메모리 접근</span><a class="headerlink" href="#writing-cuda-kernels-128-byte-coalesced-access" title="이 이미지로의 링크">#</a></p>
+</figcaption>
+</figure><p>반대로, 병적으로 최악의 시나리오는 연속된 스레드가 메모리에서 서로 32바이트 이상 떨어진 데이터 요소에 접근하는 경우입니다. 이 경우 워프(warp)는 각 스레드마다 32바이트 메모리 트랜잭션을 발행해야 하며, 메모리 트래픽의 총 바이트 수는 32바이트 × 32 스레드/워프 = 1024바이트가 됩니다. 그러나 실제로 사용되는 메모리 양은 128바이트뿐입니다(워프의 각 스레드당 4바이트). 따라서 메모리 활용률은 128 / 1024 = 12.5%에 불과합니다. 이는 메모리 시스템을 매우 비효율적으로 사용하는 것입니다. <a class="reference internal" href="#writing-cuda-kernels-128-byte-no-coalesced-access"><span class="std std-numref">그림 11</span></a>은 이러한 비병합(uncoalesced) 메모리 접근의 예를 보여줍니다.</p>
+<figure class="align-center" id="writing-cuda-kernels-128-byte-no-coalesced-access">
+<img alt="비병합된 메모리 접근" loading="lazy" src="../_images/no_coalescing_32byte_segments.png"/>
+<figcaption>
+<p><span class="caption-number">그림 11 </span><span class="caption-text">비병합된 메모리 접근</span><a class="headerlink" href="#writing-cuda-kernels-128-byte-no-coalesced-access" title="이 이미지로의 링크">#</a></p>
+</figcaption>
+</figure>
+<p>병합된 메모리 접근을 달성하는 가장 간단한 방법은 연속된 스레드가 메모리의 연속된 요소에 접근하도록 하는 것입니다. 예를 들어 1차원 스레드 블록으로 런치된 커널의 경우, 다음 <code class="docutils literal notranslate"><span class="pre">VecAdd</span></code> 커널은 병합된 메모리 접근을 달성합니다. 스레드 <code class="docutils literal notranslate"><span class="pre">workIndex</span></code>가 세 개의 배열에 접근하는 방식을 보면, 연속된 스레드(즉, <code class="docutils literal notranslate"><span class="pre">workIndex</span></code>의 연속 값으로 표시됨)가 배열에서 연속된 요소에 접근하는 것을 알 수 있습니다.</p>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">vecAdd</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">vectorLength</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">workIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="o">*</span><span class="nb">blockDim</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">workIndex</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">vectorLength</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">C</span><span class="p">[</span><span class="n">workIndex</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">workIndex</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">B</span><span class="p">[</span><span class="n">workIndex</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>병합된 메모리 접근을 달성하기 위해 연속된 스레드가 메모리의 연속된 요소에 접근해야 하는 요구 사항은 없으며, 이는 단지 병합이 달성되는 일반적인 방식일 뿐입니다. 워프 내 모든 스레드가 어떤 선형적 또는 치환(permuted)된 방식으로 메모리의 동일한 32바이트 세그먼트에서 요소에 접근하기만 하면 병합된 메모리 접근이 발생합니다. 다른 말로 하면, 병합된 메모리 접근을 달성하는 가장 좋은 방법은 사용된 바이트 수 대비 전송된 바이트 수의 비율을 최대화하는 것입니다.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>전역 메모리 접근의 적절한 병합(coalescing)을 보장하는 것은 고성능 CUDA 커널을 작성하기 위한 가장 중요한 성능 고려 사항 중 하나입니다. 애플리케이션은 메모리 시스템을 가능한 한 효율적으로 사용하는 것이 필수적입니다.</p>
+</div>
+<section id="matrix-transpose-example-using-global-memory">
+<span id="writing-cuda-kernels-matrix-transpose-example-global-memory"></span><h4><span class="section-number">2.2.4.1.1. </span>전역 메모리를 사용하는 행렬 전치 예제<a class="headerlink" href="#matrix-transpose-example-using-global-memory" title="이 제목으로의 링크">#</a></h4>
+<p>간단한 예로, 크기 N x N의 32비트 float 정사각 행렬을 행렬 <code class="docutils literal notranslate"><span class="pre">a</span></code>에서 행렬 <code class="docutils literal notranslate"><span class="pre">c</span></code>로 out-of-place 방식으로 전치하는 행렬 전치 커널을 고려해 봅시다. 이 예제는 2차원 그리드를 사용하며, 32 x 32 스레드 크기의 2차원 스레드 블록을 런치한다고 가정합니다. 즉, <code class="docutils literal notranslate"><span class="pre">blockDim.x</span> <span class="pre">=</span> <span class="pre">32</span></code> 및 <code class="docutils literal notranslate"><span class="pre">blockDim.y</span> <span class="pre">=</span> <span class="pre">32</span></code>이므로 각 2차원 스레드 블록은 행렬의 32 x 32 타일에서 동작합니다. 각 스레드는 행렬의 고유한 요소 하나에서 동작하므로 스레드의 명시적 동기화는 필요하지 않습니다. <a class="reference internal" href="#writing-cuda-kernels-figure-global-transpose"><span class="std std-numref">그림 12</span></a>는 이 행렬 전치 연산을 보여줍니다. 커널 소스 코드는 그림 뒤에 이어집니다.</p>
+<figure class="align-center" id="writing-cuda-kernels-figure-global-transpose">
+<img alt="전역 메모리를 사용하는 행렬 전치" loading="lazy" src="../_images/global_transpose.png"/>
+<figcaption>
+<p><span class="caption-number">그림 12 </span><span class="caption-text">전역 메모리를 사용하는 행렬 전치</span><a class="headerlink" href="#writing-cuda-kernels-figure-global-transpose" title="이 이미지로의 링크">#</a></p>
+<div class="legend">
+<blockquote>
+<div><p>각 행렬의 위쪽과 왼쪽에 있는 레이블은 2차원 스레드 블록 인덱스이며 타일 인덱스로도 볼 수 있는데, 여기서 각 작은 정사각형은 2차원 스레드 블록이 연산할 행렬의 타일을 나타냅니다. 이 예제에서 타일 크기는 32 x 32 요소이므로, 각 작은 정사각형은 행렬의 32 x 32 타일을 나타냅니다. 녹색 음영의 정사각형은 전치 연산 전과 후의 예시 타일 위치를 보여줍니다.</p>
+</div></blockquote>
+</div>
+</figcaption>
+</figure>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cm">/* macro to index a 1D memory array with 2D indices in row-major order */</span>
+<span class="cm">/* ld is the leading dimension, i.e. the number of columns in the matrix     */</span>
+
+<span class="cp">#define INDX( row, col, ld ) ( ( (row) * (ld) ) + (col) )</span>
+
+<span class="cm">/* CUDA kernel for naive matrix transpose */</span>
+
+<span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">naive_cuda_transpose</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">c</span><span class="w"> </span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">myCol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">myRow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockIdx</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">myRow</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">myCol</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">c</span><span class="p">[</span><span class="n">INDX</span><span class="p">(</span><span class="w"> </span><span class="n">myCol</span><span class="p">,</span><span class="w"> </span><span class="n">myRow</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">INDX</span><span class="p">(</span><span class="w"> </span><span class="n">myRow</span><span class="p">,</span><span class="w"> </span><span class="n">myCol</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)];</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="cm">/* end if */</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="cm">/* end naive_cuda_transpose */</span>
+</pre></div>
+</div>
+<p>이 커널이 병합된 메모리 접근을 달성하고 있는지 판단하려면, 연속된 스레드가 메모리의 연속된 요소에 접근하고 있는지 확인해야 합니다.  2차원 스레드 블록에서는 <code class="docutils literal notranslate"><span class="pre">x</span></code> 인덱스가 가장 빠르게 변하므로, <code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code>의 연속 값은 메모리의 연속된 요소에 접근해야 합니다.  <code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code>는 <code class="docutils literal notranslate"><span class="pre">myCol</span></code>에 나타나며, <code class="docutils literal notranslate"><span class="pre">myCol</span></code>가 <code class="docutils literal notranslate"><span class="pre">INDX</span></code> 매크로의 두 번째 인수일 때 연속된 스레드가 <code class="docutils literal notranslate"><span class="pre">a</span></code>의 연속된 값을 읽고 있음을 관찰할 수 있으므로, <code class="docutils literal notranslate"><span class="pre">a</span></code>의 읽기는 완벽하게 병합됩니다.</p>
+<p>그러나  <code class="docutils literal notranslate"><span class="pre">c</span></code> 의 쓰기는 병합되지 않는데, 이는 <code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code> (다시 살펴보면 <code class="docutils literal notranslate"><span class="pre">myCol</span></code>)는 다음에 요소를 쓰고 있습니다 <code class="docutils literal notranslate"><span class="pre">c</span></code> 인 <code class="docutils literal notranslate"><span class="pre">ld</span></code> (leading dimension) 요소만큼 서로 떨어져 있습니다. 이는 이제 <code class="docutils literal notranslate"><span class="pre">myCol</span></code> 가 다음의 첫 번째 인수이기 때문입니다 <code class="docutils literal notranslate"><span class="pre">INDX</span></code> 매크로의 첫 번째 인수이며, 또한 첫 번째 인수로 <code class="docutils literal notranslate"><span class="pre">INDX</span></code> 1씩 증가하므로 메모리 위치는 다음만큼 변경됩니다 <code class="docutils literal notranslate"><span class="pre">ld</span></code>.  때 <code class="docutils literal notranslate"><span class="pre">ld</span></code> 가 32보다 크면(행렬 크기가 32보다 클 때마다 발생), 이는 다음에 표시된 병적으로 최악의 경우와 동일합니다 <a class="reference internal" href="#writing-cuda-kernels-128-byte-no-coalesced-access"><span class="std std-numref">그림 11</span></a>.</p>
+<p>이러한 비병합(uncoalesced) 쓰기를 완화하기 위해, 공유 메모리를 사용할 수 있으며 이에 대해서는 다음 섹션에서 설명합니다.</p>
+</section>
+</section><section id="shared-memory-access-patterns">
+<span id="writing-cuda-kernels-shared-memory-access-patterns"></span><h3><span class="section-number">2.2.4.2. </span>공유 메모리 접근 패턴<a class="headerlink" href="#shared-memory-access-patterns" title="이 제목으로의 링크">#</a></h3><p>공유 메모리는 32개의 뱅크로 구성되며, 연속된 32비트 워드가 연속된 뱅크에 매핑되도록 조직되어 있습니다. 각 뱅크는 클록 사이클당 32비트의 대역폭을 가집니다.</p>
+<p>같은 워프(warp) 내의 여러 스레드가 동일한 뱅크의 서로 다른 요소에 접근하려고 하면 뱅크 충돌(bank conflict)이 발생합니다. 이 경우, 해당 뱅크의 데이터에 대한 접근은 그 뱅크의 데이터가 이를 요청한 모든 스레드에 의해 획득될 때까지 직렬화됩니다. 이러한 접근의 직렬화는 성능 페널티를 초래합니다.</p>
+<p>이 시나리오에 대한 두 가지 예외는 같은 워프(warp) 내의 여러 스레드가 동일한 공유 메모리 위치에 접근(읽기 또는 쓰기)하는 경우입니다. 읽기 접근의 경우, 워드는 요청한 스레드들에게 브로드캐스트됩니다. 쓰기 접근의 경우, 각 공유 메모리 주소는 스레드 중 하나에 의해서만 기록되며(어느 스레드가 쓰기를 수행하는지는 정의되지 않음),</p>
+<p><a class="reference internal" href="#writing-cuda-kernels-shared-memory-5-x-examples-of-strided-shared-memory-accesses"><span class="std std-numref">그림 13</span></a>은 스트라이드 접근의 몇 가지 예를 보여줍니다. 뱅크 내부의 빨간 상자는 공유 메모리에서의 고유한 위치를 나타냅니다.</p>
+<figure class="align-center" id="writing-cuda-kernels-shared-memory-5-x-examples-of-strided-shared-memory-accesses">
+<img alt="32비트 뱅크 크기 모드에서의 스트라이드 공유 메모리 접근." loading="lazy" src="../_images/examples-of-strided-shared-memory-accesses.png"/>
+<figcaption>
+<p><span class="caption-number">그림 13 </span><span class="caption-text">32비트 뱅크 크기 모드에서의 스트라이드 공유 메모리 접근.</span><a class="headerlink" href="#writing-cuda-kernels-shared-memory-5-x-examples-of-strided-shared-memory-accesses" title="이 이미지로의 링크">#</a></p>
+<div class="legend">
+<dl class="simple">
+<dt>왼쪽</dt><dd><p>32비트 워드 1개 스트라이드의 선형 주소 지정(뱅크 충돌 없음).</p>
+</dd>
+<dt>가운데</dt><dd><p>32비트 워드 2개 스트라이드의 선형 주소 지정(2-way 뱅크 충돌).</p>
+</dd>
+<dt>오른쪽</dt><dd><p>32비트 워드 3개 스트라이드의 선형 주소 지정(뱅크 충돌 없음).</p>
+</dd>
+</dl>
+</div>
+</figcaption>
+</figure><p><a class="reference internal" href="#writing-cuda-kernels-shared-memory-5-x-examples-of-irregular-shared-memory-accesses"><span class="std std-numref">그림 14</span></a>는 브로드캐스트 메커니즘이 포함된 메모리 읽기 접근의 몇 가지 예를 보여줍니다. 뱅크 내부의 빨간 상자는 공유 메모리 내의 고유한 위치를 나타냅니다. 여러 화살표가 같은 위치를 가리키면, 데이터는 이를 요청한 모든 스레드로 브로드캐스트됩니다.</p><figure class="align-center" id="writing-cuda-kernels-shared-memory-5-x-examples-of-irregular-shared-memory-accesses">
+<img alt="불규칙 공유 메모리 접근." loading="lazy" src="../_images/examples-of-irregular-shared-memory-accesses.png"/>
+<figcaption>
+<p><span class="caption-number">Figure 14 </span><span class="caption-text">불규칙 공유 메모리 접근.</span><a class="headerlink" href="#writing-cuda-kernels-shared-memory-5-x-examples-of-irregular-shared-memory-accesses" title="이 이미지로의 링크">#</a></p>
+<div class="legend">
+<dl class="simple">
+<dt>왼쪽</dt><dd><p>무작위 치환(permutation)을 통한 충돌 없는 접근.</p>
+</dd>
+<dt>가운데</dt><dd><p>스레드 3, 4, 6, 7, 9가 뱅크 5 내에서 같은 워드에 접근하므로 충돌 없는 접근.</p>
+</dd>
+<dt>오른쪽</dt><dd><p>충돌 없는 브로드캐스트 접근(스레드들이 한 뱅크 내에서 같은 워드에 접근).</p>
+</dd>
+</dl>
+</div>
+</figcaption>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>뱅크 충돌을 피하는 것은 공유 메모리를 사용하는 고성능 CUDA 커널을 작성할 때 중요한 성능 고려사항입니다.</p>
+</div>
+<section id="matrix-transpose-example-using-shared-memory">
+<span id="writing-cuda-kernels-matrix-transpose-example-shared-memory"></span><h4><span class="section-number">2.2.4.2.1. </span>공유 메모리를 사용한 행렬 전치 예제<a class="headerlink" href="#matrix-transpose-example-using-shared-memory" title="이 제목으로의 링크">#</a></h4>
+<p>이전 예제 <a class="reference internal" href="#writing-cuda-kernels-matrix-transpose-example-global-memory"><span class="std std-ref">전역 메모리를 사용한 행렬 전치 예제</span></a>에서는, 행렬 전치의 단순한 구현이 기능적으로는 올바르지만, <code class="docutils literal notranslate"><span class="pre">c</span></code> 행렬의 쓰기가 적절히 병합되지 않았기 때문에 전역 메모리를 효율적으로 사용하도록 최적화되어 있지 않음을 보여주었습니다. 이 예제에서는 공유 메모리를 사용자가 관리하는 캐시로 취급하여 전역 메모리로부터의 로드와 스토어를 스테이징하고, 그 결과 읽기와 쓰기 모두에서 병합된 전역 메모리 접근을 달성합니다.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-0">
+예제</label><div class="sd-tab-content docutils">
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cm">/* definitions of thread block size in X and Y directions */</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="cp">#define THREADS_PER_BLOCK_X 32</span>
+<span class="linenos"> 4</span><span class="cp">#define THREADS_PER_BLOCK_Y 32</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="cm">/* macro to index a 1D memory array with 2D indices in row-major order */</span>
+<span class="linenos"> 7</span><span class="cm">/* ld is the leading dimension, i.e. the number of columns in the matrix     */</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="cp">#define INDX( row, col, ld ) ( ( (row) * (ld) ) + (col) )</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="cm">/* CUDA kernel for shared memory matrix transpose */</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">smem_cuda_transpose</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">c</span><span class="w"> </span><span class="p">)</span>
+<span class="linenos">14</span><span class="p">{</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="w">    </span><span class="cm">/* declare a statically allocated shared memory array */</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="w">    </span><span class="kt">__shared__</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">smemArray</span><span class="p">[</span><span class="n">THREADS_PER_BLOCK_X</span><span class="p">][</span><span class="n">THREADS_PER_BLOCK_Y</span><span class="p">];</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span><span class="w">    </span><span class="cm">/* determine my row tile and column tile index */</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">tileCol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="linenos">23</span><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">tileRow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">blockIdx</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="w">    </span><span class="cm">/* read from global memory into shared memory array */</span>
+<span class="linenos">26</span><span class="w">    </span><span class="n">smemArray</span><span class="p">[</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">][</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">INDX</span><span class="p">(</span><span class="w"> </span><span class="n">tileRow</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">tileCol</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)];</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="w">    </span><span class="cm">/* synchronize the threads in the thread block */</span>
+<span class="linenos">29</span><span class="w">    </span><span class="nf">__syncthreads</span><span class="p">();</span>
+<span class="linenos">30</span>
+<span class="linenos">31</span><span class="w">    </span><span class="cm">/* write the result from shared memory to global memory */</span>
+<span class="linenos">32</span><span class="w">    </span><span class="n">c</span><span class="p">[</span><span class="n">INDX</span><span class="p">(</span><span class="w"> </span><span class="n">tileCol</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">tileRow</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smemArray</span><span class="p">[</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">][</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">];</span>
+<span class="linenos">33</span><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="linenos">34</span>
+<span class="linenos">35</span><span class="p">}</span><span class="w"> </span><span class="cm">/* end smem_cuda_transpose */</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-1">
+배열 검사 포함 예제</label><div class="sd-tab-content docutils">
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cm">/* definitions of thread block size in X and Y directions */</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="cp">#define THREADS_PER_BLOCK_X 32</span>
+<span class="linenos"> 4</span><span class="cp">#define THREADS_PER_BLOCK_Y 32</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="cm">/* macro to index a 1D memory array with 2D indices in column-major order */</span>
+<span class="linenos"> 7</span><span class="cm">/* ld is the leading dimension, i.e. the number of rows in the matrix     */</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="cp">#define INDX( row, col, ld ) ( ( (col) * (ld) ) + (row) )</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="cm">/* CUDA kernel for shared memory matrix transpose */</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">smem_cuda_transpose</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="p">,</span>
+<span class="linenos">14</span><span class="w">                                    </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">,</span>
+<span class="linenos">15</span><span class="w">                                    </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">c</span><span class="w"> </span><span class="p">)</span>
+<span class="linenos">16</span><span class="p">{</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="w">    </span><span class="cm">/* declare a statically allocated shared memory array */</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span><span class="w">    </span><span class="kt">__shared__</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">smemArray</span><span class="p">[</span><span class="n">THREADS_PER_BLOCK_X</span><span class="p">][</span><span class="n">THREADS_PER_BLOCK_Y</span><span class="p">];</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="w">    </span><span class="cm">/* determine my row and column indices for the error checking code */</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">myRow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="linenos">25</span><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">myCol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">blockIdx</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="w">    </span><span class="cm">/* determine my row tile and column tile index */</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">tileX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="linenos">30</span><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">tileY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">blockIdx</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">myRow</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">myCol</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)</span>
+<span class="linenos">33</span><span class="w">    </span><span class="p">{</span>
+<span class="linenos">34</span><span class="w">        </span><span class="cm">/* read from global memory into shared memory array */</span>
+<span class="linenos">35</span><span class="w">        </span><span class="n">smemArray</span><span class="p">[</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">][</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">INDX</span><span class="p">(</span><span class="w"> </span><span class="n">tileX</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">tileY</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)];</span>
+<span class="linenos">36</span><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="cm">/* end if */</span>
+<span class="linenos">37</span>
+<span class="linenos">38</span><span class="w">    </span><span class="cm">/* synchronize the threads in the thread block */</span>
+<span class="linenos">39</span><span class="w">    </span><span class="nf">__syncthreads</span><span class="p">();</span>
+<span class="linenos">40</span>
+<span class="linenos">41</span><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">myRow</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">myCol</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)</span>
+<span class="linenos">42</span><span class="w">    </span><span class="p">{</span>
+<span class="linenos">43</span><span class="w">        </span><span class="cm">/* write the result from shared memory to global memory */</span>
+<span class="linenos">44</span><span class="w">        </span><span class="n">c</span><span class="p">[</span><span class="n">INDX</span><span class="p">(</span><span class="w"> </span><span class="n">tileY</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">tileX</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smemArray</span><span class="p">[</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">][</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">];</span>
+<span class="linenos">45</span><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="cm">/* end if */</span>
+<span class="linenos">46</span><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="linenos">47</span>
+<span class="linenos">48</span><span class="p">}</span><span class="w"> </span><span class="cm">/* end smem_cuda_transpose */</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>이 예제에서 보여주는 근본적인 성능 최적화는 전역 메모리에 접근할 때 메모리 접근이 적절히 병합되도록 보장하는 것입니다. 복사 실행에 앞서, 각 스레드는 자신의 <code class="docutils literal notranslate"><span class="pre">tileRow</span></code> 및 <code class="docutils literal notranslate"><span class="pre">tileCol</span></code> 인덱스를 계산합니다. 이는 연산이 수행될 특정 타일에 대한 인덱스이며, 이러한 타일 인덱스는 어떤 스레드 블록이 실행 중인지에 따라 결정됩니다. 동일한 스레드 블록 내의 각 스레드는 같은 <code class="docutils literal notranslate"><span class="pre">tileRow</span></code> 및 <code class="docutils literal notranslate"><span class="pre">tileCol</span></code> 값을 가지므로, 이는 이 특정 스레드 블록이 연산할 타일의 시작 위치로 생각할 수 있습니다.</p>
+<p>그런 다음 커널은 다음 문장을 통해 각 스레드 블록이 행렬의 32 x 32 타일을 전역 메모리에서 공유 메모리로 복사하도록 진행합니다. 워프(warp)의 크기는 32개 스레드이므로, 이 복사 연산은 32개의 워프에 의해 실행되며 워프 간에는 실행 순서가 보장되지 않습니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">smemArray</span><span class="p">[</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">][</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">INDX</span><span class="p">(</span><span class="w"> </span><span class="n">tileRow</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">tileCol</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)];</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code>가 <code class="docutils literal notranslate"><span class="pre">INDX</span></code>의 두 번째 인자에 나타나므로, 연속된 스레드들이 메모리의 연속된 요소에 접근하게 되며 <code class="docutils literal notranslate"><span class="pre">a</span></code>의 읽기는 완벽하게 병합됩니다.</p>
+<p>커널의 다음 단계는 <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code> 함수 호출입니다. 이는 스레드 블록의 모든 스레드가 진행하기 전에 이전 코드의 실행을 완료했음을 보장하며, 따라서 공유 메모리에 <code class="docutils literal notranslate"><span class="pre">a</span></code>를 쓰는 작업이 다음 단계 전에 완료되었음을 보장합니다. 이는 다음 단계에서 스레드들이 공유 메모리에서 읽기를 수행하게 되므로 매우 중요합니다. <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code> 호출이 없다면, 공유 메모리에 <code class="docutils literal notranslate"><span class="pre">a</span></code>를 읽어들이는 작업이 스레드 블록의 모든 워프(warp)에서 완료되기 전에 일부 워프가 코드에서 더 आगे 진행할 수 있다는 점에서, 완료가 보장되지 않습니다.</p>
+<p>커널의 이 시점에서, 각 스레드 블록에 대해 <code class="docutils literal notranslate"><span class="pre">smemArray</span></code>에는 원본 행렬과 동일한 순서로 배치된 행렬의 32 x 32 타일이 들어 있습니다. 타일 내 요소들이 올바르게 전치되도록 하기 위해, <code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code> 및 <code class="docutils literal notranslate"><span class="pre">threadIdx.y</span></code>는 <code class="docutils literal notranslate"><span class="pre">smemArray</span></code>를 읽을 때 서로 교환됩니다. 전체 타일이 <code class="docutils literal notranslate"><span class="pre">c</span></code>에서 올바른 위치에 놓이도록 하기 위해, <code class="docutils literal notranslate"><span class="pre">tileRow</span></code> 및 <code class="docutils literal notranslate"><span class="pre">tileCol</span></code> 인덱스도 <code class="docutils literal notranslate"><span class="pre">c</span></code>에 쓸 때 서로 교환됩니다. 적절한 병합(coalescing)을 보장하기 위해, 아래 문장에 보이듯이 <code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code>가 <code class="docutils literal notranslate"><span class="pre">INDX</span></code>의 두 번째 인자에서 사용됩니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="p">[</span><span class="n">INDX</span><span class="p">(</span><span class="w"> </span><span class="n">tileCol</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">tileRow</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smemArray</span><span class="p">[</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">][</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>이 커널은 공유 메모리의 두 가지 일반적인 사용 사례를 보여줍니다.</p>
+<ul class="simple">
+<li><p>공유 메모리는 전역 메모리로부터의 데이터를 스테이징하여, 전역 메모리에서의 읽기와 쓰기 모두가 적절히 병합되도록 하는 데 사용됩니다.</p></li>
+<li><p>공유 메모리는 동일한 스레드 블록 내 스레드들이 서로 데이터를 공유할 수 있도록 하는 데 사용됩니다.</p></li>
+</ul>
+</section>
+<section id="shared-memory-bank-conflicts">
+<span id="writing-cuda-kernels-shared-memory-bank-conflicts"></span><h4><span class="section-number">2.2.4.2.2. </span>공유 메모리 뱅크 충돌(bank conflict)<a class="headerlink" href="#shared-memory-bank-conflicts" title="이 제목으로의 링크">#</a></h4><p><a class="reference internal" href="#writing-cuda-kernels-shared-memory-access-patterns"><span class="std std-numref">섹션 2.2.4.2</span></a>에서 공유 메모리의 뱅크 구조를 설명했습니다. 이전 행렬 전치 예제에서는 전역 메모리로부터/전역 메모리로의 적절한 병합된 메모리 접근을 달성했지만, 공유 메모리 뱅크 충돌이 존재하는지 여부는 고려하지 않았습니다. 다음 2차원 공유 메모리 선언을 고려해 봅시다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">__shared__</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">smemArray</span><span class="p">[</span><span class="mi">32</span><span class="p">][</span><span class="mi">32</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>워프(warp)는 32개 스레드이므로, 같은 워프에 있는 각 스레드는 <code class="docutils literal notranslate"><span class="pre">threadIdx.y</span></code>에 대해 고정된 값을 가지며 <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">threadIdx.x</span> <span class="pre">&lt;</span> <span class="pre">32</span></code>를 가지게 됩니다.</p>
+<p><a class="reference internal" href="#writing-cuda-kernels-figure-bank-conflicts-shared-mem"><span class="std std-numref">그림 15</span></a>의 왼쪽 패널은 워프 내 스레드들이 <code class="docutils literal notranslate"><span class="pre">smemArray</span></code>의 한 열(column)에 있는 데이터에 접근할 때의 상황을 보여줍니다. 워프 0은 메모리 위치 <code class="docutils literal notranslate"><span class="pre">smemArray[0][0]</span></code>부터 <code class="docutils literal notranslate"><span class="pre">smemArray[31][0]</span></code>까지에 접근하고 있습니다. C++ 다차원 배열 순서에서는 마지막 인덱스가 가장 빠르게 변하므로, 워프 0의 연속된 스레드들은 32개 요소 간격으로 떨어진 메모리 위치들에 접근하게 됩니다. 그림에 나타난 것처럼 색은 뱅크를 나타내며, 워프 0이 전체 열을 따라 접근하면 32-way 뱅크 충돌이 발생합니다.</p>
+<p><a class="reference internal" href="#writing-cuda-kernels-figure-bank-conflicts-shared-mem"><span class="std std-numref">그림 15</span></a>의 오른쪽 패널은 워프 내 스레드들이 <code class="docutils literal notranslate"><span class="pre">smemArray</span></code>의 한 행(row)을 가로질러 데이터에 접근할 때의 상황을 보여줍니다. 워프 0은 메모리 위치 <code class="docutils literal notranslate"><span class="pre">smemArray[0][0]</span></code>부터 <code class="docutils literal notranslate"><span class="pre">smemArray[0][31]</span></code>까지에 접근하고 있습니다. 이 경우 워프 0의 연속된 스레드들은 서로 인접한 메모리 위치들에 접근합니다. 그림에 나타난 것처럼 색은 뱅크를 나타내며, 워프 0이 전체 행을 가로질러 접근하면 뱅크 충돌이 발생하지 않습니다. 이상적인 시나리오는 워프 내 각 스레드가 서로 다른 색의 공유 메모리 위치에 접근하는 것입니다.</p><figure class="align-center" id="writing-cuda-kernels-figure-bank-conflicts-shared-mem">
+<img alt="공유 메모리의 뱅크 구조" loading="lazy" src="../_images/bank-conflicts-shared-mem.png"/>
+<figcaption>
+<p><span class="caption-number">그림 15 </span><span class="caption-text">32 x 32 공유 메모리 배열의 뱅크 구조.</span><a class="headerlink" href="#writing-cuda-kernels-figure-bank-conflicts-shared-mem" title="이 이미지로의 링크">#</a></p>
+<div class="legend">
+<p>상자 안의 숫자는 워프 인덱스를 나타냅니다. 색은 해당 공유 메모리 위치와 연관된 뱅크가 무엇인지를 나타냅니다.</p>
+</div>
+</figcaption>
+</figure>
+<p><a class="reference internal" href="#writing-cuda-kernels-matrix-transpose-example-shared-memory"><span class="std std-numref">섹션 2.2.4.2.1</span></a>의 예제로 돌아가면, 공유 메모리의 사용을 살펴 뱅크 충돌이 존재하는지 여부를 판단할 수 있습니다. 공유 메모리를 처음 사용하는 경우는 전역 메모리의 데이터를 공유 메모리에 저장할 때입니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">smemArray</span><span class="p">[</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">][</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">INDX</span><span class="p">(</span><span class="w"> </span><span class="n">tileRow</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">tileCol</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)];</span>
+</pre></div>
+</div>
+<p>C++ 배열은 행 우선(row-major) 순서로 저장되므로, <code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code>의 연속된 값으로 표시되듯이 같은 워프(warp) 내의 연속된 스레드들은 32개 요소 스트라이드로 <code class="docutils literal notranslate"><span class="pre">smemArray</span></code>에 접근하게 되는데, 이는 <code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code>가 배열에 대한 첫 번째 인덱스이기 때문입니다. 이로 인해 32-way 뱅크 충돌(bank conflict)이 발생하며, 이는 <a class="reference internal" href="#writing-cuda-kernels-figure-bank-conflicts-shared-mem"><span class="std std-numref">그림 15</span></a>의 왼쪽 패널에 나타나 있습니다.</p>
+<p>공유 메모리의 두 번째 사용은 공유 메모리의 데이터를 다시 전역 메모리에 기록할 때입니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="p">[</span><span class="n">INDX</span><span class="p">(</span><span class="w"> </span><span class="n">tileCol</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">tileRow</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smemArray</span><span class="p">[</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">y</span><span class="p">][</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">];</span>
+</pre></div>
+</div><p>이 경우 <code class="docutils literal notranslate"><span class="pre">threadIdx.x</span></code>는 <code class="docutils literal notranslate"><span class="pre">smemArray</span></code> 배열에 대한 두 번째 인덱스이므로, 같은 워프(warp) 내의 연속된 스레드들은 1개 요소 스트라이드로 <code class="docutils literal notranslate"><span class="pre">smemArray</span></code>에 접근하게 됩니다. 이는 뱅크 충돌(bank conflict)이 발생하지 않으며, <a class="reference internal" href="#writing-cuda-kernels-figure-bank-conflicts-shared-mem"><span class="std std-numref">그림 15</span></a>의 오른쪽 패널에 나타나 있습니다.</p><p><a class="reference internal" href="#writing-cuda-kernels-matrix-transpose-example-shared-memory"><span class="std std-numref">섹션 2.2.4.2.1</span></a>에 설명된 행렬 전치 커널에는 뱅크 충돌이 없는 공유 메모리 접근 1개와 32-way 뱅크 충돌이 있는 접근 1개가 있습니다. 뱅크 충돌을 피하기 위한 일반적인 수정 방법은 다음과 같이 배열의 열 차원에 1을 더해 공유 메모리를 패딩하는 것입니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">__shared__</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">smemArray</span><span class="p">[</span><span class="n">THREADS_PER_BLOCK_X</span><span class="p">][</span><span class="n">THREADS_PER_BLOCK_Y</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+</pre></div>
+</div><p><code class="docutils literal notranslate"><span class="pre">smemArray</span></code> 선언에 대한 이 작은 조정은 뱅크 충돌(bank conflict)을 제거합니다. 이를 설명하기 위해, 공유 메모리 배열이 32 x 33 크기로 선언된 <a class="reference internal" href="#writing-cuda-kernels-figure-no-bank-conflicts-shared-mem"><span class="std std-numref">그림 16</span></a>을 고려해 보겠습니다. 같은 워프(warp) 내의 스레드들이 공유 메모리 배열의 전체 열(column) 방향으로 접근하든 전체 행(row) 방향으로 가로질러 접근하든, 뱅크 충돌이 제거되었음을 관찰할 수 있습니다. 즉, 같은 워프 내의 스레드들이 서로 다른 색상의 위치에 접근합니다.</p>
+<figure class="align-center" id="writing-cuda-kernels-figure-no-bank-conflicts-shared-mem">
+<img alt="공유 메모리의 뱅크 구조" loading="lazy" src="../_images/no-bank-conflicts-shared-mem.png"/>
+<figcaption>
+<p><span class="caption-number">Figure 16 </span><span class="caption-text">32 x 33 공유 메모리 배열의 뱅크 구조.</span><a class="headerlink" href="#writing-cuda-kernels-figure-no-bank-conflicts-shared-mem" title="이 이미지로의 링크">#</a></p>
+<div class="legend">
+<p>상자 안의 숫자는 워프 인덱스를 나타냅니다. 색상은 해당 공유 메모리 위치와 연관된 뱅크를 나타냅니다.</p>
+</div>
+</figcaption>
+</figure>
+</section>
+</section>
+</section>
+<section id="atomics">
+<span id="writing-cuda-kernels-atomics"></span><h2><span class="section-number">2.2.5. </span>원자 연산(Atomics)<a class="headerlink" href="#atomics" title="이 제목으로의 링크">#</a></h2>
+<p>고성능 CUDA 커널은 가능한 한 많은 알고리즘적 병렬성을 표현하는 데 의존합니다. GPU 커널 실행의 비동기적 특성 때문에 스레드는 가능한 한 독립적으로 동작해야 합니다. 스레드의 완전한 독립성을 항상 확보할 수는 없으며, <a class="reference internal" href="#writing-cuda-kernels-shared-memory"><span class="std std-ref">공유 메모리</span></a>에서 보았듯이 같은 스레드 블록 내의 스레드들이 데이터를 교환하고 동기화할 수 있는 메커니즘이 존재합니다.</p>
+<p>전체 그리드 수준에서는 그리드의 모든 스레드를 동기화하는 그러한 메커니즘이 없습니다. 하지만 원자 함수를 사용하여 전역 메모리 위치에 대한 동기적 접근을 제공하는 메커니즘은 존재합니다. 원자 함수는 스레드가 전역 메모리 위치에 락을 획득한 뒤 해당 위치에서 읽기-수정-쓰기 연산을 수행할 수 있게 합니다. 락이 유지되는 동안에는 다른 어떤 스레드도 같은 위치에 접근할 수 없습니다. CUDA는 <code class="docutils literal notranslate"><span class="pre">cuda::std::atomic</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cuda::std::atomic_ref</span></code>에 있는 것처럼 C++ 표준 라이브러리 원자 연산과 동일한 동작을 하는 원자 연산을 제공합니다. 또한 CUDA는 확장된 C++ 원자 연산 <code class="docutils literal notranslate"><span class="pre">cuda::atomic</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cuda::atomic_ref</span></code>도 제공하며, 이는 사용자가 원자 연산의 <a class="reference internal" href="../03-advanced/advanced-kernel-programming.html"><span class="std std-ref">스레드 스코프</span></a>를 지정할 수 있게 해줍니다. 원자 함수의 자세한 내용은 <a class="reference internal" href="../05-appendices/cpp-language-extensions.html"><span class="std std-ref">원자 함수</span></a>에서 다룹니다.</p>
+<p>디바이스 전체에 대한 원자 덧셈을 수행하기 위해 <code class="docutils literal notranslate"><span class="pre">cuda::atomic_ref</span></code>를 사용하는 예는 다음과 같습니다. 여기서 <code class="docutils literal notranslate"><span class="pre">array</span></code>는 float 배열이고, <code class="docutils literal notranslate"><span class="pre">result</span></code>는 전역 메모리의 한 위치를 가리키는 float 포인터로, 배열의 합이 저장될 위치입니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">sumReduction</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">array</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="p">...</span>
+<span class="w">   </span><span class="n">tid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+
+<span class="w">   </span><span class="n">cuda</span><span class="o">::</span><span class="n">atomic_ref</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_device</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result_ref</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+<span class="w">   </span><span class="n">result_ref</span><span class="p">.</span><span class="n">fetch_add</span><span class="p">(</span><span class="n">array</span><span class="p">[</span><span class="n">tid</span><span class="p">]);</span>
+<span class="w">   </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>원자 함수는 성능에 영향을 줄 수 있는 스레드 동기화를 강제하므로, 필요한 경우에만 제한적으로 사용해야 합니다.</p>
+</section>
+<section id="cooperative-groups">
+<span id="writing-cuda-kernels-cooperative-groups"></span><h2><span class="section-number">2.2.6. </span>코오퍼러티브 그룹(Cooperative Groups)<a class="headerlink" href="#cooperative-groups" title="이 제목으로의 링크">#</a></h2>
+<p><a class="reference internal" href="../04-special-topics/cooperative-groups.html"><span class="std std-ref">코오퍼러티브 그룹(Cooperative Groups)</span></a>은 CUDA C++에서 사용할 수 있는 소프트웨어 도구로, 애플리케이션이 서로 동기화할 수 있는 스레드 그룹을 정의할 수 있게 하며, 그 스레드 그룹이 여러 스레드 블록, 단일 GPU 상의 여러 그리드, 또는 여러 GPU에 걸쳐 있더라도 가능합니다. CUDA 프로그래밍 모델은 일반적으로 스레드 블록 또는 스레드 블록 클러스터 내의 스레드들이 효율적으로 동기화하는 것을 허용하지만, 스레드 블록이나 클러스터보다 더 작은 스레드 그룹을 지정하는 메커니즘은 제공하지 않습니다. 마찬가지로, CUDA 프로그래밍 모델은 스레드 블록 간 동기화를 가능하게 하는 메커니즘이나 보장을 제공하지 않습니다.</p>
+<p>코오퍼러티브 그룹은 소프트웨어를 통해 이 두 가지 기능을 모두 제공합니다. 코오퍼러티브 그룹은 애플리케이션이 스레드 블록과 클러스터의 경계를 넘나드는 스레드 그룹을 생성할 수 있게 하지만, 그렇게 하는 데에는 일부 의미론적 제한과 성능상의 영향이 따르며, 이는 <a class="reference internal" href="../04-special-topics/cooperative-groups.html"><span class="std std-ref">코오퍼러티브 그룹을 다루는 기능 섹션</span></a>에 자세히 설명되어 있습니다.</p>
+</section>
+<section id="kernel-launch-and-occupancy">
+<span id="writing-cuda-kernels-kernel-launch-and-occupancy"></span><h2><span class="section-number">2.2.7. </span>커널 런치와 점유율(Occupancy)<a class="headerlink" href="#kernel-launch-and-occupancy" title="이 제목으로의 링크">#</a></h2>
+<p>CUDA 커널이 런치되면, 커널 런치 시 지정된 실행 구성에 따라 CUDA 스레드들이 스레드 블록과 그리드로 그룹화됩니다. 커널이 런치되면 스케줄러는 스레드 블록을 SM에 할당합니다. 어떤 스레드 블록이 어떤 SM에서 실행되도록 스케줄되는지에 대한 상세는 애플리케이션이 제어하거나 질의할 수 없으며, 스케줄러는 순서 보장도 제공하지 않으므로, 프로그램은 올바른 실행을 위해 특정 스케줄링 순서나 방식에 의존할 수 없습니다.</p>
+<p>SM에서 스케줄될 수 있는 블록 수는 특정 스레드 블록이 필요로 하는 하드웨어 자원과 SM에서 사용 가능한 하드웨어 자원에 따라 달라집니다. 커널이 처음 런치되면 스케줄러는 스레드 블록을 SM에 할당하기 시작합니다. 다른 스레드 블록에 의해 점유되지 않은 하드웨어 자원이 충분히 남아 있는 한, 스케줄러는 계속해서 스레드 블록을 SM에 할당합니다. 어느 시점에 어떤 SM도 추가 스레드 블록을 받아들일 수 있는 용량이 없게 되면, 스케줄러는 SM들이 이전에 할당된 스레드 블록을 완료할 때까지 기다립니다. 이렇게 되면 SM은 더 많은 작업을 받아들일 수 있게 되고, 스케줄러는 스레드 블록을 그들에게 할당합니다. 이 과정은 모든 스레드 블록이 스케줄되고 실행될 때까지 계속됩니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cudaGetDeviceProperties</span></code> 함수는 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html">디바이스 속성</a>을 통해 각 SM의 한계를 애플리케이션이 질의할 수 있게 해줍니다. SM별 한계와 스레드 블록별 한계가 모두 존재한다는 점에 유의하십시오.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">maxBlocksPerMultiProcessor</span></code>: SM당 상주(resident) 블록의 최대 개수.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sharedMemPerMultiprocessor</span></code>: 바이트 단위로 SM당 사용 가능한 공유 메모리의 양.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regsPerMultiprocessor</span></code>: SM당 사용 가능한 32비트 레지스터의 개수.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">maxThreadsPerMultiProcessor</span></code>: SM당 상주 스레드의 최대 개수.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sharedMemPerBlock</span></code>: 바이트 단위로 스레드 블록이 할당할 수 있는 공유 메모리의 최대량.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regsPerBlock</span></code>: 스레드 블록이 할당할 수 있는 32비트 레지스터의 최대 개수.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">maxThreadsPerBlock</span></code>: 스레드 블록당 최대 스레드 수.</p></li>
+</ul>
+<p>CUDA 커널의 점유율(occupancy)은 활성 워프(warp) 수를 SM이 지원하는 최대 활성 워프 수로 나눈 비율입니다. 일반적으로 점유율을 가능한 한 높게 유지하는 것이 좋은 관행이며, 이는 지연을 숨기고 성능을 향상시킵니다.</p>
+<p>점유율을 계산하려면, 방금 설명한 SM의 자원 한계를 알아야 하며, 또한 해당 CUDA 커널이 필요로 하는 자원이 무엇인지 알아야 합니다. 커널별 자원 사용량을 결정하기 위해, 프로그램 컴파일 과정에서 <code class="docutils literal notranslate"><span class="pre">--resource-usage</span></code> <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">옵션</a>을 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>에 사용하면 커널에 필요한 레지스터와 공유 메모리의 개수를 보여줍니다.</p>
+<p>설명을 위해, <a class="reference internal" href="#writing-cuda-kernels-sm-resource-example"><span class="std std-numref">표 2</span></a>에 열거된 디바이스 속성을 가진 compute capability 10.0 같은 디바이스를 고려해 봅시다.</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table-no-stripes table" id="writing-cuda-kernels-sm-resource-example">
+<caption><span class="caption-number">Table 2 </span><span class="caption-text">SM 자원 예제</span><a class="headerlink" href="#writing-cuda-kernels-sm-resource-example" title="이 표로의 링크">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>자원</p></th>
+<th class="head"><p>값</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">maxBlocksPerMultiProcessor</span></code></p></td>
+<td><p>32</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sharedMemPerMultiprocessor</span></code></p></td>
+<td><p>233472</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">regsPerMultiprocessor</span></code></p></td>
+<td><p>65536</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">maxThreadsPerMultiProcessor</span></code></p></td>
+<td><p>2048</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sharedMemPerBlock</span></code></p></td>
+<td><p>49152</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">regsPerBlock</span></code></p></td>
+<td><p>65536</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">maxThreadsPerBlock</span></code></p></td>
+<td><p>1024</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>커널이 <code class="docutils literal notranslate"><span class="pre">testKernel&lt;&lt;&lt;512,</span> <span class="pre">768&gt;&gt;&gt;()</span></code>로 런치되었다면, 즉 블록당 768 스레드인 경우, 각 SM은 한 번에 스레드 블록 2개만 실행할 수 있습니다. 스케줄러는 SM당 2개를 초과하는 스레드 블록을 할당할 수 없는데, <code class="docutils literal notranslate"><span class="pre">maxThreadsPerMultiProcessor</span></code>가 2048이기 때문입니다. 따라서 점유율은 (768 * 2) / 2048, 즉 75%가 됩니다.</p>
+<p>커널이 <code class="docutils literal notranslate"><span class="pre">testKernel&lt;&lt;&lt;512,</span> <span class="pre">32&gt;&gt;&gt;()</span></code>로 런치되었다면, 즉 블록당 32 스레드인 경우, 각 SM은 <code class="docutils literal notranslate"><span class="pre">maxThreadsPerMultiProcessor</span></code>에 대한 한계에는 걸리지 않지만, <code class="docutils literal notranslate"><span class="pre">maxBlocksPerMultiProcessor</span></code>가 32이므로 스케줄러는 각 SM에 스레드 블록 32개만 할당할 수 있습니다. 블록의 스레드 수가 32이므로, SM에 상주하는 총 스레드 수는 32 블록 * 블록당 32 스레드, 즉 총 1024 스레드가 됩니다. compute capability 10.0 SM의 SM당 상주 스레드 최대값은 2048이므로, 이 경우 점유율은 1024 / 2048, 즉 50%입니다.</p>
+<p>같은 분석을 공유 메모리로도 수행할 수 있습니다. 예를 들어 커널이 100KB의 공유 메모리를 사용한다면, 스케줄러는 각 SM에 스레드 블록 2개만 할당할 수 있습니다. 해당 SM에서 세 번째 스레드 블록은 추가로 100KB의 공유 메모리가 필요하여 총 300KB가 되는데, 이는 SM당 사용 가능한 233472바이트보다 많기 때문입니다.</p>
+<p>블록당 스레드 수와 블록당 공유 메모리 사용량은 프로그래머가 명시적으로 제어하며, 원하는 점유율(occupancy)을 달성하도록 조정할 수 있습니다. 프로그래머가 레지스터 사용량을 제어할 수 있는 범위는 제한적이며, 컴파일러와 런타임이 레지스터 사용을 최적화하려고 시도합니다. 그러나 프로그래머는 <code class="docutils literal notranslate"><span class="pre">--maxrregcount</span></code> <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">옵션</a>을 통해 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>에 대해 스레드 블록당 최대 레지스터 수를 지정할 수 있습니다. 커널에 이 지정된 양보다 더 많은 레지스터가 필요하다면, 커널은 로컬 메모리로 스필(spill)될 가능성이 높으며, 이는 커널의 성능 특성을 변경합니다. 어떤 경우에는 스필링이 발생하더라도 레지스터를 제한하면 더 많은 스레드 블록을 스케줄링할 수 있게 되어 점유율이 증가하고, 그 결과 전체 성능이 순증가할 수 있습니다.</p>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="asynchronous-execution.html">2.3. 비동기 실행</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#basics-of-simt">2.2.1. SIMT의 기초</a></li><li><a class="toc-link" href="#thread-hierarchy">2.2.2. 스레드 계층 구조</a></li><li><a class="toc-link" href="#gpu-device-memory-spaces">2.2.3. GPU 디바이스 메모리 공간</a><ul><li><a class="toc-link" href="#global-memory">2.2.3.1. 전역 메모리</a></li><li><a class="toc-link" href="#shared-memory">2.2.3.2. 공유 메모리</a><ul><li><a class="toc-link" href="#static-allocation-of-shared-memory">2.2.3.2.1. 공유 메모리의 정적 할당</a></li><li><a class="toc-link" href="#dynamic-allocation-of-shared-memory">2.2.3.2.2. 공유 메모리의 동적 할당</a></li></ul></li><li><a class="toc-link" href="#registers">2.2.3.3. 레지스터</a></li><li><a class="toc-link" href="#local-memory">2.2.3.4. 로컬 메모리</a></li><li><a class="toc-link" href="#constant-memory">2.2.3.5. 상수 메모리</a></li><li><a class="toc-link" href="#caches">2.2.3.6. 캐시</a></li><li><a class="toc-link" href="#texture-and-surface-memory">2.2.3.7. 텍스처 및 서피스 메모리</a></li><li><a class="toc-link" href="#distributed-shared-memory">2.2.3.8. 분산 공유 메모리</a></li></ul></li><li><a class="toc-link" href="#memory-performance">2.2.4. 메모리 성능</a><ul><li><a class="toc-link" href="#coalesced-global-memory-access">2.2.4.1. 병합된 전역 메모리 접근</a><ul><li><a class="toc-link" href="#matrix-transpose-example-using-global-memory">2.2.4.1.1. 전역 메모리를 사용하는 행렬 전치 예제</a></li></ul></li><li><a class="toc-link" href="#shared-memory-access-patterns">2.2.4.2. 공유 메모리 접근 패턴</a><ul><li><a class="toc-link" href="#matrix-transpose-example-using-shared-memory">2.2.4.2.1. 공유 메모리를 사용한 행렬 전치 예제</a></li><li><a class="toc-link" href="#shared-memory-bank-conflicts">2.2.4.2.2. 공유 메모리 뱅크 충돌(bank conflict)</a></li></ul></li></ul></li><li><a class="toc-link" href="#atomics">2.2.5. 원자 연산(Atomics)</a></li><li><a class="toc-link" href="#cooperative-groups">2.2.6. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a class="toc-link" href="#kernel-launch-and-occupancy">2.2.7. 커널 런치와 점유율(Occupancy)</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

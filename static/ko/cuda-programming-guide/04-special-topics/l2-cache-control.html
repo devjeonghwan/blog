@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4.13. L2 캐시 제어 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="CUDA 커널이 전역 메모리의 데이터 영역에 반복적으로 접근할 때, 이러한 데이터 접근은 지속적(persisting)이라고 간주할 수 있습니다. 반면 데이터가 한 번만 접근된다면, 이러한 데이터 접근은 스트리밍(streaming)이라고 간주할 수 있습니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part4.html">4. CUDA 기능</a></li><li>4.13. L2 캐시 제어</li></ul>
+          <h1 class="page-title">4.13. L2 캐시 제어</h1>
+          <article class="doc-article">
+<section id="l2-cache-control">
+<span id="advanced-kernels-l2-control"></span>
+<p>CUDA 커널이 전역 메모리의 데이터 영역에 반복적으로 접근할 때, 이러한 데이터 접근은 지속적(persisting)이라고 간주할 수 있습니다. 반면 데이터가 한 번만 접근된다면, 이러한 데이터 접근은 스트리밍(streaming)이라고 간주할 수 있습니다.</p>
+<p>컴퓨트 기능 8.0 이상의 디바이스는 L2 캐시에서 데이터의 지속성에 영향을 줄 수 있는 기능을 갖추고 있으며, 잠재적으로 전역 메모리에 대한 더 높은 대역폭과 더 낮은 지연 시간의 접근을 제공할 수 있습니다.</p>
+<p>이 기능은 두 가지 주요 API를 통해 노출됩니다:</p>
+<ul class="simple">
+<li><p>CUDA 런타임 API(CUDA 11.0부터)는 L2 캐시 지속성에 대한 프로그래밍 방식의 제어를 제공합니다.</p></li>
+<li><p>이 <code class="docutils literal notranslate"><span class="pre">cuda::annotated_ptr</span></code> API에서 <a class="reference external" href="https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_access_properties/annotated_ptr.html">libcu++</a> 라이브러리(CUDA 11.5부터)는 유사한 효과를 얻기 위해 CUDA 커널의 포인터에 메모리 접근 속성을 주석으로 표시합니다..</p></li>
+</ul>
+<p>다음 섹션에서는 CUDA 런타임 API에 중점을 둡니다. 에 대한 자세한 정보는 <code class="docutils literal notranslate"><span class="pre">cuda::annotated_ptr</span></code> 접근 방식에 대해서는 다음을 참조하십시오 <a class="reference external" href="https://nvidia.github.io/cccl/libcudacxx/extended_api/memory_access_properties/annotated_ptr.html">libcu++ 문서</a>.</p>
+<section id="l2-cache-set-aside-for-persisting-accesses">
+<span id="l2-set-aside"></span><h2><span class="section-number">4.13.1. </span>지속적 접근을 위한 L2 캐시 예약<a class="headerlink" href="#l2-cache-set-aside-for-persisting-accesses" title="이 제목으로 연결">#</a></h2>
+<p>L2 캐시의 일부를 전역 메모리에 대한 지속적 데이터 접근에 사용하도록 예약할 수 있습니다. 지속적 접근은 L2 캐시의 이 예약된 부분을 우선적으로 사용하며, 반면 전역 메모리에 대한 일반 또는 스트리밍 접근은 지속적 접근이 사용하지 않을 때에만 L2의 이 부분을 활용할 수 있습니다.</p><p>지속적 접근을 위한 L2 캐시 예약 크기는 제한 내에서 조정할 수 있습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaGetDeviceProperties</span><span class="p">(</span><span class="o">&amp;</span><span class="n">prop</span><span class="p">,</span><span class="w"> </span><span class="n">device_id</span><span class="p">);</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">min</span><span class="p">(</span><span class="kt">int</span><span class="p">(</span><span class="n">prop</span><span class="p">.</span><span class="n">l2CacheSize</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">0.75</span><span class="p">),</span><span class="w"> </span><span class="n">prop</span><span class="p">.</span><span class="n">persistingL2CacheMaxSize</span><span class="p">);</span>
+<span class="n">cudaDeviceSetLimit</span><span class="p">(</span><span class="n">cudaLimitPersistingL2CacheSize</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span><span class="w"> </span><span class="cm">/* set-aside 3/4 of L2 cache for persisting accesses or the max allowed*/</span>
+</pre></div>
+</div>
+<p>GPU가 Multi-Instance GPU(MIG) 모드로 구성된 경우, L2 캐시 예약 기능이 비활성화됩니다.</p>
+<p>Multi-Process Service(MPS)를 사용할 때는 L2 캐시 예약 크기를 <code class="docutils literal notranslate"><span class="pre">cudaDeviceSetLimit</span></code>로 변경할 수 없습니다. 대신 예약 크기는 환경 변수 <code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_DEFAULT_PERSISTING_L2_CACHE_PERCENTAGE_LIMIT</span></code>를 통해 MPS 서버 시작 시에만 지정할 수 있습니다.</p>
+</section>
+<section id="l2-policy-for-persisting-accesses">
+<span id="l2-access-policy"></span><h2><span class="section-number">4.13.2. </span>지속적 접근을 위한 L2 정책<a class="headerlink" href="#l2-policy-for-persisting-accesses" title="이 제목으로 연결">#</a></h2>
+<p>접근 정책 창(access policy window)은 전역 메모리의 연속적인 영역과, 해당 영역 내 접근에 대해 L2 캐시에서의 지속성 속성을 지정합니다.</p>
+<p>아래 코드 예시는 CUDA Stream을 사용하여 L2 지속적 접근 창을 설정하는 방법을 보여줍니다.</p>
+<p><strong>CUDA Stream 예시</strong></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaStreamAttrValue</span><span class="w"> </span><span class="n">stream_attribute</span><span class="p">;</span><span class="w">                                         </span><span class="c1">// Stream level attributes data structure</span>
+<span class="n">stream_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">base_ptr</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span><span class="w"> </span><span class="c1">// Global Memory data pointer</span>
+<span class="n">stream_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">num_bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num_bytes</span><span class="p">;</span><span class="w">                    </span><span class="c1">// Number of bytes for persistence access.</span>
+<span class="w">                                                                              </span><span class="c1">// (Must be less than cudaDeviceProp::accessPolicyMaxWindowSize)</span>
+<span class="n">stream_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">hitRatio</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mf">0.6</span><span class="p">;</span><span class="w">                          </span><span class="c1">// Hint for cache hit ratio</span>
+<span class="n">stream_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">hitProp</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">cudaAccessPropertyPersisting</span><span class="p">;</span><span class="w"> </span><span class="c1">// Type of access property on cache hit</span>
+<span class="n">stream_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">missProp</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">cudaAccessPropertyStreaming</span><span class="p">;</span><span class="w">  </span><span class="c1">// Type of access property on cache miss.</span>
+
+<span class="c1">//Set the attributes to a CUDA stream of type cudaStream_t</span>
+<span class="n">cudaStreamSetAttribute</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStreamAttributeAccessPolicyWindow</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stream_attribute</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>이후 커널이 CUDA <code class="docutils literal notranslate"><span class="pre">stream</span></code>에서 실행되면, 전역 메모리 범위 <code class="docutils literal notranslate"><span class="pre">[ptr..ptr+num_bytes)</span></code> 내의 메모리 접근은 다른 전역 메모리 위치에 대한 접근보다 L2 캐시에 지속될 가능성이 더 높습니다.</p>
+<p>아래 예시에 보인 것처럼 CUDA Graph Kernel Node에 대해서도 L2 지속성을 설정할 수 있습니다:</p>
+<p><strong>CUDA GraphKernelNode 예시</strong></p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaKernelNodeAttrValue</span><span class="w"> </span><span class="n">node_attribute</span><span class="p">;</span><span class="w">                                     </span><span class="c1">// Kernel level attributes data structure</span>
+<span class="n">node_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">base_ptr</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span><span class="w"> </span><span class="c1">// Global Memory data pointer</span>
+<span class="n">node_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">num_bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num_bytes</span><span class="p">;</span><span class="w">                    </span><span class="c1">// Number of bytes for persistence access.</span>
+<span class="w">                                                                            </span><span class="c1">// (Must be less than cudaDeviceProp::accessPolicyMaxWindowSize)</span>
+<span class="n">node_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">hitRatio</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mf">0.6</span><span class="p">;</span><span class="w">                          </span><span class="c1">// Hint for cache hit ratio</span>
+<span class="n">node_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">hitProp</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">cudaAccessPropertyPersisting</span><span class="p">;</span><span class="w"> </span><span class="c1">// Type of access property on cache hit</span>
+<span class="n">node_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">missProp</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">cudaAccessPropertyStreaming</span><span class="p">;</span><span class="w">  </span><span class="c1">// Type of access property on cache miss.</span>
+
+<span class="c1">//Set the attributes to a CUDA Graph Kernel node of type cudaGraphNode_t</span>
+<span class="n">cudaGraphKernelNodeSetAttribute</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">cudaKernelNodeAttributeAccessPolicyWindow</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">node_attribute</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">hitRatio</span></code> 매개변수는 <code class="docutils literal notranslate"><span class="pre">hitProp</span></code> 속성을 부여받는 접근의 비율을 지정하는 데 사용할 수 있습니다. 위의 두 예시 모두에서 전역 메모리 영역 <code class="docutils literal notranslate"><span class="pre">[ptr..ptr+num_bytes)</span></code> 내 메모리 접근의 60%는 지속적(persisting) 속성을 가지며, 메모리 접근의 40%는 스트리밍(streaming) 속성을 가집니다. 어떤 특정 메모리 접근이 지속적(즉, <code class="docutils literal notranslate"><span class="pre">hitProp</span></code>)으로 분류되는지는 약 <code class="docutils literal notranslate"><span class="pre">hitRatio</span></code>의 확률로 무작위이며, 확률 분포는 하드웨어 아키텍처와 메모리 범위에 따라 달라집니다.</p><p>예를 들어, L2 예약(set-aside) 캐시 크기가 16KB이고 <code class="docutils literal notranslate"><span class="pre">num_bytes</span></code> 에서 <code class="docutils literal notranslate"><span class="pre">accessPolicyWindow</span></code> 가 32KB인 경우:</p>
+<ul class="simple">
+<li><p>a를 사용하여 <code class="docutils literal notranslate"><span class="pre">hitRatio</span></code> 0.5의 경우 하드웨어는 32KB 윈도우 중 16KB를 무작위로 선택하여 지속적(persisting)으로 지정하고, 예약된(set-aside) L2 캐시 영역에 캐시합니다.</p></li>
+<li><p>With a <code class="docutils literal notranslate"><span class="pre">hitRatio</span></code> of 1.0이면 하드웨어는 예약된(set-aside) L2 캐시 영역에 전체 32KB 윈도우를 캐시하려고 시도합니다. 예약된 영역은 윈도우보다 작으므로, 캐시 라인은 축출되어 32KB 데이터 중 가장 최근에 사용된 16KB가 L2 캐시의 예약된 부분에 유지되도록 합니다.</p></li>
+</ul>
+<p>따라서 <code class="docutils literal notranslate"><span class="pre">hitRatio</span></code>를 사용하면 캐시 라인의 스래싱(thrashing)을 방지하고, 전반적으로 L2 캐시로 들어오고 나가는 데이터 이동량을 줄일 수 있습니다.</p><p>1.0 미만의 <code class="docutils literal notranslate"><span class="pre">hitRatio</span></code> 값은 동시 CUDA 스트림의 서로 다른 <code class="docutils literal notranslate"><span class="pre">accessPolicyWindow</span></code>들이 L2에 캐시할 수 있는 데이터 양을 수동으로 제어하는 데 사용할 수 있습니다. 예를 들어, L2 예약(set-aside) 캐시 크기가 16KB라고 하고, 서로 다른 두 CUDA 스트림에서 실행되는 두 개의 동시 커널이 각각 16KB <code class="docutils literal notranslate"><span class="pre">accessPolicyWindow</span></code>를 가지며, 둘 다 <code class="docutils literal notranslate"><span class="pre">hitRatio</span></code> 값이 1.0이라면, 공유 L2 리소스를 두고 경쟁할 때 서로의 캐시 라인을 축출할 수 있습니다. 하지만 두 <code class="docutils literal notranslate"><span class="pre">accessPolicyWindows</span></code> 모두 hitRatio 값이 0.5라면, 자기 자신의 또는 서로의 지속적(persisting) 캐시 라인을 축출할 가능성이 더 낮아집니다.</p>
+</section>
+<section id="l2-access-properties">
+<span id="l2-access-prop"></span><h2><span class="section-number">4.13.3. </span>L2 접근 속성<a class="headerlink" href="#l2-access-properties" title="이 제목으로 연결">#</a></h2>
+<p>서로 다른 전역 메모리 데이터 접근에 대해 세 가지 유형의 접근 속성이 정의됩니다:</p><ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaAccessPropertyStreaming</span></code>: 스트리밍(streaming) 속성으로 발생하는 메모리 접근은 우선적으로 축출되므로 L2 캐시에 유지될 가능성이 더 낮습니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaAccessPropertyPersisting</span></code>: 지속적(persisting) 속성으로 발생하는 메모리 접근은 L2 캐시에서 유지될 가능성이 더 높습니다. 이러한 접근은 L2 캐시의 예약된(set-aside) 부분에서 우선적으로 유지되기 때문입니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaAccessPropertyNormal</span></code>: 이 접근 속성은 이전에 적용된 지속적 접근 속성을 강제로 정상 상태로 재설정합니다. 이전 CUDA 커널의 지속적 속성을 가진 메모리 접근은 의도한 사용이 끝난 후에도 L2 캐시에 오랫동안 유지될 수 있습니다. 이러한 사용 후 지속(persistence-after-use)은 지속적 속성을 사용하지 않는 후속 커널이 사용할 수 있는 L2 캐시의 양을 줄입니다. <code class="docutils literal notranslate"><span class="pre">cudaAccessPropertyNormal</span></code> 속성으로 접근 속성 윈도우를 재설정하면, 이전 접근이 접근 속성 없이 수행된 것처럼, 이전 접근의 지속적(우선적 유지) 상태가 제거됩니다.</p></li>
+</ol>
+</section>
+<section id="l2-persistence-example">
+<span id="l2-simple-example"></span><h2><span class="section-number">4.13.4. </span>L2 지속성 예시<a class="headerlink" href="#l2-persistence-example" title="이 제목으로 연결">#</a></h2>
+<p>다음 예시는 지속적 접근을 위해 L2 캐시를 예약(set-aside)하는 방법, CUDA Stream을 통해 CUDA 커널에서 예약된(set-aside) L2 캐시를 사용하는 방법, 그리고 이후 L2 캐시를 재설정하는 방법을 보여줍니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">;</span>
+<span class="n">cudaStreamCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stream</span><span class="p">);</span><span class="w">                                                                  </span><span class="c1">// Create CUDA stream</span>
+
+<span class="n">cudaDeviceProp</span><span class="w"> </span><span class="n">prop</span><span class="p">;</span><span class="w">                                                                        </span><span class="c1">// CUDA device properties variable</span>
+<span class="n">cudaGetDeviceProperties</span><span class="p">(</span><span class="w"> </span><span class="o">&amp;</span><span class="n">prop</span><span class="p">,</span><span class="w"> </span><span class="n">device_id</span><span class="p">);</span><span class="w">                                                 </span><span class="c1">// Query GPU properties</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">min</span><span class="p">(</span><span class="w"> </span><span class="kt">int</span><span class="p">(</span><span class="n">prop</span><span class="p">.</span><span class="n">l2CacheSize</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">0.75</span><span class="p">)</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">prop</span><span class="p">.</span><span class="n">persistingL2CacheMaxSize</span><span class="w"> </span><span class="p">);</span>
+<span class="n">cudaDeviceSetLimit</span><span class="p">(</span><span class="w"> </span><span class="n">cudaLimitPersistingL2CacheSize</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span><span class="w">                                  </span><span class="c1">// set-aside 3/4 of L2 cache for persisting accesses or the max allowed</span>
+
+<span class="kt">size_t</span><span class="w"> </span><span class="n">window_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">min</span><span class="p">(</span><span class="n">prop</span><span class="p">.</span><span class="n">accessPolicyMaxWindowSize</span><span class="p">,</span><span class="w"> </span><span class="n">num_bytes</span><span class="p">);</span><span class="w">                        </span><span class="c1">// Select minimum of user defined num_bytes and max window size.</span>
+
+<span class="n">cudaStreamAttrValue</span><span class="w"> </span><span class="n">stream_attribute</span><span class="p">;</span><span class="w">                                                       </span><span class="c1">// Stream level attributes data structure</span>
+<span class="n">stream_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">base_ptr</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">data1</span><span class="p">);</span><span class="w">               </span><span class="c1">// Global Memory data pointer</span>
+<span class="n">stream_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">num_bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">window_size</span><span class="p">;</span><span class="w">                                </span><span class="c1">// Number of bytes for persistence access</span>
+<span class="n">stream_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">hitRatio</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mf">0.6</span><span class="p">;</span><span class="w">                                        </span><span class="c1">// Hint for cache hit ratio</span>
+<span class="n">stream_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">hitProp</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">cudaAccessPropertyPersisting</span><span class="p">;</span><span class="w">               </span><span class="c1">// Persistence Property</span>
+<span class="n">stream_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">missProp</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">cudaAccessPropertyStreaming</span><span class="p">;</span><span class="w">                </span><span class="c1">// Type of access property on cache miss</span>
+
+<span class="n">cudaStreamSetAttribute</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStreamAttributeAccessPolicyWindow</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stream_attribute</span><span class="p">);</span><span class="w">   </span><span class="c1">// Set the attributes to a CUDA Stream</span>
+
+<span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cuda_kernelA</span><span class="o">&lt;&lt;&lt;</span><span class="n">grid_size</span><span class="p">,</span><span class="n">block_size</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">stream</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">data1</span><span class="p">);</span><span class="w">                                 </span><span class="c1">// This data1 is used by a kernel multiple times</span>
+<span class="p">}</span><span class="w">                                                                                           </span><span class="c1">// [data1 + num_bytes) benefits from L2 persistence</span>
+<span class="n">cuda_kernelB</span><span class="o">&lt;&lt;&lt;</span><span class="n">grid_size</span><span class="p">,</span><span class="n">block_size</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">stream</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">data1</span><span class="p">);</span><span class="w">                                     </span><span class="c1">// A different kernel in the same stream can also benefit</span>
+<span class="w">                                                                                            </span><span class="c1">// from the persistence of data1</span>
+
+<span class="n">stream_attribute</span><span class="p">.</span><span class="n">accessPolicyWindow</span><span class="p">.</span><span class="n">num_bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">                                          </span><span class="c1">// Setting the window size to 0 disable it</span>
+<span class="n">cudaStreamSetAttribute</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStreamAttributeAccessPolicyWindow</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stream_attribute</span><span class="p">);</span><span class="w">   </span><span class="c1">// Overwrite the access policy attribute to a CUDA Stream</span>
+<span class="n">cudaCtxResetPersistingL2Cache</span><span class="p">();</span><span class="w">                                                            </span><span class="c1">// Remove any persistent lines in L2</span>
+
+<span class="n">cuda_kernelC</span><span class="o">&lt;&lt;&lt;</span><span class="n">grid_size</span><span class="p">,</span><span class="n">block_size</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">stream</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">data2</span><span class="p">);</span><span class="w">                                     </span><span class="c1">// data2 can now benefit from full L2 in normal mode</span>
+</pre></div>
+</div>
+</section>
+<section id="reset-l2-access-to-normal">
+<span id="l2-reset-to-normal"></span><h2><span class="section-number">4.13.5. </span>L2 접근을 정상으로 재설정<a class="headerlink" href="#reset-l2-access-to-normal" title="이 제목으로 연결">#</a></h2>
+<p>이전 CUDA 커널의 지속적 L2 캐시 라인은 사용된 후에도 L2에 오랫동안 유지될 수 있습니다. 따라서 스트리밍 또는 일반 메모리 접근이 정상 우선순위로 L2 캐시를 활용할 수 있도록 L2 캐시를 정상으로 재설정하는 것이 중요합니다. 지속적 접근을 정상 상태로 재설정하는 방법은 세 가지가 있습니다.</p>
+<ol class="arabic simple">
+<li><p>접근 속성 <code class="docutils literal notranslate"><span class="pre">cudaAccessPropertyNormal</span></code>를 사용하여 이전 지속적 메모리 영역을 재설정합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaCtxResetPersistingL2Cache()</span></code>를 호출하여 모든 지속적 L2 캐시 라인을 정상으로 재설정합니다.</p></li><li><p><strong>궁극적으로</strong> 건드리지 않은 라인은 자동으로 정상 상태로 재설정됩니다. 자동 재설정이 발생하는 데 필요한 시간이 정해져 있지 않으므로 자동 재설정에 의존하는 것은 강력히 권장되지 않습니다.</p></li>
+</ol>
+</section>
+<section id="manage-utilization-of-l2-set-aside-cache">
+<span id="l2-managing-utilization"></span><h2><span class="section-number">4.13.6. </span>L2 예약(set-aside) 캐시 활용 관리<a class="headerlink" href="#manage-utilization-of-l2-set-aside-cache" title="이 제목으로 연결">#</a></h2>
+<p>서로 다른 CUDA 스트림에서 동시에 실행되는 여러 CUDA 커널에는 각 스트림에 서로 다른 접근 정책 윈도우가 할당될 수 있습니다. 하지만 L2 예약(set-aside) 캐시 부분은 이러한 모든 동시 CUDA 커널 간에 공유됩니다. 그 결과, 이 예약 캐시 부분의 순(총) 사용량은 모든 동시 커널의 개별 사용량의 합이 됩니다. 지속적(persisting)으로 메모리 접근을 지정하는 이점은 지속적 접근의 양이 예약된(set-aside) L2 캐시 용량을 초과할수록 감소합니다.</p>
+<p>예약된(set-aside) L2 캐시 부분의 활용을 관리하기 위해 애플리케이션은 다음을 고려해야 합니다:</p>
+<ul class="simple">
+<li><p>L2 예약(set-aside) 캐시의 크기.</p></li>
+<li><p>동시에 실행될 수 있는 CUDA 커널.</p></li>
+<li><p>동시에 실행될 수 있는 모든 CUDA 커널의 접근 정책 윈도우.</p></li>
+<li><p>정상 또는 스트리밍 접근이 이전에 예약된(set-aside) L2 캐시를 동일한 우선순위로 활용할 수 있도록 L2 재설정이 언제, 어떻게 필요한지.</p></li>
+</ul>
+</section>
+<section id="query-l2-cache-properties">
+<span id="l2-cache-query"></span><h2><span class="section-number">4.13.7. </span>L2 캐시 속성 조회<a class="headerlink" href="#query-l2-cache-properties" title="이 제목으로 연결">#</a></h2>
+<p>L2 캐시와 관련된 속성은 <code class="docutils literal notranslate"><span class="pre">cudaDeviceProp</span></code> 구조체의 일부이며 CUDA 런타임 API <code class="docutils literal notranslate"><span class="pre">cudaGetDeviceProperties</span></code>를 사용하여 조회할 수 있습니다</p>
+<p>CUDA 디바이스 속성에는 다음이 포함됩니다:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">l2CacheSize</span></code>: GPU에서 사용 가능한 L2 캐시의 양.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">persistingL2CacheMaxSize</span></code>: 지속적 메모리 접근을 위해 예약(set-aside)할 수 있는 L2 캐시의 최대량.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">accessPolicyMaxWindowSize</span></code>: 접근 정책 윈도우의 최대 크기.</p></li>
+</ul>
+</section><section id="control-l2-cache-set-aside-size-for-persisting-memory-access">
+<span id="l2-cache-getset-size"></span><h2><span class="section-number">4.13.8. </span>지속적 메모리 접근을 위한 L2 캐시 예약(set-aside) 크기 제어<a class="headerlink" href="#control-l2-cache-set-aside-size-for-persisting-memory-access" title="이 제목으로 연결">#</a></h2>
+<p>지속적 메모리 접근을 위한 L2 예약(set-aside) 캐시 크기는 CUDA 런타임 API <code class="docutils literal notranslate"><span class="pre">cudaDeviceGetLimit</span></code>를 사용하여 조회하며, CUDA 런타임 API <code class="docutils literal notranslate"><span class="pre">cudaDeviceSetLimit</span></code>를 사용하여 <code class="docutils literal notranslate"><span class="pre">cudaLimit</span></code>로 설정합니다. 이 제한을 설정할 때의 최대 값은 <code class="docutils literal notranslate"><span class="pre">cudaDeviceProp::persistingL2CacheMaxSize</span></code>입니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span><span class="w"> </span><span class="nc">cudaLimit</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* other fields not shown */</span>
+<span class="w">    </span><span class="n">cudaLimitPersistingL2CacheSize</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#l2-cache-set-aside-for-persisting-accesses">4.13.1. 지속적 접근을 위한 L2 캐시 예약</a></li><li><a class="toc-link" href="#l2-policy-for-persisting-accesses">4.13.2. 지속적 접근을 위한 L2 정책</a></li><li><a class="toc-link" href="#l2-access-properties">4.13.3. L2 접근 속성</a></li><li><a class="toc-link" href="#l2-persistence-example">4.13.4. L2 지속성 예시</a></li><li><a class="toc-link" href="#reset-l2-access-to-normal">4.13.5. L2 접근을 정상으로 재설정</a></li><li><a class="toc-link" href="#manage-utilization-of-l2-set-aside-cache">4.13.6. L2 예약(set-aside) 캐시 활용 관리</a></li><li><a class="toc-link" href="#query-l2-cache-properties">4.13.7. L2 캐시 속성 조회</a></li><li><a class="toc-link" href="#control-l2-cache-set-aside-size-for-persisting-memory-access">4.13.8. 지속적 메모리 접근을 위한 L2 캐시 예약(set-aside) 크기 제어</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

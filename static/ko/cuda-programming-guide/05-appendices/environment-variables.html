@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>5.2. CUDA 환경 변수 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="다음 섹션에는 CUDA 환경 변수가 나열되어 있습니다. Multi-Process Service(MPS) 관련 항목은 GPU 배포 및 관리 가이드 에 문서화되어 있습니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part5.html">5. 기술 부록</a></li><li>5.2. CUDA 환경 변수</li></ul>
+          <h1 class="page-title">5.2. CUDA 환경 변수</h1>
+          <article class="doc-article">
+<section id="cuda-environment-variables">
+<span id="id1"></span>
+<p>다음 섹션에는 CUDA 환경 변수가 나열되어 있습니다. Multi-Process Service(MPS) 관련 항목은 <a class="reference external" href="https://docs.nvidia.com/deploy/mps/index.html">GPU 배포 및 관리 가이드</a>에 문서화되어 있습니다.</p>
+<section id="device-enumeration-and-properties">
+<h2><span class="section-number">5.2.1. </span>디바이스 열거 및 속성<a class="headerlink" href="#device-enumeration-and-properties" title="이 제목으로의 링크">#</a></h2>
+<section id="cuda-visible-devices">
+<h3><span class="section-number">5.2.1.1. </span><code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code><a class="headerlink" href="#cuda-visible-devices" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 CUDA 애플리케이션에서 어떤 GPU 디바이스가 보이는지, 그리고 어떤 순서로 열거되는지를 제어합니다.</p>
+<ul class="simple">
+<li><p>변수가 설정되지 않으면 모든 GPU 디바이스가 표시됩니다.</p></li>
+<li><p>변수가 빈 문자열로 설정되면 어떤 GPU 디바이스도 표시되지 않습니다.</p></li>
+</ul>
+<p><strong>가능한 값</strong>: 쉼표로 구분된 GPU 식별자 시퀀스.</p>
+<p>GPU 식별자는 다음과 같이 제공됩니다:</p>
+<ul class="simple">
+<li><p><strong>정수 인덱스</strong>: 이는 <code class="docutils literal notranslate"><span class="pre">nvidia-smi</span></code>에 의해 결정되는 시스템 내 GPU의 서수 번호에 해당하며, 0부터 시작합니다. 예를 들어, <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES=2,1</span></code>로 설정하면 디바이스 0은 보이지 않게 되고 디바이스 2가 디바이스 1보다 먼저 열거됩니다.</p>
+<ul>
+<li><p>잘못된 인덱스가 발견되면, 목록에서 잘못된 인덱스보다 앞에 나타나는 인덱스를 가진 디바이스만 표시됩니다. 예를 들어, <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES=0,2,-1,1</span></code>로 설정하면 디바이스 0과 2가 표시되며, 디바이스 1은 잘못된 인덱스인 <code class="docutils literal notranslate"><span class="pre">-1</span></code> 뒤에 나타나므로 표시되지 않습니다.</p></li>
+</ul>
+</li>
+<li><p><strong>GPU UUID 문자열</strong>: <code class="docutils literal notranslate"><span class="pre">nvidia-smi</span> <span class="pre">-L</span></code>에서 제공되는 것과 동일한 형식을 따라야 하며, 예를 들어 <code class="docutils literal notranslate"><span class="pre">GPU-8932f937-d72c-4106-c12f-20bd9faed9f6</span></code>과 같습니다. 다만 편의를 위해 축약형도 허용됩니다. 대상 시스템에서 해당 GPU를 고유하게 식별할 수 있을 정도로 GPU UUID 시작 부분의 숫자를 충분히 지정하면 됩니다. 예를 들어, 시스템 내 다른 GPU가 이 접두사를 공유하지 않는다는 가정 하에 <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES=GPU-8932f937</span></code>은 위 GPU UUID를 참조하는 유효한 방법일 수 있습니다.</p></li>
+<li><p><a class="reference external" href="https://docs.nvidia.com/datacenter/tesla/mig-user-guide/">Multi-Instance GPU(MIG)</a> 지원: <code class="docutils literal notranslate"><span class="pre">MIG-&lt;GPU-UUID&gt;/&lt;GPU</span> <span class="pre">instance</span> <span class="pre">ID&gt;/&lt;compute</span> <span class="pre">instance</span> <span class="pre">ID&gt;</span></code>. 예: <code class="docutils literal notranslate"><span class="pre">MIG-GPU-8932f937-d72c-4106-c12f-20bd9faed9f6/1/2</span></code>. 단일 MIG 인스턴스 열거만 지원됩니다.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">cudaGetDeviceCount()</span></code> API가 반환하는 디바이스 개수에는 표시되는 디바이스만 포함되므로, 정수 디바이스 식별자를 사용하는 CUDA API는 [0, 표시 디바이스 개수 - 1] 범위의 서수만 지원합니다. GPU 디바이스의 열거 순서가 서수 값을 결정합니다. 예를 들어, <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES=2,1</span></code>인 경우, <code class="docutils literal notranslate"><span class="pre">cudaSetDevice(0)</span></code>를 호출하면 디바이스 2가 먼저 열거되어 서수 0이 할당되므로 디바이스 2가 현재 디바이스로 설정됩니다. 그 후 <code class="docutils literal notranslate"><span class="pre">cudaGetDevice(&amp;device_ordinal)</span></code>을 호출하면 <code class="docutils literal notranslate"><span class="pre">device_ordinal</span></code>도 0으로 설정되며, 이는 디바이스 2에 해당합니다.</p>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvidia-smi<span class="w"> </span>-L<span class="w"> </span><span class="c1"># Get list of GPU UUIDs</span>
+<span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="m">0</span>,1
+<span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span>GPU-8932f937-d72c-4106-c12f-20bd9faed9f6
+<span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span>MIG-GPU-8932f937-d72c-4106-c12f-20bd9faed9f6/1/2
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-device-order">
+<h3><span class="section-number">5.2.1.2. </span><code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_ORDER</span></code><a class="headerlink" href="#cuda-device-order" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 CUDA가 사용 가능한 디바이스를 열거하는 순서를 제어합니다.</p>
+<p><strong>가능한 값</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">FASTEST_FIRST</span></code>: 간단한 휴리스틱을 사용하여 가장 빠른 디바이스에서 가장 느린 디바이스 순으로 사용 가능한 디바이스가 열거됩니다(기본값).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PCI_BUS_ID</span></code>: 사용 가능한 디바이스가 PCI 버스 ID 오름차순으로 열거됩니다. PCI 버스 ID는 <code class="docutils literal notranslate"><span class="pre">nvidia-smi</span> <span class="pre">--query-gpu=name,pci.bus_id</span></code>로 얻을 수 있습니다.</p></li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_DEVICE_ORDER</span><span class="o">=</span>FASTEST_FIRST
+<span class="nv">CUDA_DEVICE_ORDER</span><span class="o">=</span>PCI_BUS_ID
+nvidia-smi<span class="w"> </span>--query-gpu<span class="o">=</span>name,pci.bus_id<span class="w"> </span><span class="c1"># Get list of PCI bus IDs</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-managed-force-device-alloc">
+<h3><span class="section-number">5.2.1.3. </span><code class="docutils literal notranslate"><span class="pre">CUDA_MANAGED_FORCE_DEVICE_ALLOC</span></code><a class="headerlink" href="#cuda-managed-force-device-alloc" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 멀티 GPU 시스템에서 <a class="reference internal" href="../02-basics/understanding-memory.html"><span class="std std-ref">통합 메모리</span></a>가 물리적으로 저장되는 방식을 변경합니다.</p>
+<p><strong>가능한 값</strong>: 0 또는 0이 아닌 숫자 값.</p>
+<ul class="simple">
+<li><p><strong>0이 아닌 값</strong>: 드라이버가 물리 저장소로 디바이스 메모리를 사용하도록 강제합니다. 프로세스에서 사용되는 모든 디바이스 중 관리형 메모리를 지원하는 디바이스는 피어 투 피어(peer-to-peer) 호환이어야 합니다. 그렇지 않으면 <code class="docutils literal notranslate"><span class="pre">cudaErrorInvalidDevice</span></code>이 반환됩니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: 기본 동작.</p></li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_MANAGED_FORCE_DEVICE_ALLOC</span><span class="o">=</span><span class="m">0</span>
+<span class="nv">CUDA_MANAGED_FORCE_DEVICE_ALLOC</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="c1"># force device memory</span>
+</pre></div>
+</div>
+<hr class="docutils"/>
+</section>
+</section>
+<section id="jit-compilation">
+<span id="cuda-environment-variables-compilation"></span><h2><span class="section-number">5.2.2. </span>JIT 컴파일<a class="headerlink" href="#jit-compilation" title="이 제목으로의 링크">#</a></h2>
+<section id="cuda-cache-disable">
+<h3><span class="section-number">5.2.2.1. </span><code class="docutils literal notranslate"><span class="pre">CUDA_CACHE_DISABLE</span></code><a class="headerlink" href="#cuda-cache-disable" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 디스크 상 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">Just-In-Time(JIT) 컴파일</span></a> 캐시의 동작을 제어합니다.
+JIT 캐시를 비활성화하면, 실행 중인 아키텍처에 대한 CUBIN 코드가 바이너리에서 발견되지 않는 한 CUDA 애플리케이션이 실행될 때마다 PTX에서 CUBIN으로의 컴파일이 강제됩니다.</p>
+<p>JIT 캐시를 비활성화하면 초기 실행 시 애플리케이션의 로드 시간이 증가합니다. 하지만 애플리케이션의 디스크 공간을 줄이거나 드라이버 버전 또는 빌드 플래그에 따른 차이를 진단하는 데 유용할 수 있습니다.</p>
+<p><strong>가능한 값</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: PTX JIT 캐싱을 비활성화합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: PTX JIT 캐싱을 활성화합니다(기본값).</p></li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_CACHE_DISABLE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="c1"># disables caching</span>
+<span class="nv">CUDA_CACHE_DISABLE</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="c1"># enables caching</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-cache-path">
+<h3><span class="section-number">5.2.2.2. </span><code class="docutils literal notranslate"><span class="pre">CUDA_CACHE_PATH</span></code><a class="headerlink" href="#cuda-cache-path" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">Just-In-Time(JIT) 컴파일</span></a> 캐시를 위한 디렉터리 경로를 지정합니다.</p>
+<p><strong>가능한 값</strong>: 캐시 디렉터리의 절대 경로(적절한 접근 권한 포함). 기본값은 다음과 같습니다:</p>
+<ul class="simple">
+<li><p>Windows: <code class="docutils literal notranslate"><span class="pre">%APPDATA%\NVIDIA\ComputeCache</span></code></p></li>
+<li><p>Linux: <code class="docutils literal notranslate"><span class="pre">~/.nv/ComputeCache</span></code></p></li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_CACHE_PATH</span><span class="o">=</span>~/tmp
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-cache-maxsize">
+<h3><span class="section-number">5.2.2.3. </span><code class="docutils literal notranslate"><span class="pre">CUDA_CACHE_MAXSIZE</span></code><a class="headerlink" href="#cuda-cache-maxsize" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">Just-In-Time(JIT) 컴파일</span></a> 캐시 크기를 바이트 단위로 지정합니다. 이 크기를 초과하는 바이너리는 캐시되지 않습니다. 필요 시 더 새로운 바이너리를 위한 공간을 확보하기 위해 오래된 바이너리가 캐시에서 제거됩니다.</p>
+<p><strong>가능한 값</strong>: 바이트 수. 기본값은 다음과 같습니다:</p>
+<ul class="simple">
+<li><p>데스크톱/서버 플랫폼: <code class="docutils literal notranslate"><span class="pre">1073741824</span></code> (1 GiB)</p></li>
+<li><p>임베디드 플랫폼: <code class="docutils literal notranslate"><span class="pre">268435456</span></code> (256 MiB)</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">4294967296</span></code> (4 GiB)이 최대 크기입니다.</p>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_CACHE_MAXSIZE</span><span class="o">=</span><span class="m">268435456</span><span class="w"> </span><span class="c1"># 256 MiB</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-force-ptx-jit-and-cuda-force-jit">
+<h3><span class="section-number">5.2.2.4. </span><code class="docutils literal notranslate"><span class="pre">CUDA_FORCE_PTX_JIT</span></code> and <code class="docutils literal notranslate"><span class="pre">CUDA_FORCE_JIT</span></code><a class="headerlink" href="#cuda-force-ptx-jit-and-cuda-force-jit" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 CUDA 드라이버가 애플리케이션에 내장된 모든 CUBIN을 무시하고, 대신 내장된 PTX 코드에 대해 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">Just-In-Time(JIT) 컴파일</span></a>을 수행하도록 지시합니다.</p>
+<p>JIT 컴파일을 강제하면 초기 실행 시 애플리케이션의 로드 시간이 증가합니다. 하지만 애플리케이션에 PTX 코드가 내장되어 있는지, 그리고 해당 Just-In-Time 컴파일이 정상적으로 동작하는지를 검증하는 데 사용할 수 있습니다.
+이는 향후 아키텍처에 대한 <a class="reference external" href="https://docs.nvidia.com/deploy/cuda-compatibility/">전방 호환성</a>을 보장합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">CUDA_FORCE_PTX_JIT</span></code>는 <code class="docutils literal notranslate"><span class="pre">CUDA_FORCE_JIT</span></code>를 재정의합니다.</p>
+<p><strong>가능한 값</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: PTX JIT 컴파일을 강제합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: 기본 동작.</p></li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_FORCE_PTX_JIT</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-disable-ptx-jit-and-cuda-disable-jit">
+<h3><span class="section-number">5.2.2.5. </span><code class="docutils literal notranslate"><span class="pre">CUDA_DISABLE_PTX_JIT</span></code> and <code class="docutils literal notranslate"><span class="pre">CUDA_DISABLE_JIT</span></code><a class="headerlink" href="#cuda-disable-ptx-jit-and-cuda-disable-jit" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 내장된 PTX 코드의 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">Just-In-Time(JIT) 컴파일</span></a>을 비활성화하고, 애플리케이션에 내장된 호환 CUBIN을 사용합니다.</p>
+<p>커널에 내장 바이너리 코드가 없거나 내장된 바이너리가 호환되지 않는 아키텍처용으로 컴파일된 경우, 커널 로드에 실패합니다. 이 환경 변수는 애플리케이션이 각 커널에 대해 호환 CUBIN 코드를 생성했는지 검증하는 데 사용할 수 있습니다. 자세한 내용은 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">바이너리 호환성</span></a> 섹션을 참조하십시오.</p>
+<p><code class="docutils literal notranslate"><span class="pre">CUDA_DISABLE_PTX_JIT</span></code>는 <code class="docutils literal notranslate"><span class="pre">CUDA_DISABLE_JIT</span></code>를 재정의합니다.</p>
+<p><strong>가능한 값</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: PTX JIT 컴파일을 비활성화합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: 기본 동작.</p></li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_DISABLE_PTX_JIT</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+</section><hr class="docutils"/>
+<section id="cuda-force-preload-libraries">
+<h3><span class="section-number">5.2.2.6. </span><code class="docutils literal notranslate"><span class="pre">CUDA_FORCE_PRELOAD_LIBRARIES</span></code><a class="headerlink" href="#cuda-force-preload-libraries" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 <a class="reference external" href="https://docs.nvidia.com/cuda/nvvm-ir-spec/">NVVM</a> 및 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">Just-In-Time (JIT) 컴파일</span></a>에 필요한 라이브러리의 사전 로딩에 영향을 줍니다.</p>
+<p><strong>가능한 값</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: 이는 초기화 중에 <a class="reference external" href="https://docs.nvidia.com/cuda/nvvm-ir-spec/">NVVM</a> 및 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">Just-In-Time (JIT) 컴파일</span></a>에 필요한 라이브러리를 드라이버가 사전 로딩하도록 강제합니다. 이는 메모리 사용량과 CUDA 드라이버 초기화에 필요한 시간을 증가시킵니다. 이 환경 변수를 설정하는 것은 여러 스레드가 관련된 특정 데드락 상황을 피하기 위해 필요합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: 기본 동작.</p></li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_FORCE_PRELOAD_LIBRARIES</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils"/>
+<section id="execution">
+<h2><span class="section-number">5.2.3. </span>실행<a class="headerlink" href="#execution" title="이 제목으로의 링크">#</a></h2>
+<section id="cuda-launch-blocking">
+<h3><span class="section-number">5.2.3.1. </span><code class="docutils literal notranslate"><span class="pre">CUDA_LAUNCH_BLOCKING</span></code><a class="headerlink" href="#cuda-launch-blocking" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 비동기 커널 실행을 비활성화할지 또는 활성화할지를 지정합니다.</p>
+<p>비동기 실행을 비활성화하면 실행은 더 느려지지만 디버깅에 유용합니다. 이는 CPU의 관점에서 GPU 작업이 동기적으로 실행되도록 강제합니다. 이를 통해 CUDA API 오류를 실행의 나중 시점이 아니라, 이를 유발한 정확한 API 호출에서 관찰할 수 있습니다. 동기 실행은 디버깅 목적에 유용합니다.</p>
+<p><strong>가능한 값</strong>:</p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: 비동기 실행을 비활성화합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: 비동기 실행(기본값).</p></li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_LAUNCH_BLOCKING</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-device-max-connections">
+<h3><span class="section-number">5.2.3.2. </span><code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_MAX_CONNECTIONS</span></code><a class="headerlink" href="#cuda-device-max-connections" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 동시 컴퓨트 및 복사 엔진 연결(작업 큐)의 수를 제어하며, 둘 다 지정된 값으로 설정합니다.
+서로 독립적인 GPU 작업, 즉 서로 다른 CUDA 스트림에서 실행된 커널 또는 복사 작업이 동일한 작업 큐에 매핑되면 동일한 기본 리소스가 사용되므로 잘못된 종속성이 생성될 수 있으며, 이로 인해 GPU 작업이 직렬화될 수 있습니다.
+이러한 잘못된 종속성의 발생 확률을 줄이기 위해, 이 환경 변수가 제어하는 작업 큐 개수는 컨텍스트당 활성 CUDA 스트림 수보다 크거나 같도록 하는 것이 권장됩니다.</p>
+<p>이 환경 변수를 설정하면 <code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_MAX_COPY_CONNECTIONS</span></code> 환경 변수를 통해 명시적으로 설정되지 않는 한, 복사 연결의 수도 수정됩니다.</p>
+<p><strong>가능한 값</strong>: <code class="docutils literal notranslate"><span class="pre">1</span></code>에서 <code class="docutils literal notranslate"><span class="pre">32</span></code>개 연결, 기본값은 <code class="docutils literal notranslate"><span class="pre">8</span></code>입니다(MPS 없음 가정).</p>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_DEVICE_MAX_CONNECTIONS</span><span class="o">=</span><span class="m">16</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-device-max-copy-connections">
+<h3><span class="section-number">5.2.3.3. </span><code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_MAX_COPY_CONNECTIONS</span></code><a class="headerlink" href="#cuda-device-max-copy-connections" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 복사 작업에 관련된 동시 복사 연결(작업 큐)의 수를 제어합니다.
+이는 <a class="reference internal" href="compute-capabilities.html"><span class="std std-ref">컴퓨트 성능</span></a> 8.0 이상인 디바이스에만 영향을 미칩니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_MAX_COPY_CONNECTIONS</span></code>는 둘 다 설정된 경우, <code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_MAX_CONNECTIONS</span></code>를 통해 설정된 복사 연결 값보다 우선합니다.</p>
+<p><strong>가능한 값</strong>: <code class="docutils literal notranslate"><span class="pre">1</span></code>부터 <code class="docutils literal notranslate"><span class="pre">32</span></code>개 연결까지이며, 기본값은 <code class="docutils literal notranslate"><span class="pre">8</span></code>입니다(Multi-Process Service(MPS)가 없다고 가정).</p>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_DEVICE_MAX_COPY_CONNECTIONS</span><span class="o">=</span><span class="m">16</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-scale-launch-queues">
+<h3><span class="section-number">5.2.3.4. </span><code class="docutils literal notranslate"><span class="pre">CUDA_SCALE_LAUNCH_QUEUES</span></code><a class="headerlink" href="#cuda-scale-launch-queues" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 작업(명령 버퍼)을 실행하기 위해 사용할 수 있는 큐의 크기에 대한 스케일링 계수, 즉 디바이스에서 엔큐할 수 있는 대기 중인 커널 또는 호스트/디바이스 복사 작업의 총 수를 지정합니다.</p>
+<p><strong>가능한 값</strong>: <code class="docutils literal notranslate"><span class="pre">0.25x</span></code>, <code class="docutils literal notranslate"><span class="pre">0.5x</span></code>, <code class="docutils literal notranslate"><span class="pre">2x</span></code>, <code class="docutils literal notranslate"><span class="pre">4x</span></code></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0.25x</span></code>, <code class="docutils literal notranslate"><span class="pre">0.5x</span></code>, <code class="docutils literal notranslate"><span class="pre">2x</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">4x</span></code> 이외의 모든 값은 <code class="docutils literal notranslate"><span class="pre">1x</span></code>로 해석됩니다.</p></li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_SCALE_LAUNCH_QUEUES</span><span class="o">=</span>2x
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-graphs-use-node-priority">
+<h3><span class="section-number">5.2.3.5. </span><code class="docutils literal notranslate"><span class="pre">CUDA_GRAPHS_USE_NODE_PRIORITY</span></code><a class="headerlink" href="#cuda-graphs-use-node-priority" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 그래프가 실행되는 스트림으로부터 상속받는 스트림 우선순위에 상대적인 CUDA 그래프의 실행 우선순위를 제어합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">CUDA_GRAPHS_USE_NODE_PRIORITY</span></code>는 그래프 인스턴스화 시 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__GRAPH.html">cudaGraphInstantiateFlagUseNodePriority</a> 플래그를 재정의합니다.</p>
+<p><strong>가능한 값</strong>:</p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: 그래프가 실행되는 스트림의 우선순위를 상속합니다(기본값).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: 노드별 실행 우선순위를 준수합니다. CUDA 런타임은 노드 수준 우선순위를 실행 준비가 된 그래프 노드에 대한 스케줄링 힌트로 취급합니다.</p></li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_GRAPHS_USE_NODE_PRIORITY</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-device-waits-on-exception">
+<h3><span class="section-number">5.2.3.6. </span><code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_WAITS_ON_EXCEPTION</span></code><a class="headerlink" href="#cuda-device-waits-on-exception" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 예외(오류)가 발생했을 때 CUDA 애플리케이션의 동작을 제어합니다.</p>
+<p>활성화되면, 디바이스 측 예외가 발생했을 때 CUDA 애플리케이션이 중단하고 대기하여, 프로세스가 종료되거나 계속되기 전에 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-gdb/index.html">cuda-gdb</a>와 같은 디버거를 연결해 라이브 GPU 상태를 검사할 수 있습니다.</p>
+<p><strong>가능한 값</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code>: 기본 동작.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>: 디바이스 예외가 발생하면 중단합니다.</p></li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_DEVICE_WAITS_ON_EXCEPTION</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-device-default-persisting-l2-cache-percentage-limit">
+<h3><span class="section-number">5.2.3.7. </span><code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_DEFAULT_PERSISTING_L2_CACHE_PERCENTAGE_LIMIT</span></code><a class="headerlink" href="#cuda-device-default-persisting-l2-cache-percentage-limit" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 <a class="reference internal" href="../04-special-topics/l2-cache-control.html"><span class="std std-ref">지속 접근</span></a>을 위해 예약되는 GPU의 L2 캐시 기본 “할당” 부분을 L2 크기의 백분율로 표현하여 제어합니다.</p>
+<p>이는 지속 L2 캐시를 지원하는 GPU, 특히 <a class="reference internal" href="compute-capabilities.html"><span class="std std-ref">컴퓨트 성능</span></a> 8.0 이상인 디바이스에서 <a class="reference external" href="https://docs.nvidia.com/deploy/mps/index.html">CUDA Multi-Process Service (MPS)</a>를 사용할 때 관련이 있습니다. 이 환경 변수는 CUDA MPS Control Daemon을 시작하기 전에, 즉 <code class="docutils literal notranslate"><span class="pre">nvidia-cuda-mps-control</span> <span class="pre">-d</span></code> 명령을 실행하기 전에 설정해야 합니다.</p>
+<p><strong>가능한 값</strong>: 0에서 100 사이의 백분율 값이며, 기본값은 0입니다.</p>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_DEVICE_DEFAULT_PERSISTING_L2_CACHE_PERCENTAGE_LIMIT</span><span class="o">=</span><span class="m">25</span><span class="w"> </span><span class="c1"># 25%</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-disable-perf-boost">
+<h3><span class="section-number">5.2.3.8. </span><code class="docutils literal notranslate"><span class="pre">CUDA_DISABLE_PERF_BOOST</span></code><a class="headerlink" href="#cuda-disable-perf-boost" title="이 제목으로의 링크">#</a></h3><p>Linux 호스트에서 이 환경 변수를 1로 설정하면 디바이스 성능 상태의 부스팅을 방지하며, 대신 다양한 휴리스틱에 따라 pstate가 암묵적으로 선택될 수 있습니다. 이 옵션은 전력 소비를 줄이는 데 잠재적으로 사용될 수 있지만, 동적 성능 상태 선택으로 인해 특정 시나리오에서는 지연 시간이 더 길어질 수 있습니다.</p>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_DISABLE_PERF_BOOST</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="c1"># perf boost disabled, Linux only.</span>
+<span class="nv">CUDA_DISABLE_PERF_BOOST</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="c1"># default behavior</span>
+</pre></div>
+</div>
+</section>
+<section id="cuda-auto-boost-deprecated">
+<h3><span class="section-number">5.2.3.9. </span><code class="docutils literal notranslate"><span class="pre">CUDA_AUTO_BOOST</span></code> [[deprecated]]<a class="headerlink" href="#cuda-auto-boost-deprecated" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 GPU 클록 “자동 부스트(auto boost)” 동작, 즉 동적 클록 부스팅에 영향을 줍니다.
+이는 <code class="docutils literal notranslate"><span class="pre">nvidia-smi</span></code> 도구의 “자동 부스트(auto boost)” 옵션, 즉 <code class="docutils literal notranslate"><span class="pre">nvidia-smi</span> <span class="pre">--auto-boost-default=0</span></code>를 재정의합니다.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p><p>이 환경 변수는 사용이 중단(deprecated)되었습니다. 다음을 사용할 것을 강력히 권장합니다 <code class="docutils literal notranslate"><span class="pre">nvidia-smi</span> <span class="pre">--applications-clocks=&lt;memory,graphics&gt;</span></code> 또는 <a class="reference external" href="https://docs.nvidia.com/deploy/nvml-api/group__nvmlDeviceCommands.html">NVML API</a> 대신 <code class="docutils literal notranslate"><span class="pre">CUDA_AUTO_BOOST</span></code> 환경 변수.</p>
+</div>
+</section>
+</section>
+<hr class="docutils"/>
+<section id="module-loading">
+<h2><span class="section-number">5.2.4. </span>모듈 로딩<a class="headerlink" href="#module-loading" title="이 제목으로의 링크">#</a></h2>
+<section id="cuda-module-loading">
+<h3><span class="section-number">5.2.4.1. </span><code class="docutils literal notranslate"><span class="pre">CUDA_MODULE_LOADING</span></code><a class="headerlink" href="#cuda-module-loading" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 CUDA 런타임이 모듈을 로드하는 방식, 특히 디바이스 코드를 초기화하는 방식에 영향을 줍니다.</p>
+<p><strong>가능한 값</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DEFAULT</span></code>: 기본 동작이며, <code class="docutils literal notranslate"><span class="pre">LAZY</span></code>와 동일합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LAZY</span></code>: 특정 커널의 로딩은 CUDA 함수 핸들인 <code class="docutils literal notranslate"><span class="pre">CUfunc</span></code>이(가) <code class="docutils literal notranslate"><span class="pre">cuModuleGetFunction()</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">cuKernelGetFunction()</span></code> API 호출을 사용해 추출될 때까지 지연됩니다. 이 경우 CUBIN의 데이터는 CUBIN의 첫 번째 커널이 로드될 때 또는 CUBIN의 첫 번째 변수가 액세스될 때 로드됩니다.</p>
+<ul>
+<li><p>드라이버는 커널에 대한 첫 호출에서 필요한 코드를 로드하며, 이후 호출에는 추가 오버헤드가 발생하지 않습니다. 이는 시작 시간을 줄이고 GPU 메모리 점유량을 줄입니다.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EAGER</span></code>: 프로그램 초기화 시 CUDA 모듈과 커널을 완전히 로드합니다. CUBIN, FATBIN 또는 PTX 파일의 모든 커널과 데이터는 해당 <code class="docutils literal notranslate"><span class="pre">cuModuleLoad*</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cuLibraryLoad*</span></code> 드라이버 API 호출 시 완전히 로드됩니다.</p>
+<ul>
+<li><p>시작 시간과 GPU 메모리 점유량이 더 큽니다. 커널 실행 오버헤드는 예측 가능합니다.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_MODULE_LOADING</span><span class="o">=</span>EAGER
+<span class="nv">CUDA_MODULE_LOADING</span><span class="o">=</span>LAZY
+</pre></div>
+</div>
+</section>
+<hr class="docutils"/>
+<section id="cuda-module-data-loading">
+<h3><span class="section-number">5.2.4.2. </span><code class="docutils literal notranslate"><span class="pre">CUDA_MODULE_DATA_LOADING</span></code><a class="headerlink" href="#cuda-module-data-loading" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 CUDA 런타임이 모듈에 연결된 데이터를 로드하는 방식에 영향을 줍니다.</p>
+<p>이는 <code class="docutils literal notranslate"><span class="pre">CUDA_MODULE_LOADING</span></code>의 커널 중심 설정을 보완하는 설정입니다. 이 환경 변수는 커널의 <code class="docutils literal notranslate"><span class="pre">LAZY</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">EAGER</span></code> 로딩에 영향을 주지 않습니다.
+이 환경 변수가 설정되지 않은 경우 데이터 로딩 동작은 <code class="docutils literal notranslate"><span class="pre">CUDA_MODULE_LOADING</span></code>에서 상속됩니다.</p>
+<p><strong>가능한 값</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DEFAULT</span></code>: 기본 동작으로, <code class="docutils literal notranslate"><span class="pre">LAZY</span></code>와 동일합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LAZY</span></code>: 모듈 데이터의 로딩은 CUDA 함수 핸들인 <code class="docutils literal notranslate"><span class="pre">CUfunc</span></code>가 필요해질 때까지 지연됩니다. 이 경우 CUBIN의 데이터는 CUBIN에서 첫 번째 커널이 로드될 때 또는 CUBIN에서 첫 번째 변수에 접근할 때 로드됩니다.</p>
+<ul>
+<li><p>지연 데이터 로드는 컨텍스트 동기화가 필요할 수 있으며, 이는 동시 실행을 느리게 할 수 있습니다.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EAGER</span></code>: CUBIN, FATBIN 또는 PTX 파일의 모든 데이터가 해당 <code class="docutils literal notranslate"><span class="pre">cuModuleLoad*</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cuLibraryLoad*</span></code> API 호출 시 완전히 로드됩니다.</p></li>
+</ul>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_MODULE_DATA_LOADING</span><span class="o">=</span>EAGER
+</pre></div>
+</div>
+</section>
+<section id="cuda-binary-loader-thread-count">
+<h3><span class="section-number">5.2.4.3. </span><code class="docutils literal notranslate"><span class="pre">CUDA_BINARY_LOADER_THREAD_COUNT</span></code><a class="headerlink" href="#cuda-binary-loader-thread-count" title="이 제목으로의 링크">#</a></h3>
+<p>디바이스 바이너리를 로드할 때 사용할 CPU 스레드 수를 설정합니다. 0으로 설정하면 사용되는 CPU 스레드 수는 기본값인 1로 설정됩니다.</p>
+<p><strong>가능한 값</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>사용할 스레드의 정수 개수. 기본값은 0이며, 이 경우 1개 스레드를 사용합니다.</p></li>
+</ul>
+</div></blockquote>
+<p><strong>예</strong>:</p><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_BINARY_LOADER_THREAD_COUNT</span><span class="o">=</span><span class="m">4</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils"/>
+<section id="cuda-error-log-management">
+<h2><span class="section-number">5.2.5. </span>CUDA 오류 로그 관리<a class="headerlink" href="#cuda-error-log-management" title="이 제목으로의 링크">#</a></h2>
+<section id="cuda-log-file">
+<span id="env-vars-cuda-log-file"></span><h3><span class="section-number">5.2.5.1. </span><code class="docutils literal notranslate"><span class="pre">CUDA_LOG_FILE</span></code><a class="headerlink" href="#cuda-log-file" title="이 제목으로의 링크">#</a></h3>
+<p>이 환경 변수는 오류를 반환한 지원되는 CUDA API 호출에 대해, 설명적인 오류 로그 메시지가 발생하는 즉시 출력될 위치를 지정합니다.</p>
+<p>예를 들어, <code class="docutils literal notranslate"><span class="pre">kernel&lt;&lt;&lt;1,</span> <span class="pre">dim3(1,1,128)&gt;&gt;&gt;(...)</span></code>과 같은 잘못된 그리드 구성으로 커널을 실행하려고 하면, 해당 커널은 실행에 실패하고 <code class="docutils literal notranslate"><span class="pre">cudaGetLastError()</span></code>는 일반적인 <code class="docutils literal notranslate"><span class="pre">invalid</span> <span class="pre">configuration</span> <span class="pre">argument</span></code> 오류를 반환합니다. <br/>
+<code class="docutils literal notranslate"><span class="pre">CUDA_LOG_FILE</span></code> 환경 변수가 설정되어 있으면, 사용자는 로그에서 다음과 같은 설명적인 오류 메시지인 <code class="docutils literal notranslate"><span class="pre">[CUDA][E]</span> <span class="pre">Block</span> <span class="pre">Dimensions</span> <span class="pre">(1,1,128)</span> <span class="pre">include</span> <span class="pre">one</span> <span class="pre">or</span> <span class="pre">more</span> <span class="pre">values</span> <span class="pre">that</span> <span class="pre">exceed</span> <span class="pre">the</span> <span class="pre">device</span> <span class="pre">limit</span> <span class="pre">of</span> <span class="pre">(1024,1024,64)</span></code>를 확인할 수 있으며, 지정된 블록의 z-차원이 잘못되었음을 쉽게 판단할 수 있습니다. 자세한 내용은 <a class="reference internal" href="../04-special-topics/error-log-management.html"><span class="std std-ref">오류 로그 관리</span></a>를 참조하십시오.</p>
+<p><strong>가능한 값</strong>: <code class="docutils literal notranslate"><span class="pre">stdout</span></code>, <code class="docutils literal notranslate"><span class="pre">stderr</span></code>, 또는 유효한 파일 경로(적절한 접근 권한 포함)</p>
+<p><strong>예</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_LOG_FILE</span><span class="o">=</span>stdout
+<span class="nv">CUDA_LOG_FILE</span><span class="o">=</span>/tmp/dbg_cuda_log
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="compute-capabilities.html">5.1. 컴퓨트 기능</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="cpp-language-support.html">5.3. C++ 언어 지원</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#device-enumeration-and-properties">5.2.1. 디바이스 열거 및 속성</a><ul><li><a class="toc-link" href="#cuda-visible-devices">5.2.1.1. CUDA_VISIBLE_DEVICES</a></li><li><a class="toc-link" href="#cuda-device-order">5.2.1.2. CUDA_DEVICE_ORDER</a></li><li><a class="toc-link" href="#cuda-managed-force-device-alloc">5.2.1.3. CUDA_MANAGED_FORCE_DEVICE_ALLOC</a></li></ul></li><li><a class="toc-link" href="#jit-compilation">5.2.2. JIT 컴파일</a><ul><li><a class="toc-link" href="#cuda-cache-disable">5.2.2.1. CUDA_CACHE_DISABLE</a></li><li><a class="toc-link" href="#cuda-cache-path">5.2.2.2. CUDA_CACHE_PATH</a></li><li><a class="toc-link" href="#cuda-cache-maxsize">5.2.2.3. CUDA_CACHE_MAXSIZE</a></li><li><a class="toc-link" href="#cuda-force-ptx-jit-and-cuda-force-jit">5.2.2.4. CUDA_FORCE_PTX_JIT and CUDA_FORCE_JIT</a></li><li><a class="toc-link" href="#cuda-disable-ptx-jit-and-cuda-disable-jit">5.2.2.5. CUDA_DISABLE_PTX_JIT and CUDA_DISABLE_JIT</a></li><li><a class="toc-link" href="#cuda-force-preload-libraries">5.2.2.6. CUDA_FORCE_PRELOAD_LIBRARIES</a></li></ul></li><li><a class="toc-link" href="#execution">5.2.3. 실행</a><ul><li><a class="toc-link" href="#cuda-launch-blocking">5.2.3.1. CUDA_LAUNCH_BLOCKING</a></li><li><a class="toc-link" href="#cuda-device-max-connections">5.2.3.2. CUDA_DEVICE_MAX_CONNECTIONS</a></li><li><a class="toc-link" href="#cuda-device-max-copy-connections">5.2.3.3. CUDA_DEVICE_MAX_COPY_CONNECTIONS</a></li><li><a class="toc-link" href="#cuda-scale-launch-queues">5.2.3.4. CUDA_SCALE_LAUNCH_QUEUES</a></li><li><a class="toc-link" href="#cuda-graphs-use-node-priority">5.2.3.5. CUDA_GRAPHS_USE_NODE_PRIORITY</a></li><li><a class="toc-link" href="#cuda-device-waits-on-exception">5.2.3.6. CUDA_DEVICE_WAITS_ON_EXCEPTION</a></li><li><a class="toc-link" href="#cuda-device-default-persisting-l2-cache-percentage-limit">5.2.3.7. CUDA_DEVICE_DEFAULT_PERSISTING_L2_CACHE_PERCENTAGE_LIMIT</a></li><li><a class="toc-link" href="#cuda-disable-perf-boost">5.2.3.8. CUDA_DISABLE_PERF_BOOST</a></li><li><a class="toc-link" href="#cuda-auto-boost-deprecated">5.2.3.9. CUDA_AUTO_BOOST [[deprecated]]</a></li></ul></li><li><a class="toc-link" href="#module-loading">5.2.4. 모듈 로딩</a><ul><li><a class="toc-link" href="#cuda-module-loading">5.2.4.1. CUDA_MODULE_LOADING</a></li><li><a class="toc-link" href="#cuda-module-data-loading">5.2.4.2. CUDA_MODULE_DATA_LOADING</a></li><li><a class="toc-link" href="#cuda-binary-loader-thread-count">5.2.4.3. CUDA_BINARY_LOADER_THREAD_COUNT</a></li></ul></li><li><a class="toc-link" href="#cuda-error-log-management">5.2.5. CUDA 오류 로그 관리</a><ul><li><a class="toc-link" href="#cuda-log-file">5.2.5.1. CUDA_LOG_FILE</a></li></ul></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

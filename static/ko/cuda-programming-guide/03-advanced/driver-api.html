@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3.3. CUDA 드라이버 API — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="이 가이드의 이전 섹션에서는 CUDA 런타임을 다루었습니다. CUDA 런타임 API와 CUDA 드라이버 API 에서 언급했듯이, CUDA 런타임은 더 낮은 수준의 CUDA 드라이버 API 위에 작성되어 있습니다. 이 섹션에서는 CUDA 런타임과 드라이버 API 간의 차이점 일부와, 이를 서로 혼용하는 방법을 다룹니다. 대부분의 애플리케이션은 CUDA 드라이버 API와 상호작용할 필요 없이도 완전한 성능으로 동작할 수 있습니다. 그러나 새로운 인터페이스는 때때로 런타임 API보다 드라이버 API에서 더 일찍 제공되며, 가상 메모리 관리 와 같은 일부 고급 인터페이스는 드라이버 API에서만 노출됩니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part3.html">3. 고급 CUDA</a></li><li>3.3. CUDA 드라이버 API</li></ul>
+          <h1 class="page-title">3.3. CUDA 드라이버 API</h1>
+          <article class="doc-article">
+<section id="the-cuda-driver-api">
+<span id="driver-api"></span>
+<p>이 가이드의 이전 섹션에서는 CUDA 런타임을 다루었습니다. <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">CUDA 런타임 API와 CUDA 드라이버 API</span></a>에서 언급했듯이, CUDA 런타임은 더 낮은 수준의 CUDA 드라이버 API 위에 작성되어 있습니다. 이 섹션에서는 CUDA 런타임과 드라이버 API 간의 차이점 일부와, 이를 서로 혼용하는 방법을 다룹니다. 대부분의 애플리케이션은 CUDA 드라이버 API와 상호작용할 필요 없이도 완전한 성능으로 동작할 수 있습니다. 그러나 새로운 인터페이스는 때때로 런타임 API보다 드라이버 API에서 더 일찍 제공되며, <a class="reference internal" href="../04-special-topics/virtual-memory-management.html"><span class="std std-ref">가상 메모리 관리</span></a>와 같은 일부 고급 인터페이스는 드라이버 API에서만 노출됩니다.</p>
+<p>드라이버 API는 장치 드라이버 설치 중 시스템에 복사되는 <code class="docutils literal notranslate"><span class="pre">cuda</span></code> 동적 라이브러리(<code class="docutils literal notranslate"><span class="pre">cuda.dll</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">cuda.so</span></code>)에 구현되어 있습니다. 모든 엔트리 포인트는 cu로 시작합니다.</p>
+<p>이는 핸들 기반의 명령형 API입니다. 대부분의 객체는 불투명 핸들로 참조되며, 이러한 핸들은 함수를 통해 지정되어 객체를 조작할 수 있습니다.</p>
+<p>드라이버 API에서 사용 가능한 객체는 <a class="reference internal" href="#driver-api-objects-available-in-cuda-driver-api"><span class="std std-numref">Table 6</span></a>에 요약되어 있습니다.</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table-no-stripes table" id="driver-api-objects-available-in-cuda-driver-api">
+<caption><span class="caption-number">Table 6 </span><span class="caption-text">CUDA 드라이버 API에서 사용 가능한 객체</span><a class="headerlink" href="#driver-api-objects-available-in-cuda-driver-api" title="이 표에 대한 링크">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>객체</p></th>
+<th class="head"><p>핸들</p></th>
+<th class="head"><p>설명</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>디바이스</p></td>
+<td><p>CUdevice</p></td>
+<td><p>CUDA 지원 디바이스</p></td>
+</tr>
+<tr class="row-odd"><td><p>컨텍스트</p></td>
+<td><p>CUcontext</p></td>
+<td><p>대략 CPU 프로세스와 동등함</p></td>
+</tr>
+<tr class="row-even"><td><p>모듈</p></td>
+<td><p>CUmodule</p></td>
+<td><p>대략 동적 라이브러리와 동등함</p></td>
+</tr>
+<tr class="row-odd"><td><p>함수</p></td>
+<td><p>CUfunction</p></td>
+<td><p>커널</p></td>
+</tr>
+<tr class="row-even"><td><p>힙 메모리</p></td>
+<td><p>CUdeviceptr</p></td>
+<td><p>디바이스 메모리에 대한 포인터</p></td>
+</tr>
+<tr class="row-odd"><td><p>CUDA 배열</p></td>
+<td><p>CUarray</p></td>
+<td><p>디바이스 상의 1차원 또는 2차원 데이터를 위한 불투명 컨테이너로, 텍스처 또는 서피스 참조를 통해 읽을 수 있음</p></td>
+</tr>
+<tr class="row-even"><td><p>텍스처 객체</p></td>
+<td><p>CUtexref</p></td>
+<td><p>텍스처 메모리 데이터를 해석하는 방법을 설명하는 객체</p></td>
+</tr>
+<tr class="row-odd"><td><p>서피스 참조</p></td>
+<td><p>CUsurfref</p></td>
+<td><p>CUDA 배열을 읽거나 쓰는 방법을 설명하는 객체</p></td>
+</tr>
+<tr class="row-even"><td><p>스트림</p></td>
+<td><p>CUstream</p></td>
+<td><p>CUDA 스트림을 설명하는 객체</p></td>
+</tr>
+<tr class="row-odd"><td><p>이벤트</p></td>
+<td><p>CUevent</p></td>
+<td><p>CUDA 이벤트를 설명하는 객체</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>드라이버 API는 드라이버 API의 어떤 함수를 호출하기 전에 <code class="docutils literal notranslate"><span class="pre">cuInit()</span></code>로 초기화되어야 합니다. 그런 다음 특정 디바이스에 연결된 CUDA 컨텍스트를 생성하고, <a class="reference internal" href="#driver-api-context"><span class="std std-ref">컨텍스트</span></a>에 자세히 설명된 대로 이를 호출하는 호스트 스레드의 현재 컨텍스트로 만들어야 합니다.</p>
+<p>CUDA 컨텍스트 내에서 커널은 <a class="reference internal" href="#driver-api-module"><span class="std std-ref">모듈</span></a>에 설명된 대로 호스트 코드에 의해 PTX 또는 바이너리 객체로 명시적으로 로드됩니다. 따라서 C++로 작성된 커널은 <em>PTX</em> 또는 바이너리 객체로 별도로 컴파일되어야 합니다. 커널은 <a class="reference internal" href="#driver-api-kernel-execution"><span class="std std-ref">커널 실행</span></a>에 설명된 대로 API 엔트리 포인트를 사용해 런치됩니다.</p>
+<p>향후 디바이스 아키텍처에서 실행되기를 원하는 모든 애플리케이션은 바이너리 코드가 아니라 <em>PTX</em>를 로드해야 합니다. 이는 바이너리 코드가 아키텍처별이어서 향후 아키텍처와 호환되지 않는 반면, <em>PTX</em> 코드는 로드 시 디바이스 드라이버에 의해 바이너리 코드로 컴파일되기 때문입니다.</p>
+<p>다음은 드라이버 API를 사용하여 작성된 <a class="reference internal" href="../02-basics/intro-to-cuda-cpp.html"><span class="std std-ref">커널</span></a>의 샘플 호스트 코드입니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Allocate input vectors h_A and h_B in host memory</span>
+<span class="w">    </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">h_A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">h_B</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Initialize input vectors</span>
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="c1">// Initialize</span>
+<span class="w">    </span><span class="n">cuInit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Get number of devices supporting CUDA</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">deviceCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cuDeviceGetCount</span><span class="p">(</span><span class="o">&amp;</span><span class="n">deviceCount</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">deviceCount</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"There is no device supporting CUDA.</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">        </span><span class="n">exit</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Get handle for device 0</span>
+<span class="w">    </span><span class="n">CUdevice</span><span class="w"> </span><span class="n">cuDevice</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cuDeviceGet</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cuDevice</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Create context</span>
+<span class="w">    </span><span class="n">CUcontext</span><span class="w"> </span><span class="n">cuContext</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cuCtxCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cuContext</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">cuDevice</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Create module from binary file</span>
+<span class="w">    </span><span class="n">CUmodule</span><span class="w"> </span><span class="n">cuModule</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cuModuleLoad</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cuModule</span><span class="p">,</span><span class="w"> </span><span class="s">"VecAdd.ptx"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Allocate vectors in device memory</span>
+<span class="w">    </span><span class="n">CUdeviceptr</span><span class="w"> </span><span class="n">d_A</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cuMemAlloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">d_A</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CUdeviceptr</span><span class="w"> </span><span class="n">d_B</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cuMemAlloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">d_B</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CUdeviceptr</span><span class="w"> </span><span class="n">d_C</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cuMemAlloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">d_C</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Copy vectors from host memory to device memory</span>
+<span class="w">    </span><span class="n">cuMemcpyHtoD</span><span class="p">(</span><span class="n">d_A</span><span class="p">,</span><span class="w"> </span><span class="n">h_A</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+<span class="w">    </span><span class="n">cuMemcpyHtoD</span><span class="p">(</span><span class="n">d_B</span><span class="p">,</span><span class="w"> </span><span class="n">h_B</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Get function handle from module</span>
+<span class="w">    </span><span class="n">CUfunction</span><span class="w"> </span><span class="n">vecAdd</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cuModuleGetFunction</span><span class="p">(</span><span class="o">&amp;</span><span class="n">vecAdd</span><span class="p">,</span><span class="w"> </span><span class="n">cuModule</span><span class="p">,</span><span class="w"> </span><span class="s">"VecAdd"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Invoke kernel</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadsPerBlock</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">blocksPerGrid</span><span class="w"> </span><span class="o">=</span>
+<span class="w">            </span><span class="p">(</span><span class="n">N</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadsPerBlock</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">threadsPerBlock</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">args</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">&amp;</span><span class="n">d_A</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">d_B</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">d_C</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">N</span><span class="w"> </span><span class="p">};</span>
+<span class="w">    </span><span class="n">cuLaunchKernel</span><span class="p">(</span><span class="n">vecAdd</span><span class="p">,</span>
+<span class="w">                   </span><span class="n">blocksPerGrid</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">threadsPerBlock</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">                   </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>전체 코드는 <code class="docutils literal notranslate"><span class="pre">vectorAddDrv</span></code> CUDA 샘플에서 찾을 수 있습니다.</p>
+<section id="context">
+<span id="driver-api-context"></span><h2><span class="section-number">3.3.1. </span>컨텍스트<a class="headerlink" href="#context" title="이 제목에 대한 링크">#</a></h2>
+<p>CUDA 컨텍스트는 CPU 프로세스에 비유할 수 있습니다. 드라이버 API 내에서 수행되는 모든 리소스와 작업은 CUDA 컨텍스트 안에 캡슐화되며, 컨텍스트가 파괴되면 시스템이 자동으로 이러한 리소스를 정리합니다. 모듈 및 텍스처 또는 서피스 레퍼런스 같은 객체 외에도, 각 컨텍스트는 고유한 별도의 주소 공간을 가집니다. 그 결과, 서로 다른 컨텍스트의 <code class="docutils literal notranslate"><span class="pre">CUdeviceptr</span></code> 값은 서로 다른 메모리 위치를 참조합니다.</p>
+<p>호스트 스레드는 한 번에 하나의 디바이스 컨텍스트만 현재 컨텍스트로 가질 수 있습니다. 컨텍스트가 <code class="docutils literal notranslate"><span class="pre">cuCtxCreate()</span></code>로 생성되면, 이를 호출한 호스트 스레드의 현재 컨텍스트로 설정됩니다. 컨텍스트에서 동작하는 CUDA 함수(디바이스 열거 또는 컨텍스트 관리를 포함하지 않는 대부분의 함수)는 유효한 컨텍스트가 스레드의 현재 컨텍스트가 아니면 <code class="docutils literal notranslate"><span class="pre">CUDA_ERROR_INVALID_CONTEXT</span></code>를 반환합니다.</p>
+<p>각 호스트 스레드는 현재 컨텍스트의 스택을 가집니다. <code class="docutils literal notranslate"><span class="pre">cuCtxCreate()</span></code>는 새로운 컨텍스트를 스택의 맨 위에 푸시합니다. <code class="docutils literal notranslate"><span class="pre">cuCtxPopCurrent()</span></code>를 호출하여 호스트 스레드에서 컨텍스트를 분리(detach)할 수 있습니다. 그러면 컨텍스트는 “부유(floating)” 상태가 되며, 어떤 호스트 스레드에 대해서든 현재 컨텍스트로 푸시될 수 있습니다. <code class="docutils literal notranslate"><span class="pre">cuCtxPopCurrent()</span></code>는 또한(있다면) 이전의 현재 컨텍스트를 복원합니다.</p>
+<p>각 컨텍스트에 대해서는 사용 카운트도 유지됩니다. <code class="docutils literal notranslate"><span class="pre">cuCtxCreate()</span></code>는 사용 카운트가 1인 컨텍스트를 생성합니다. <code class="docutils literal notranslate"><span class="pre">cuCtxAttach()</span></code>는 사용 카운트를 증가시키고, <code class="docutils literal notranslate"><span class="pre">cuCtxDetach()</span></code>는 이를 감소시킵니다. <code class="docutils literal notranslate"><span class="pre">cuCtxDetach()</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">cuCtxDestroy()</span></code>를 호출할 때 사용 카운트가 0이 되면 컨텍스트가 파괴됩니다.</p><p>드라이버 API는 런타임과 상호 운용 가능하며, 기본 컨텍스트에 접근할 수 있습니다(참조 <a class="reference internal" href="../02-basics/intro-to-cuda-cpp.html"><span class="std std-ref">런타임 초기화</span></a>) 런타임이 관리하는 것을 드라이버 API에서 다음을 통해 <code class="docutils literal notranslate"><span class="pre">cuDevicePrimaryCtxRetain()</span></code>.</p>
+<p>사용 카운트는 동일한 컨텍스트에서 동작하는 서드파티 작성 코드 간의 상호운용성을 용이하게 합니다. 예를 들어, 동일한 컨텍스트를 사용하기 위해 세 개의 라이브러리가 로드되는 경우, 각 라이브러리는 사용 카운트를 증가시키기 위해 <code class="docutils literal notranslate"><span class="pre">cuCtxAttach()</span></code>를 호출하고, 라이브러리가 컨텍스트 사용을 마치면 사용 카운트를 감소시키기 위해 <code class="docutils literal notranslate"><span class="pre">cuCtxDetach()</span></code>를 호출합니다. 대부분의 라이브러리에서는 애플리케이션이 라이브러리를 로드하거나 초기화하기 전에 컨텍스트를 생성해 두었을 것으로 예상됩니다. 이렇게 하면 애플리케이션이 자체 휴리스틱을 사용해 컨텍스트를 생성할 수 있고, 라이브러리는 자신에게 전달된 컨텍스트에서 단순히 동작합니다. 자체 컨텍스트를 생성하려는 라이브러리(자신들의 API 클라이언트가 자체적으로 컨텍스트를 생성했을 수도 있고 생성하지 않았을 수도 있지만, 이를 알지 못하는 상태에서)는 다음 그림에 표시된 대로 <code class="docutils literal notranslate"><span class="pre">cuCtxPushCurrent()</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cuCtxPopCurrent()</span></code>를 사용합니다.</p><figure class="align-center" id="library-context-management">
+<img alt="라이브러리 컨텍스트 관리" loading="lazy" src="../_images/library-context-management.png"/>
+<figcaption>
+<p><span class="caption-number">Figure 20 </span><span class="caption-text">라이브러리 컨텍스트 관리</span><a class="headerlink" href="#library-context-management" title="이 이미지로의 링크">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="module">
+<span id="driver-api-module"></span><h2><span class="section-number">3.3.2. </span>모듈<a class="headerlink" href="#module" title="이 제목으로의 링크">#</a></h2>
+<p>모듈은 Windows의 DLL과 유사하게, nvcc가 출력하는 디바이스 코드 및 데이터의 동적 로드 가능 패키지입니다(<a class="reference internal" href="../02-basics/intro-to-cuda-cpp.html"><span class="std std-ref">NVCC로 컴파일</span></a> 참조). 함수, 전역 변수, 텍스처 또는 서피스 레퍼런스를 포함한 모든 심볼의 이름은 모듈 범위에서 유지되므로, 독립적인 제3자가 작성한 모듈도 동일한 CUDA 컨텍스트에서 상호 운용할 수 있습니다.</p>
+<p>이 코드 샘플은 모듈을 로드하고 일부 커널에 대한 핸들을 가져옵니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUmodule</span><span class="w"> </span><span class="n">cuModule</span><span class="p">;</span>
+<span class="n">cuModuleLoad</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cuModule</span><span class="p">,</span><span class="w"> </span><span class="s">"myModule.ptx"</span><span class="p">);</span>
+<span class="n">CUfunction</span><span class="w"> </span><span class="n">myKernel</span><span class="p">;</span>
+<span class="n">cuModuleGetFunction</span><span class="p">(</span><span class="o">&amp;</span><span class="n">myKernel</span><span class="p">,</span><span class="w"> </span><span class="n">cuModule</span><span class="p">,</span><span class="w"> </span><span class="s">"MyKernel"</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>이 코드 샘플은 PTX 코드에서 새 모듈을 컴파일하고 로드한 다음 컴파일 오류를 파싱합니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define BUFFER_SIZE 8192</span>
+<span class="n">CUmodule</span><span class="w"> </span><span class="n">cuModule</span><span class="p">;</span>
+<span class="n">CUjit_option</span><span class="w"> </span><span class="n">options</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">PTXCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"some PTX code"</span><span class="p">;</span>
+<span class="kt">char</span><span class="w"> </span><span class="n">error_log</span><span class="p">[</span><span class="n">BUFFER_SIZE</span><span class="p">];</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">err</span><span class="p">;</span>
+<span class="n">options</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_JIT_ERROR_LOG_BUFFER</span><span class="p">;</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">error_log</span><span class="p">;</span>
+<span class="n">options</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_JIT_ERROR_LOG_BUFFER_SIZE_BYTES</span><span class="p">;</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">BUFFER_SIZE</span><span class="p">;</span>
+<span class="n">options</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_JIT_TARGET_FROM_CUCONTEXT</span><span class="p">;</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuModuleLoadDataEx</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cuModule</span><span class="p">,</span><span class="w"> </span><span class="n">PTXCode</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">options</span><span class="p">,</span><span class="w"> </span><span class="n">values</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">CUDA_SUCCESS</span><span class="p">)</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"Link error:</span><span class="se">\n</span><span class="s">%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">error_log</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>이 코드 샘플은 여러 PTX 코드에서 새 모듈을 컴파일, 링크 및 로드한 다음 링크 및 컴파일 오류를 파싱합니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define BUFFER_SIZE 8192</span>
+<span class="n">CUmodule</span><span class="w"> </span><span class="n">cuModule</span><span class="p">;</span>
+<span class="n">CUjit_option</span><span class="w"> </span><span class="n">options</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">values</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span>
+<span class="kt">float</span><span class="w"> </span><span class="n">walltime</span><span class="p">;</span>
+<span class="kt">char</span><span class="w"> </span><span class="n">error_log</span><span class="p">[</span><span class="n">BUFFER_SIZE</span><span class="p">],</span><span class="w"> </span><span class="n">info_log</span><span class="p">[</span><span class="n">BUFFER_SIZE</span><span class="p">];</span>
+<span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">PTXCode0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"some PTX code"</span><span class="p">;</span>
+<span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">PTXCode1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"some other PTX code"</span><span class="p">;</span>
+<span class="n">CUlinkState</span><span class="w"> </span><span class="n">linkState</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">err</span><span class="p">;</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">cubin</span><span class="p">;</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">cubinSize</span><span class="p">;</span>
+<span class="n">options</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_JIT_WALL_TIME</span><span class="p">;</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">walltime</span><span class="p">;</span>
+<span class="n">options</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_JIT_INFO_LOG_BUFFER</span><span class="p">;</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">info_log</span><span class="p">;</span>
+<span class="n">options</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_JIT_INFO_LOG_BUFFER_SIZE_BYTES</span><span class="p">;</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">BUFFER_SIZE</span><span class="p">;</span>
+<span class="n">options</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_JIT_ERROR_LOG_BUFFER</span><span class="p">;</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">error_log</span><span class="p">;</span>
+<span class="n">options</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_JIT_ERROR_LOG_BUFFER_SIZE_BYTES</span><span class="p">;</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">BUFFER_SIZE</span><span class="p">;</span>
+<span class="n">options</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_JIT_LOG_VERBOSE</span><span class="p">;</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="mi">1</span><span class="p">;</span>
+<span class="n">cuLinkCreate</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="n">options</span><span class="p">,</span><span class="w"> </span><span class="n">values</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">linkState</span><span class="p">);</span>
+<span class="n">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuLinkAddData</span><span class="p">(</span><span class="n">linkState</span><span class="p">,</span><span class="w"> </span><span class="n">CU_JIT_INPUT_PTX</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">PTXCode0</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">PTXCode0</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">CUDA_SUCCESS</span><span class="p">)</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"Link error:</span><span class="se">\n</span><span class="s">%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">error_log</span><span class="p">);</span>
+<span class="n">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuLinkAddData</span><span class="p">(</span><span class="n">linkState</span><span class="p">,</span><span class="w"> </span><span class="n">CU_JIT_INPUT_PTX</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">PTXCode1</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">PTXCode1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">CUDA_SUCCESS</span><span class="p">)</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"Link error:</span><span class="se">\n</span><span class="s">%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">error_log</span><span class="p">);</span>
+<span class="n">cuLinkComplete</span><span class="p">(</span><span class="n">linkState</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cubin</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cubinSize</span><span class="p">);</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"Link completed in %fms. Linker Output:</span><span class="se">\n</span><span class="s">%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">walltime</span><span class="p">,</span><span class="w"> </span><span class="n">info_log</span><span class="p">);</span>
+<span class="n">cuModuleLoadData</span><span class="p">(</span><span class="n">cuModule</span><span class="p">,</span><span class="w"> </span><span class="n">cubin</span><span class="p">);</span>
+<span class="n">cuLinkDestroy</span><span class="p">(</span><span class="n">linkState</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>cubin을 로드할 때를 포함하여, 여러 스레드를 사용해 모듈 링크/로드 프로세스의 일부를 가속하는 것이 가능합니다. 이 코드 샘플은 모듈 로딩을 빠르게 하기 위해 <code class="docutils literal notranslate"><span class="pre">CU_JIT_BINARY_LOADER_THREAD_COUNT</span></code>를 사용합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define BUFFER_SIZE 8192</span>
+<span class="n">CUmodule</span><span class="w"> </span><span class="n">cuModule</span><span class="p">;</span>
+<span class="n">CUjit_option</span><span class="w"> </span><span class="n">options</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">cubinCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"some cubin code"</span><span class="p">;</span>
+<span class="kt">char</span><span class="w"> </span><span class="n">error_log</span><span class="p">[</span><span class="n">BUFFER_SIZE</span><span class="p">];</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">err</span><span class="p">;</span>
+<span class="n">options</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_JIT_ERROR_LOG_BUFFER</span><span class="p">;</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">error_log</span><span class="p">;</span>
+<span class="n">options</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_JIT_ERROR_LOG_BUFFER_SIZE_BYTES</span><span class="p">;</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">BUFFER_SIZE</span><span class="p">;</span>
+<span class="n">options</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CU_JIT_BINARY_LOADER_THREAD_COUNT</span><span class="p">;</span>
+<span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">// Use as many threads as CPUs on the machine</span>
+<span class="n">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuModuleLoadDataEx</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cuModule</span><span class="p">,</span><span class="w"> </span><span class="n">cubinCode</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">options</span><span class="p">,</span><span class="w"> </span><span class="n">values</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">CUDA_SUCCESS</span><span class="p">)</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"Link error:</span><span class="se">\n</span><span class="s">%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">error_log</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>전체 코드는 <code class="docutils literal notranslate"><span class="pre">ptxjit</span></code> CUDA 샘플에서 찾을 수 있습니다.</p>
+</section>
+<section id="kernel-execution">
+<span id="driver-api-kernel-execution"></span><h2><span class="section-number">3.3.3. </span>커널 실행<a class="headerlink" href="#kernel-execution" title="이 제목으로의 링크">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">cuLaunchKernel()</span></code>는 지정된 실행 구성으로 커널을 런치합니다.</p>
+<p>매개변수는 포인터 배열( <code class="docutils literal notranslate"><span class="pre">cuLaunchKernel()</span></code>의 끝에서 두 번째 매개변수)로 전달되는데, 여기서 n번째 포인터는 n번째 매개변수에 해당하며 매개변수가 복사되는 메모리 영역을 가리키거나, 또는 추가 옵션 중 하나( <code class="docutils literal notranslate"><span class="pre">cuLaunchKernel()</span></code>의 마지막 매개변수)로 전달됩니다.</p>
+<p>매개변수가 추가 옵션( <code class="docutils literal notranslate"><span class="pre">CU_LAUNCH_PARAM_BUFFER_POINTER</span></code> 옵션)으로 전달될 때에는, 매개변수들이 디바이스 코드에서 각 매개변수 타입의 정렬 요구사항을 만족하도록 서로에 대해 적절히 오프셋되어 있다고 가정되는 단일 버퍼에 대한 포인터로 전달됩니다.</p>
+<p>내장 벡터 타입에 대한 디바이스 코드의 정렬 요구사항은 <a class="reference internal" href="../05-appendices/cpp-language-extensions.html"><span class="std std-numref">Table 42</span></a>에 나열되어 있습니다. 다른 모든 기본 타입에 대해서는, 디바이스 코드의 정렬 요구사항이 호스트 코드의 정렬 요구사항과 일치하므로 <code class="docutils literal notranslate"><span class="pre">__alignof()</span></code>를 사용하여 얻을 수 있습니다. 유일한 예외는 호스트 컴파일러가 <code class="docutils literal notranslate"><span class="pre">double</span></code> 및 <code class="docutils literal notranslate"><span class="pre">long</span> <span class="pre">long</span></code>(그리고 64비트 시스템에서는 <code class="docutils literal notranslate"><span class="pre">long</span></code>)를 두 단어 경계가 아닌 한 단어 경계에 정렬하는 경우(예: <code class="docutils literal notranslate"><span class="pre">gcc</span></code>의 컴파일 플래그 <code class="docutils literal notranslate"><span class="pre">-mno-align-double</span></code> 사용)인데, 디바이스 코드에서는 이러한 타입들이 항상 두 단어 경계에 정렬되기 때문입니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">CUdeviceptr</span></code>는 정수이지만 포인터를 나타내므로, 해당 정렬 요구사항은 <code class="docutils literal notranslate"><span class="pre">__alignof(void*)</span></code>입니다.</p>
+<p>다음 코드 샘플은 매크로(<code class="docutils literal notranslate"><span class="pre">ALIGN_UP()</span></code>)를 사용해 각 매개변수의 오프셋을 조정하여 정렬 요구사항을 만족시키고, 또 다른 매크로(<code class="docutils literal notranslate"><span class="pre">ADD_TO_PARAM_BUFFER()</span></code>)를 사용해 <code class="docutils literal notranslate"><span class="pre">CU_LAUNCH_PARAM_BUFFER_POINTER</span></code> 옵션에 전달되는 매개변수 버퍼에 각 매개변수를 추가합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#define ALIGN_UP(offset, alignment) \</span>
+<span class="cp">      (offset) = ((offset) + (alignment) - 1) &amp; ~((alignment) - 1)</span>
+
+<span class="kt">char</span><span class="w"> </span><span class="n">paramBuffer</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">paramBufferSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="cp">#define ADD_TO_PARAM_BUFFER(value, alignment)                   \</span>
+<span class="cp">    do {                                                        \</span>
+<span class="cp">        paramBufferSize = ALIGN_UP(paramBufferSize, alignment); \</span>
+<span class="cp">        memcpy(paramBuffer + paramBufferSize,                   \</span>
+<span class="cp">               &amp;(value), sizeof(value));                        \</span>
+<span class="cp">        paramBufferSize += sizeof(value);                       \</span>
+<span class="cp">    } while (0)</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="n">ADD_TO_PARAM_BUFFER</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">__alignof</span><span class="p">(</span><span class="n">i</span><span class="p">));</span>
+<span class="n">float4</span><span class="w"> </span><span class="n">f4</span><span class="p">;</span>
+<span class="n">ADD_TO_PARAM_BUFFER</span><span class="p">(</span><span class="n">f4</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">);</span><span class="w"> </span><span class="c1">// float4's alignment is 16</span>
+<span class="kt">char</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+<span class="n">ADD_TO_PARAM_BUFFER</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">__alignof</span><span class="p">(</span><span class="n">c</span><span class="p">));</span>
+<span class="kt">float</span><span class="w"> </span><span class="n">f</span><span class="p">;</span>
+<span class="n">ADD_TO_PARAM_BUFFER</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">__alignof</span><span class="p">(</span><span class="n">f</span><span class="p">));</span>
+<span class="n">CUdeviceptr</span><span class="w"> </span><span class="n">devPtr</span><span class="p">;</span>
+<span class="n">ADD_TO_PARAM_BUFFER</span><span class="p">(</span><span class="n">devPtr</span><span class="p">,</span><span class="w"> </span><span class="n">__alignof</span><span class="p">(</span><span class="n">devPtr</span><span class="p">));</span>
+<span class="n">float2</span><span class="w"> </span><span class="n">f2</span><span class="p">;</span>
+<span class="n">ADD_TO_PARAM_BUFFER</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">);</span><span class="w"> </span><span class="c1">// float2's alignment is 8</span>
+
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">extra</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">CU_LAUNCH_PARAM_BUFFER_POINTER</span><span class="p">,</span><span class="w"> </span><span class="n">paramBuffer</span><span class="p">,</span>
+<span class="w">    </span><span class="n">CU_LAUNCH_PARAM_BUFFER_SIZE</span><span class="p">,</span><span class="w">    </span><span class="o">&amp;</span><span class="n">paramBufferSize</span><span class="p">,</span>
+<span class="w">    </span><span class="n">CU_LAUNCH_PARAM_END</span>
+<span class="p">};</span>
+<span class="n">cuLaunchKernel</span><span class="p">(</span><span class="n">cuFunction</span><span class="p">,</span>
+<span class="w">               </span><span class="n">blockWidth</span><span class="p">,</span><span class="w"> </span><span class="n">blockHeight</span><span class="p">,</span><span class="w"> </span><span class="n">blockDepth</span><span class="p">,</span>
+<span class="w">               </span><span class="n">gridWidth</span><span class="p">,</span><span class="w"> </span><span class="n">gridHeight</span><span class="p">,</span><span class="w"> </span><span class="n">gridDepth</span><span class="p">,</span>
+<span class="w">               </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">extra</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>구조체의 정렬 요구사항은 해당 필드들의 정렬 요구사항 중 최대값과 같습니다. 내장 벡터 타입을 포함하는 구조체의 정렬 요구사항은, <code class="docutils literal notranslate"><span class="pre">CUdeviceptr</span></code>, 또는 정렬되지 않은 <code class="docutils literal notranslate"><span class="pre">double</span></code> 그리고 <code class="docutils literal notranslate"><span class="pre">long</span> <span class="pre">long</span></code>, 따라서 디바이스 코드와 호스트 코드 간에 다를 수 있습니다. 또한 이러한 구조체는 다르게 패딩될 수도 있습니다. 예를 들어, 다음 구조체는 호스트 코드에서는 전혀 패딩되지 않지만, 디바이스 코드에서는 필드 뒤에 12바이트가 패딩됩니다 <code class="docutils literal notranslate"><span class="pre">f</span></code> 필드의 정렬 요구사항이 <code class="docutils literal notranslate"><span class="pre">f4</span></code> 은(는) 16입니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">float</span><span class="w">  </span><span class="n">f</span><span class="p">;</span>
+<span class="w">    </span><span class="n">float4</span><span class="w"> </span><span class="n">f4</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">myStruct</span><span class="p">;</span>
+</pre></div>
+</div>
+</section><section id="interoperability-between-runtime-and-driver-apis">
+<span id="driver-api-interop-with-runtime"></span><h2><span class="section-number">3.3.4. </span>런타임 API와 드라이버 API 간 상호운용성<a class="headerlink" href="#interoperability-between-runtime-and-driver-apis" title="이 제목으로의 링크">#</a></h2>
+<p>애플리케이션은 런타임 API 코드와 드라이버 API 코드를 혼용할 수 있습니다.</p>
+<p>드라이버 API를 통해 컨텍스트가 생성되고 현재 컨텍스트로 설정되면, 이후의 런타임 호출은 새 컨텍스트를 생성하는 대신 이 컨텍스트를 사용합니다.</p>
+<p>런타임이 초기화된 경우, <code class="docutils literal notranslate"><span class="pre">cuCtxGetCurrent()</span></code>를 사용하여 초기화 중 생성된 컨텍스트를 가져올 수 있습니다. 이 컨텍스트는 이후의 드라이버 API 호출에서 사용할 수 있습니다.</p>
+<p>런타임에서 암묵적으로 생성된 컨텍스트는 기본 컨텍스트(primary context)라고 합니다( <a class="reference internal" href="../02-basics/intro-to-cuda-cpp.html"><span class="std std-ref">런타임 초기화</span></a> 참조). 이는 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__PRIMARY__CTX.html">기본 컨텍스트 관리</a> 함수로 드라이버 API에서 관리할 수 있습니다.</p>
+<p>디바이스 메모리는 어느 API를 사용하든 할당 및 해제할 수 있습니다. <code class="docutils literal notranslate"><span class="pre">CUdeviceptr</span></code>는 일반 포인터로 캐스팅할 수 있으며 그 반대도 가능합니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUdeviceptr</span><span class="w"> </span><span class="n">devPtr</span><span class="p">;</span>
+<span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">d_data</span><span class="p">;</span>
+
+<span class="c1">// Allocation using driver API</span>
+<span class="n">cuMemAlloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">devPtr</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+<span class="n">d_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="p">)</span><span class="n">devPtr</span><span class="p">;</span>
+
+<span class="c1">// Allocation using runtime API</span>
+<span class="n">cudaMalloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">d_data</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+<span class="n">devPtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">CUdeviceptr</span><span class="p">)</span><span class="n">d_data</span><span class="p">;</span>
+</pre></div>
+</div><p>특히 이는 드라이버 API를 사용해 작성된 애플리케이션이 런타임 API를 사용해 작성된 라이브러리(예: cuFFT, cuBLAS, …)를 호출할 수 있음을 의미합니다.</p>
+<p>레퍼런스 매뉴얼의 디바이스 및 버전 관리 섹션에 있는 모든 함수는 서로 바꿔 사용될 수 있습니다.</p>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#context">3.3.1. 컨텍스트</a></li><li><a class="toc-link" href="#module">3.3.2. 모듈</a></li><li><a class="toc-link" href="#kernel-execution">3.3.3. 커널 실행</a></li><li><a class="toc-link" href="#interoperability-between-runtime-and-driver-apis">3.3.4. 런타임 API와 드라이버 API 간 상호운용성</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

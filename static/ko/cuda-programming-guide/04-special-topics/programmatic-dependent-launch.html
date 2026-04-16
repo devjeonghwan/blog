@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4.5. 프로그래밍 방식 종속 런치 및 동기화 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="프로그래밍 방식 종속 런치(Programmatic Dependent Launch) 메커니즘은 동일한 CUDA 스트림에서 의존 대상인 기본(primary) 커널의 실행이 끝나기 전에, 의존하는 보조(secondary) 커널이 실행을 시작할 수 있도록 합니다. 이 기법은 컴퓨트 기능(Compute Capability) 9.0 디바이스부터 사용할 수 있으며, 보조 커널이 기본 커널의 결과에 의존하지 않는 상당한 작업을 미리 처리할 수 있을 때 성능상 이점을 제공합니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part4.html">4. CUDA 기능</a></li><li>4.5. 프로그래밍 방식 종속 런치 및 동기화</li></ul>
+          <h1 class="page-title">4.5. 프로그래밍 방식 종속 런치 및 동기화</h1>
+          <article class="doc-article">
+<section id="programmatic-dependent-launch-and-synchronization">
+<span id="id1"></span>
+<p><em>프로그래밍 방식 종속 런치(Programmatic Dependent Launch)</em> 메커니즘은 동일한 CUDA 스트림에서 의존 대상인 <em>기본(primary)</em> 커널의 실행이 끝나기 전에, 의존하는 <em>보조(secondary)</em> 커널이 실행을 시작할 수 있도록 합니다. 이 기법은 컴퓨트 기능(Compute Capability) 9.0 디바이스부터 사용할 수 있으며, <em>보조</em> 커널이 <em>기본</em> 커널의 결과에 의존하지 않는 상당한 작업을 미리 처리할 수 있을 때 성능상 이점을 제공합니다.</p>
+<section id="background">
+<h2><span class="section-number">4.5.1. </span>배경<a class="headerlink" href="#background" title="이 제목으로 연결">#</a></h2>
+<p>CUDA 애플리케이션은 여러 커널을 GPU에서 실행되도록 런치하고 실행함으로써 GPU를 활용합니다.
+전형적인 GPU 활동 타임라인은 <a class="reference internal" href="#gpu-activity"><span class="std std-numref">그림 39</span></a>에 나와 있습니다.</p>
+<figure class="align-default" id="gpu-activity">
+<a class="reference internal image-reference" href="../_images/gpu-activity.png"><img alt="GPU 활동 타임라인" loading="lazy" src="../_images/gpu-activity.png" style="width: 723.36px; height: 121.44000000000001px;"/>
+</a>
+<figcaption>
+<p><span class="caption-number">그림 39 </span><span class="caption-text">GPU 활동 타임라인</span><a class="headerlink" href="#gpu-activity" title="이 이미지로 연결">#</a></p>
+</figcaption>
+</figure>
+<p>여기서 <code class="docutils literal notranslate"><span class="pre">secondary_kernel</span></code>은(는) <code class="docutils literal notranslate"><span class="pre">primary_kernel</span></code>이(가) 실행을 완료한 뒤에 실행됩니다.
+직렬화된 실행은 보통 필요합니다. 이는 <code class="docutils literal notranslate"><span class="pre">secondary_kernel</span></code>이(가)
+<code class="docutils literal notranslate"><span class="pre">primary_kernel</span></code>에 의해 생성된 결과 데이터에 의존하기 때문입니다. <code class="docutils literal notranslate"><span class="pre">secondary_kernel</span></code>이(가) <code class="docutils literal notranslate"><span class="pre">primary_kernel</span></code>에 대한 의존성이 없다면,
+<a class="reference internal" href="../02-basics/asynchronous-execution.html"><span class="std std-ref">CUDA 스트림</span></a>을(를) 사용하여 둘 다 동시에 실행되도록(동시 실행으로) 실행할 수 있습니다.
+<code class="docutils literal notranslate"><span class="pre">secondary_kernel</span></code>이(가) <code class="docutils literal notranslate"><span class="pre">primary_kernel</span></code>에 의존하더라도, 동시 실행에 대한 잠재력은 어느 정도 존재합니다.
+예를 들어, 거의 모든 커널에는 버퍼를 0으로 초기화하거나 상수 값을 로드하는 등의 작업이 수행되는
+일종의 <em>프리앰블(preamble)</em> 섹션이 있습니다.</p>
+<figure class="align-default" id="secondary-kernel-preamble">
+<a class="reference internal image-reference" href="../_images/secondary-kernel-preamble.png"><img alt="``secondary_kernel``의 프리앰블 섹션" loading="lazy" src="../_images/secondary-kernel-preamble.png" style="width: 723.36px; height: 156.42000000000002px;"/>
+</a>
+<figcaption>
+<p><span class="caption-number">그림 40 </span><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">secondary_kernel</span></code>의 프리앰블 섹션</span><a class="headerlink" href="#secondary-kernel-preamble" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p><a class="reference internal" href="#secondary-kernel-preamble"><span class="std std-numref">그림 40</span></a>은 애플리케이션의 의미를 바꾸지 않으면서도 <code class="docutils literal notranslate"><span class="pre">secondary_kernel</span></code>에서 동시에 실행할 수 있는 부분을 보여줍니다. 또한 이런 동시 실행은 <code class="docutils literal notranslate"><span class="pre">secondary_kernel</span></code>의 런치 지연 시간을 <code class="docutils literal notranslate"><span class="pre">primary_kernel</span></code> 실행 뒤에 숨길 수 있다는 점도 중요합니다.</p>
+<figure class="align-default" id="preamble-overlap">
+<a class="reference internal image-reference" href="../_images/preamble-overlap.png"><img alt="Concurrent execution of ``primary_kernel`` and ``secondary_kernel``" loading="lazy" src="../_images/preamble-overlap.png" style="width: 723.36px; height: 192.06px;"/>
+</a>
+<figcaption>
+<p><span class="caption-number">그림 41 </span><span class="caption-text">동시 실행은 <code class="docutils literal notranslate"><span class="pre">primary_kernel</span></code> 및 <code class="docutils literal notranslate"><span class="pre">secondary_kernel</span></code></span><a class="headerlink" href="#preamble-overlap" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p><a class="reference internal" href="#preamble-overlap"><span class="std std-numref">그림 41</span></a>에 나타난 <code class="docutils literal notranslate"><span class="pre">secondary_kernel</span></code>의 겹친 실행은 <em>프로그래밍 방식 종속 런치</em>를 사용해 달성할 수 있습니다.</p>
+<p><em>프로그래밍 방식 종속 런치(Programmatic Dependent Launch)</em>는 다음 섹션에서 설명하듯 CUDA 커널 실행 API에 몇 가지 변경을 도입합니다. 이러한 API는 중첩 실행을 제공하기 위해 최소 컴퓨트 기능(Compute Capability) 9.0이 필요합니다.</p>
+</section><section id="api-description">
+<h2><span class="section-number">4.5.2. </span>API 설명<a class="headerlink" href="#api-description" title="Link to this heading">#</a></h2>
+<p>프로그래밍 방식 종속 실행에서 기본 커널과 보조 커널은 동일한 CUDA 스트림에서 실행됩니다.
+기본 커널은 보조 커널이 실행될 준비가 되었을 때 모든 스레드 블록에서 <code class="docutils literal notranslate"><span class="pre">cudaTriggerProgrammaticLaunchCompletion</span></code> 를 실행해야 합니다. 보조 커널은 표시된 대로 확장 가능한 실행 API를 사용하여 실행되어야 합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">primary_kernel</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="c1">// Initial work that should finish before starting secondary kernel</span>
+
+<span class="w">   </span><span class="c1">// Trigger the secondary kernel</span>
+<span class="w">   </span><span class="n">cudaTriggerProgrammaticLaunchCompletion</span><span class="p">();</span>
+
+<span class="w">   </span><span class="c1">// Work that can coincide with the secondary kernel</span>
+<span class="p">}</span>
+
+<span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">secondary_kernel</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="c1">// Independent work</span>
+
+<span class="w">   </span><span class="c1">// Will block until all primary kernels the secondary kernel is dependent on have completed and flushed results to global memory</span>
+<span class="w">   </span><span class="n">cudaGridDependencySynchronize</span><span class="p">();</span>
+
+<span class="w">   </span><span class="c1">// Dependent work</span>
+<span class="p">}</span>
+
+<span class="n">cudaLaunchAttribute</span><span class="w"> </span><span class="n">attribute</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="n">attribute</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaLaunchAttributeProgrammaticStreamSerialization</span><span class="p">;</span>
+<span class="n">attribute</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">val</span><span class="p">.</span><span class="n">programmaticStreamSerializationAllowed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="n">configSecondary</span><span class="p">.</span><span class="n">attrs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">attribute</span><span class="p">;</span>
+<span class="n">configSecondary</span><span class="p">.</span><span class="n">numAttrs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="n">primary_kernel</span><span class="o">&lt;&lt;&lt;</span><span class="n">grid_dim</span><span class="p">,</span><span class="w"> </span><span class="n">block_dim</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">stream</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+<span class="n">cudaLaunchKernelEx</span><span class="p">(</span><span class="o">&amp;</span><span class="n">configSecondary</span><span class="p">,</span><span class="w"> </span><span class="n">secondary_kernel</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>보조 커널이 <code class="docutils literal notranslate"><span class="pre">cudaLaunchAttributeProgrammaticStreamSerialization</span></code> 속성을 사용하여 실행되면,
+CUDA 드라이버는 보조 커널을 조기에 실행해도 안전하며, 보조 커널을 실행하기 전에 기본 커널의 완료 및 메모리 플러시를 기다리지 않아도 됩니다.</p>
+<p>CUDA 드라이버는 모든 기본 스레드 블록이 실행을 시작하고
+<code class="docutils literal notranslate"><span class="pre">cudaTriggerProgrammaticLaunchCompletion</span></code> 를 실행했을 때 보조 커널을 실행할 수 있습니다.
+기본 커널이 트리거를 실행하지 않으면, 기본 커널의 모든 스레드 블록이 종료된 후 암묵적으로 발생합니다.</p>
+<p>어느 경우든 보조 스레드 블록은
+기본 커널이 기록한 데이터가 가시화되기 전에 실행될 수 있습니다. 따라서 보조 커널이 <em>프로그래밍 방식 종속 실행</em>으로 구성된 경우,
+항상 <code class="docutils literal notranslate"><span class="pre">cudaGridDependencySynchronize</span></code>
+또는 다른 수단을 사용하여 기본 커널의 결과 데이터가 사용 가능함을 확인해야 합니다.</p>
+<p>이러한 방법은 기본 커널과 보조 커널이 동시에 실행될 기회를 제공하지만,
+이 동작은 기회주의적(opportunistic)이며 동시 커널 실행으로 이어지는 것이 보장되지 않습니다.
+이러한 방식의 동시 실행에 의존하는 것은 안전하지 않으며 데드락으로 이어질 수 있습니다.</p>
+</section>
+<section id="use-in-cuda-graphs">
+<h2><span class="section-number">4.5.3. </span>CUDA 그래프에서의 사용<a class="headerlink" href="#use-in-cuda-graphs" title="Link to this heading">#</a></h2>
+<p>프로그래밍 방식 종속 실행은 <a class="reference internal" href="cuda-graphs.html"><span class="std std-ref">CUDA 그래프</span></a>에서 <a class="reference internal" href="cuda-graphs.html"><span class="std std-ref">stream capture</span></a>를 통해 또는
+<a class="reference internal" href="cuda-graphs.html"><span class="std std-ref">edge data</span></a>를 통해 직접 사용할 수 있습니다. 에지 데이터를 사용하여 CUDA 그래프에서 이 기능을 프로그래밍하려면, 두 커널 노드를 연결하는 에지에서 <code class="docutils literal notranslate"><span class="pre">cudaGraphDependencyType</span></code>
+값으로 <code class="docutils literal notranslate"><span class="pre">cudaGraphDependencyTypeProgrammatic</span></code> 를 사용하십시오. 이 에지 타입은 업스트림 커널을
+다운스트림 커널의 <code class="docutils literal notranslate"><span class="pre">cudaGridDependencySynchronize()</span></code> 에서 볼 수 있게 합니다. 이 타입은
+<code class="docutils literal notranslate"><span class="pre">cudaGraphKernelNodePortLaunchCompletion</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">cudaGraphKernelNodePortProgrammatic</span></code> 중 하나의 아웃고잉 포트와 함께 사용되어야 합니다.</p>
+<p>스트림 캡처에 대한 결과 그래프 동등 항목은 다음과 같습니다:</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table-no-stripes table">
+<thead>
+<tr class="row-odd"><th class="head"><p>스트림 코드(축약)</p></th>
+<th class="head"><p>결과 그래프 에지</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaLaunchAttribute</span><span class="w"> </span><span class="n">attribute</span><span class="p">;</span>
+<span class="n">attribute</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaLaunchAttributeProgrammaticStreamSerialization</span><span class="p">;</span>
+<span class="n">attribute</span><span class="p">.</span><span class="n">val</span><span class="p">.</span><span class="n">programmaticStreamSerializationAllowed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</td>
+<td><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaGraphEdgeData</span><span class="w"> </span><span class="n">edgeData</span><span class="p">;</span>
+<span class="n">edgeData</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaGraphDependencyTypeProgrammatic</span><span class="p">;</span>
+<span class="n">edgeData</span><span class="p">.</span><span class="n">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaGraphKernelNodePortProgrammatic</span><span class="p">;</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaLaunchAttribute</span><span class="w"> </span><span class="n">attribute</span><span class="p">;</span>
+<span class="n">attribute</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaLaunchAttributeProgrammaticEvent</span><span class="p">;</span>
+<span class="n">attribute</span><span class="p">.</span><span class="n">val</span><span class="p">.</span><span class="n">programmaticEvent</span><span class="p">.</span><span class="n">triggerAtBlockStart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</pre></div>
+</div>
+</td>
+<td><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaGraphEdgeData</span><span class="w"> </span><span class="n">edgeData</span><span class="p">;</span>
+<span class="n">edgeData</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaGraphDependencyTypeProgrammatic</span><span class="p">;</span>
+<span class="n">edgeData</span><span class="p">.</span><span class="n">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaGraphKernelNodePortProgrammatic</span><span class="p">;</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaLaunchAttribute</span><span class="w"> </span><span class="n">attribute</span><span class="p">;</span>
+<span class="n">attribute</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaLaunchAttributeProgrammaticEvent</span><span class="p">;</span>
+<span class="n">attribute</span><span class="p">.</span><span class="n">val</span><span class="p">.</span><span class="n">programmaticEvent</span><span class="p">.</span><span class="n">triggerAtBlockStart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</td>
+<td><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">cudaGraphEdgeData</span><span class="w"> </span><span class="n">edgeData</span><span class="p">;</span>
+<span class="n">edgeData</span><span class="p">.</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaGraphDependencyTypeProgrammatic</span><span class="p">;</span>
+<span class="n">edgeData</span><span class="p">.</span><span class="n">from_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaGraphKernelNodePortLaunchCompletion</span><span class="p">;</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#background">4.5.1. 배경</a></li><li><a class="toc-link" href="#api-description">4.5.2. API 설명</a></li><li><a class="toc-link" href="#use-in-cuda-graphs">4.5.3. CUDA 그래프에서의 사용</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

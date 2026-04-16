@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4.20. 드라이버 엔트리 포인트 액세스 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="Driver Entry Point Access APIs 는 CUDA 드라이버 함수의 주소를 가져오는 방법을 제공합니다. CUDA 11.3부터 사용자는 이들 API에서 얻은 함수 포인터를 사용하여 사용 가능한 CUDA 드라이버 API를 호출할 수 있습니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part4.html">4. CUDA 기능</a></li><li>4.20. 드라이버 엔트리 포인트 액세스</li></ul>
+          <h1 class="page-title">4.20. 드라이버 엔트리 포인트 액세스</h1>
+          <article class="doc-article">
+<section id="driver-entry-point-access">
+<span id="id1"></span>
+<section id="introduction">
+<span id="introduction-driver-entry-point-access"></span><h2><span class="section-number">4.20.1. </span>소개<a class="headerlink" href="#introduction" title="이 제목으로의 링크">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Driver</span> <span class="pre">Entry</span> <span class="pre">Point</span> <span class="pre">Access</span> <span class="pre">APIs</span></code>는 CUDA 드라이버 함수의 주소를 가져오는 방법을 제공합니다. CUDA 11.3부터 사용자는 이들 API에서 얻은 함수 포인터를 사용하여 사용 가능한 CUDA 드라이버 API를 호출할 수 있습니다.</p>
+<p>이들 API는 POSIX 플랫폼의 dlsym 및 Windows의 GetProcAddress와 유사한 기능을 제공합니다. 제공되는 API를 통해 사용자는 다음을 할 수 있습니다:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CUDA</span> <span class="pre">Driver</span> <span class="pre">API.</span></code>을 사용하여 드라이버 함수의 주소를 가져옵니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CUDA</span> <span class="pre">Runtime</span> <span class="pre">API.</span></code>를 사용하여 드라이버 함수의 주소를 가져옵니다.</p></li>
+<li><p>CUDA 드라이버 함수의 <em>스레드별 기본 스트림(per-thread default stream)</em> 버전을 요청합니다. 자세한 내용은 <a class="reference internal" href="#retrieve-per-thread-default-stream-versions"><span class="std std-ref">스레드별 기본 스트림 버전 가져오기</span></a>를 참조하세요.</p></li>
+<li><p>오래된 툴킷에서도 더 최신 드라이버를 사용하여 새로운 CUDA 기능에 접근합니다.</p></li>
+</ul>
+</section>
+<section id="driver-function-typedefs">
+<span id="id2"></span><h2><span class="section-number">4.20.2. </span>드라이버 함수 typedef<a class="headerlink" href="#driver-function-typedefs" title="이 제목으로의 링크">#</a></h2>
+<p>CUDA Driver API 엔트리 포인트를 가져오는 데 도움이 되도록, CUDA Toolkit은 모든 CUDA 드라이버 API에 대한 함수 포인터 정의를 포함하는 헤더에 대한 액세스를 제공합니다. 이러한 헤더는 CUDA Toolkit과 함께 설치되며, 툴킷의 <code class="docutils literal notranslate"><span class="pre">include/</span></code> 디렉터리에서 사용할 수 있습니다. 아래 표는 각 CUDA API 헤더 파일에 대해 <code class="docutils literal notranslate"><span class="pre">typedefs</span></code>를 포함하는 헤더 파일을 요약합니다.</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="id9">
+<caption><span class="caption-number">Table 27 </span><span class="caption-text">CUDA 드라이버 API를 위한 typedef 헤더 파일</span><a class="headerlink" href="#id9" title="이 표로의 링크">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>API 헤더 파일</p></th>
+<th class="head"><p>API Typedef 헤더 파일</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cuda.h</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cudaTypedefs.h</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cudaGL.h</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cudaGLTypedefs.h</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cudaProfiler.h</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cudaProfilerTypedefs.h</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cudaVDPAU.h</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cudaVDPAUTypedefs.h</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cudaEGL.h</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cudaEGLTypedefs.h</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cudaD3D9.h</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cudaD3D9Typedefs.h</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cudaD3D10.h</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cudaD3D10Typedefs.h</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cudaD3D11.h</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cudaD3D11Typedefs.h</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>위 헤더는 실제 함수 포인터 자체를 정의하지 않으며, 함수 포인터에 대한 typedef를 정의합니다. 예를 들어, <code class="docutils literal notranslate"><span class="pre">cudaTypedefs.h</span></code>에는 드라이버 API <code class="docutils literal notranslate"><span class="pre">cuMemAlloc</span></code>에 대해 아래 typedef가 있습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span><span class="w"> </span><span class="n">CUresult</span><span class="w"> </span><span class="p">(</span><span class="n">CUDAAPI</span><span class="w"> </span><span class="o">*</span><span class="n">PFN_cuMemAlloc_v3020</span><span class="p">)(</span><span class="n">CUdeviceptr_v2</span><span class="w"> </span><span class="o">*</span><span class="n">dptr</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">bytesize</span><span class="p">);</span>
+<span class="k">typedef</span><span class="w"> </span><span class="n">CUresult</span><span class="w"> </span><span class="p">(</span><span class="n">CUDAAPI</span><span class="w"> </span><span class="o">*</span><span class="n">PFN_cuMemAlloc_v2000</span><span class="p">)(</span><span class="n">CUdeviceptr_v1</span><span class="w"> </span><span class="o">*</span><span class="n">dptr</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">bytesize</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>CUDA 드라이버 심볼은 첫 번째 버전을 제외하고 이름에 <code class="docutils literal notranslate"><span class="pre">_v*</span></code> 확장자가 포함되는 버전 기반 명명 체계를 갖습니다. 특정 CUDA 드라이버 API의 시그니처 또는 의미(semantics)가 변경되면, 해당 드라이버 심볼의 버전 번호를 증가시킵니다. <code class="docutils literal notranslate"><span class="pre">cuMemAlloc</span></code> 드라이버 API의 경우, 첫 번째 드라이버 심볼 이름은 <code class="docutils literal notranslate"><span class="pre">cuMemAlloc</span></code>이고 다음 심볼 이름은 <code class="docutils literal notranslate"><span class="pre">cuMemAlloc_v2</span></code>입니다. CUDA 2.0 (2000)에서 도입된 첫 번째 버전에 대한 typedef는 <code class="docutils literal notranslate"><span class="pre">PFN_cuMemAlloc_v2000</span></code>입니다. CUDA 3.2 (3020)에서 도입된 다음 버전에 대한 typedef는 <code class="docutils literal notranslate"><span class="pre">PFN_cuMemAlloc_v3020</span></code>입니다.</p>
+<p>코드에서 적절한 타입의 함수 포인터를 더 쉽게 정의하기 위해 <code class="docutils literal notranslate"><span class="pre">typedefs</span></code>를 사용할 수 있습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">PFN_cuMemAlloc_v3020</span><span class="w"> </span><span class="n">pfn_cuMemAlloc_v2</span><span class="p">;</span>
+<span class="n">PFN_cuMemAlloc_v2000</span><span class="w"> </span><span class="n">pfn_cuMemAlloc_v1</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>위 방법은 사용자가 특정 버전의 API에 관심이 있는 경우에 더 바람직합니다. 또한 헤더에는 설치된 CUDA 툴킷이 릴리스되었을 때 사용 가능했던 모든 드라이버 심볼의 최신 버전에 대해 미리 정의된 매크로가 있으며, 이러한 typedef에는 <code class="docutils literal notranslate"><span class="pre">_v*</span></code> 접미사가 없습니다. CUDA 11.3 툴킷의 경우 <code class="docutils literal notranslate"><span class="pre">cuMemAlloc_v2</span></code>이 최신 버전이었으므로, 아래와 같이 해당 함수 포인터를 정의할 수도 있습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">PFN_cuMemAlloc</span><span class="w"> </span><span class="n">pfn_cuMemAlloc</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="driver-function-retrieval">
+<span id="id3"></span><h2><span class="section-number">4.20.3. </span>드라이버 함수 가져오기<a class="headerlink" href="#driver-function-retrieval" title="이 제목으로의 링크">#</a></h2>
+<p>드라이버 엔트리 포인트 액세스 API와 적절한 typedef를 사용하면, 어떤 CUDA 드라이버 API에 대해서도 함수 포인터를 얻을 수 있습니다.</p>
+<section id="using-the-driver-api">
+<span id="id4"></span><h3><span class="section-number">4.20.3.1. </span>드라이버 API 사용<a class="headerlink" href="#using-the-driver-api" title="이 제목으로의 링크">#</a></h3>
+<p>드라이버 API는 요청된 드라이버 심볼에 대해 ABI 호환 버전을 얻기 위해 인자로 CUDA 버전을 요구합니다. CUDA 드라이버 API는 함수별 ABI를 가지며, 이는 다음으로 표시됩니다. <code class="docutils literal notranslate"><span class="pre">_v*</span></code> 확장자입니다. 예를 들어, 다음의 버전들을 고려해 보겠습니다. <code class="docutils literal notranslate"><span class="pre">cuStreamBeginCapture</span></code> 및 이에 대응하는 <code class="docutils literal notranslate"><span class="pre">typedefs</span></code> 에서 <code class="docutils literal notranslate"><span class="pre">cudaTypedefs.h</span></code>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// cuda.h</span>
+<span class="n">CUresult</span><span class="w"> </span><span class="n">CUDAAPI</span><span class="w"> </span><span class="n">cuStreamBeginCapture</span><span class="p">(</span><span class="n">CUstream</span><span class="w"> </span><span class="n">hStream</span><span class="p">);</span>
+<span class="n">CUresult</span><span class="w"> </span><span class="n">CUDAAPI</span><span class="w"> </span><span class="n">cuStreamBeginCapture_v2</span><span class="p">(</span><span class="n">CUstream</span><span class="w"> </span><span class="n">hStream</span><span class="p">,</span><span class="w"> </span><span class="n">CUstreamCaptureMode</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
+
+<span class="c1">// cudaTypedefs.h</span>
+<span class="k">typedef</span><span class="w"> </span><span class="n">CUresult</span><span class="w"> </span><span class="p">(</span><span class="n">CUDAAPI</span><span class="w"> </span><span class="o">*</span><span class="n">PFN_cuStreamBeginCapture_v10000</span><span class="p">)(</span><span class="n">CUstream</span><span class="w"> </span><span class="n">hStream</span><span class="p">);</span>
+<span class="k">typedef</span><span class="w"> </span><span class="n">CUresult</span><span class="w"> </span><span class="p">(</span><span class="n">CUDAAPI</span><span class="w"> </span><span class="o">*</span><span class="n">PFN_cuStreamBeginCapture_v10010</span><span class="p">)(</span><span class="n">CUstream</span><span class="w"> </span><span class="n">hStream</span><span class="p">,</span><span class="w"> </span><span class="n">CUstreamCaptureMode</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>위 내용에서 <code class="docutils literal notranslate"><span class="pre">typedefs</span></code> 코드 스니펫에서, 버전 접미사 <code class="docutils literal notranslate"><span class="pre">_v10000</span></code> 그리고 <code class="docutils literal notranslate"><span class="pre">_v10010</span></code> 위 API는 각각 CUDA 10.0과 CUDA 10.1에서 도입되었음을 나타냅니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cudaTypedefs.h&gt;</span>
+
+<span class="c1">// Declare the entry points for cuStreamBeginCapture</span>
+<span class="n">PFN_cuStreamBeginCapture_v10000</span><span class="w"> </span><span class="n">pfn_cuStreamBeginCapture_v1</span><span class="p">;</span>
+<span class="n">PFN_cuStreamBeginCapture_v10010</span><span class="w"> </span><span class="n">pfn_cuStreamBeginCapture_v2</span><span class="p">;</span>
+
+<span class="c1">// Get the function pointer to the cuStreamBeginCapture driver symbol</span>
+<span class="n">cuGetProcAddress</span><span class="p">(</span><span class="s">"cuStreamBeginCapture"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuStreamBeginCapture_v1</span><span class="p">,</span><span class="w"> </span><span class="mi">10000</span><span class="p">,</span><span class="w"> </span><span class="n">CU_GET_PROC_ADDRESS_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+<span class="c1">// Get the function pointer to the cuStreamBeginCapture_v2 driver symbol</span>
+<span class="n">cuGetProcAddress</span><span class="p">(</span><span class="s">"cuStreamBeginCapture"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuStreamBeginCapture_v2</span><span class="p">,</span><span class="w"> </span><span class="mi">10010</span><span class="p">,</span><span class="w"> </span><span class="n">CU_GET_PROC_ADDRESS_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+</pre></div>
+</div><p>위 코드 스니펫을 참조하면, 다음에 대한 주소를 가져오기 위해 <code class="docutils literal notranslate"><span class="pre">_v1</span></code> 드라이버 API의 버전 <code class="docutils literal notranslate"><span class="pre">cuStreamBeginCapture</span></code>, CUDA 버전 인자는 정확히 10.0(10000)이어야 합니다. 마찬가지로, 다음에 대한 주소를 가져오기 위한 CUDA 버전은 <code class="docutils literal notranslate"><span class="pre">_v2</span></code> API의 버전은 10.1(10010)이어야 합니다. 드라이버 API의 특정 버전을 가져오기 위해 더 높은 CUDA 버전을 지정하는 것은 항상 이식 가능하지 않을 수 있습니다. 예를 들어, 여기에서 11030을 사용하더라도 여전히 <code class="docutils literal notranslate"><span class="pre">_v2</span></code> 심볼이지만, 만약 가상의 <code class="docutils literal notranslate"><span class="pre">_v3</span></code> 버전이 CUDA 11.3에서 릴리스되면, <code class="docutils literal notranslate"><span class="pre">cuGetProcAddress</span></code> API는 더 새로운 것을 반환하기 시작할 것입니다. <code class="docutils literal notranslate"><span class="pre">_v3</span></code> CUDA 11.3 드라이버와 함께 페어링되면 대신 더 새로운 심볼을 반환합니다. ABI 및 함수 시그니처가 <code class="docutils literal notranslate"><span class="pre">_v2</span></code> 그리고 <code class="docutils literal notranslate"><span class="pre">_v3</span></code> 심볼이 서로 다를 수 있으므로, 이를 호출하면 <code class="docutils literal notranslate"><span class="pre">_v3</span></code> 다음을 사용하는 함수 <code class="docutils literal notranslate"><span class="pre">_v10010</span></code> 다음을 위한 typedef <code class="docutils literal notranslate"><span class="pre">_v2</span></code> 해당 심볼은 정의되지 않은 동작을 보일 것입니다.</p>
+<p>주어진 CUDA Toolkit에 대해 드라이버 API의 최신 버전을 가져오려면, <code class="docutils literal notranslate"><span class="pre">version</span></code> 인자로 CUDA_VERSION을 지정하고 버전이 없는 typedef를 사용해 함수 포인터를 정의할 수도 있습니다. <code class="docutils literal notranslate"><span class="pre">_v2</span></code>는 CUDA 11.3에서 드라이버 API <code class="docutils literal notranslate"><span class="pre">cuStreamBeginCapture</span></code>의 최신 버전이므로, 아래 코드 스니펫은 이를 가져오는 다른 방법을 보여줍니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming we are using CUDA 11.3 Toolkit</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cudaTypedefs.h&gt;</span>
+
+<span class="c1">// Declare the entry point</span>
+<span class="n">PFN_cuStreamBeginCapture</span><span class="w"> </span><span class="n">pfn_cuStreamBeginCapture_latest</span><span class="p">;</span>
+
+<span class="c1">// Initialize the entry point. Specifying CUDA_VERSION will give the function pointer to the</span>
+<span class="c1">// cuStreamBeginCapture_v2 symbol since it is latest version on CUDA 11.3.</span>
+<span class="n">cuGetProcAddress</span><span class="p">(</span><span class="s">"cuStreamBeginCapture"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuStreamBeginCapture_latest</span><span class="p">,</span><span class="w"> </span><span class="n">CUDA_VERSION</span><span class="p">,</span><span class="w"> </span><span class="n">CU_GET_PROC_ADDRESS_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>유효하지 않은 CUDA 버전으로 드라이버 API를 요청하면 오류 <code class="docutils literal notranslate"><span class="pre">CUDA_ERROR_NOT_FOUND</span></code>가 반환된다는 점에 유의하십시오. 위 코드 예제에서 10000(CUDA 10.0) 미만의 버전을 전달하는 것은 유효하지 않습니다.</p>
+</section>
+<section id="using-the-runtime-api">
+<span id="id5"></span><h3><span class="section-number">4.20.3.2. </span>런타임 API 사용<a class="headerlink" href="#using-the-runtime-api" title="이 제목으로의 링크">#</a></h3>
+<p>런타임 API <code class="docutils literal notranslate"><span class="pre">cudaGetDriverEntryPoint</span></code>는 CUDA 런타임 버전을 사용하여 요청된 드라이버 심볼에 대해 ABI 호환 버전을 가져옵니다. 아래 코드 스니펫에서 필요한 최소 CUDA 런타임 버전은, <code class="docutils literal notranslate"><span class="pre">cuMemAllocAsync</span></code>가 그때 도입되었으므로 CUDA 11.2입니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cudaTypedefs.h&gt;</span>
+
+<span class="c1">// Declare the entry point</span>
+<span class="n">PFN_cuMemAllocAsync</span><span class="w"> </span><span class="n">pfn_cuMemAllocAsync</span><span class="p">;</span>
+
+<span class="c1">// Initialize the entry point. Assuming CUDA runtime version &gt;= 11.2</span>
+<span class="n">cudaGetDriverEntryPoint</span><span class="p">(</span><span class="s">"cuMemAllocAsync"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuMemAllocAsync</span><span class="p">,</span><span class="w"> </span><span class="n">cudaEnableDefault</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+
+<span class="c1">// Call the entry point</span>
+<span class="k">if</span><span class="p">(</span><span class="n">driverStatus</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">cudaDriverEntryPointSuccess</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pfn_cuMemAllocAsync</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">pfn_cuMemAllocAsync</span><span class="p">(...);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>런타임 API <code class="docutils literal notranslate"><span class="pre">cudaGetDriverEntryPointByVersion</span></code>는 사용자가 제공한 CUDA 버전을 사용하여 요청된 드라이버 심볼에 대해 ABI 호환 버전을 가져옵니다. 이를 통해 요청된 ABI 버전에 대해 더 구체적으로 제어할 수 있습니다.</p>
+</section>
+<section id="retrieve-per-thread-default-stream-versions">
+<span id="id6"></span><h3><span class="section-number">4.20.3.3. </span>스레드별 기본 스트림(per-thread default stream) 버전 가져오기<a class="headerlink" href="#retrieve-per-thread-default-stream-versions" title="이 제목으로의 링크">#</a></h3>
+<p>일부 CUDA 드라이버 API는 <em>기본 스트림</em> 시맨틱이나 <em>스레드별 기본 스트림(per-thread default stream)</em> 시맨틱으로 구성할 수 있습니다. 스레드별 기본 스트림 시맨틱을 따르는 드라이버 API는 이름에 <em>_ptsz</em> 또는 <em>_ptds</em> 접미사가 붙습니다. 예를 들어 <code class="docutils literal notranslate"><span class="pre">cuLaunchKernel</span></code>에는 <code class="docutils literal notranslate"><span class="pre">cuLaunchKernel_ptsz</span></code>라는 스레드별 기본 스트림 변형이 있습니다. 드라이버 엔트리 포인트 액세스 API를 사용하면 사용자는 <code class="docutils literal notranslate"><span class="pre">cuLaunchKernel</span></code>의 기본 스트림 버전 대신 스레드별 기본 스트림 버전을 요청할 수 있습니다. CUDA 드라이버 API를 기본 스트림 또는 스레드별 기본 스트림 시맨틱으로 구성하면 동기화 동작에 차이가 생깁니다. 자세한 내용은 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-driver-api/stream-sync-behavior.html">스트림 동기화 동작 문서</a>를 참조하십시오.</p>
+<p>드라이버 API의 <em>기본 스트림</em> 버전이나 <em>스레드별 기본 스트림(per-thread default stream)</em> 버전은 다음 방법 중 하나로 얻을 수 있습니다:</p>
+<ul class="simple">
+<li><p>컴파일 플래그 <code class="docutils literal notranslate"><span class="pre">--default-stream</span> <span class="pre">per-thread</span></code>를 사용하거나 매크로 <code class="docutils literal notranslate"><span class="pre">CUDA_API_PER_THREAD_DEFAULT_STREAM</span></code>를 정의해 스레드별 기본 스트림 동작을 선택합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CU_GET_PROC_ADDRESS_LEGACY_STREAM/cudaEnableLegacyStream</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">CU_GET_PROC_ADDRESS_PER_THREAD_DEFAULT_STREAM/cudaEnablePerThreadDefaultStream</span></code> 플래그를 사용해 각각 기본 스트림 또는 스레드별 기본 스트림 동작을 강제합니다.</p></li>
+</ul>
+</section>
+<section id="access-new-cuda-features">
+<span id="id7"></span><h3><span class="section-number">4.20.3.4. </span>새로운 CUDA 기능에 액세스<a class="headerlink" href="#access-new-cuda-features" title="Link to this heading">#</a></h3>
+<p>새로운 CUDA 드라이버 기능에 액세스하려면 항상 최신 CUDA 툴킷을 설치하는 것이 권장되지만, 어떤 이유로 사용자가 업데이트를 원하지 않거나 최신 툴킷에 액세스할 수 없는 경우에도, API를 사용하면 업데이트된 CUDA 드라이버만으로 새로운 CUDA 기능에 액세스할 수 있습니다. 논의를 위해, 사용자가 CUDA 11.3을 사용 중이며 CUDA 12.0 드라이버에서 사용 가능한 새로운 드라이버 API <code class="docutils literal notranslate"><span class="pre">cuFoo</span></code>를 사용하고자 한다고 가정하겠습니다. 아래 코드 스니펫은 이 사용 사례를 보여줍니다:</p><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Assuming we have CUDA 12.0 driver installed.</span>
+
+<span class="w">    </span><span class="c1">// Manually define the prototype as cudaTypedefs.h in CUDA 11.3 does not have the cuFoo typedef</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">CUresult</span><span class="w"> </span><span class="p">(</span><span class="n">CUDAAPI</span><span class="w"> </span><span class="o">*</span><span class="n">PFN_cuFoo</span><span class="p">)(...);</span>
+<span class="w">    </span><span class="n">PFN_cuFoo</span><span class="w"> </span><span class="n">pfn_cuFoo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="n">CUdriverProcAddressQueryResult</span><span class="w"> </span><span class="n">driverStatus</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Get the address for cuFoo API using cuGetProcAddress. Specify CUDA version as</span>
+<span class="w">    </span><span class="c1">// 12000 since cuFoo was introduced then or get the driver version dynamically</span>
+<span class="w">    </span><span class="c1">// using cuDriverGetVersion</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">driverVersion</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cuDriverGetVersion</span><span class="p">(</span><span class="o">&amp;</span><span class="n">driverVersion</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CUresult</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuGetProcAddress</span><span class="p">(</span><span class="s">"cuFoo"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuFoo</span><span class="p">,</span><span class="w"> </span><span class="n">driverVersion</span><span class="p">,</span><span class="w"> </span><span class="n">CU_GET_PROC_ADDRESS_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CUDA_SUCCESS</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pfn_cuFoo</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">pfn_cuFoo</span><span class="p">(...);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"Cannot retrieve the address to cuFoo - driverStatus = %d. Check if the latest driver for CUDA 12.0 is installed.</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">driverStatus</span><span class="p">);</span>
+<span class="w">        </span><span class="n">assert</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// rest of code here</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section><section id="potential-implications-with-cugetprocaddress">
+<span id="implications-with-cugetprocaddress"></span><h2><span class="section-number">4.20.4. </span>cuGetProcAddress 사용 시 잠재적 영향<a class="headerlink" href="#potential-implications-with-cugetprocaddress" title="이 제목으로의 링크">#</a></h2>
+<p>아래는 <code class="docutils literal notranslate"><span class="pre">cuGetProcAddress</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cudaGetDriverEntryPoint</span></code>에서 발생할 수 있는 잠재적 문제에 대한 구체적 및 이론적 예시 모음입니다.</p>
+<section id="implications-with-cugetprocaddress-vs-implicit-linking">
+<span id="implications-with-native-compilation"></span><h3><span class="section-number">4.20.4.1. </span>cuGetProcAddress와 암시적 링킹(implicit linking)의 영향 비교<a class="headerlink" href="#implications-with-cugetprocaddress-vs-implicit-linking" title="이 제목으로의 링크">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">cuDeviceGetUuid</span></code> CUDA 9.2에서 도입되었습니다. 이 API에는 더 새로운 개정판이 있습니다 (<code class="docutils literal notranslate"><span class="pre">cuDeviceGetUuid_v2</span></code>) CUDA 11.4에서 도입되었습니다. 마이너 버전 호환성을 유지하기 위해, <code class="docutils literal notranslate"><span class="pre">cuDeviceGetUuid</span></code> 버전이 상향 조정되지 않습니다: <code class="docutils literal notranslate"><span class="pre">cuDeviceGetUuid_v2</span></code> CUDA 12.0까지는 cuda.h에서 그렇지 않습니다. 이는 이를 통해 함수 포인터를 얻어 호출하는 것은 <code class="docutils literal notranslate"><span class="pre">cuGetProcAddress</span></code> 다른 동작을 할 수도 있습니다. API를 직접 사용하는 예:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda.h&gt;</span>
+
+<span class="n">CUuuid</span><span class="w"> </span><span class="n">uuid</span><span class="p">;</span>
+<span class="n">CUdevice</span><span class="w"> </span><span class="n">dev</span><span class="p">;</span>
+<span class="n">CUresult</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuDeviceGet</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dev</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// Get device 0</span>
+<span class="c1">// handle status</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuDeviceGetUuid</span><span class="p">(</span><span class="o">&amp;</span><span class="n">uuid</span><span class="p">,</span><span class="w"> </span><span class="n">dev</span><span class="p">)</span><span class="w"> </span><span class="c1">// Get uuid of device 0</span>
+</pre></div>
+</div>
+<p>이 예에서는 사용자가 CUDA 11.4로 컴파일하고 있다고 가정합니다. 이는 다음의 동작을 수행한다는 점에 유의하십시오. <code class="docutils literal notranslate"><span class="pre">cuDeviceGetUuid</span></code>, _v2 버전이 아닙니다. 이제 다음을 사용하는 예시를 살펴보겠습니다. <code class="docutils literal notranslate"><span class="pre">cuGetProcAddress</span></code>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cudaTypedefs.h&gt;</span>
+
+<span class="n">CUuuid</span><span class="w"> </span><span class="n">uuid</span><span class="p">;</span>
+<span class="n">CUdevice</span><span class="w"> </span><span class="n">dev</span><span class="p">;</span>
+<span class="n">CUresult</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="n">CUdriverProcAddressQueryResult</span><span class="w"> </span><span class="n">driverStatus</span><span class="p">;</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuDeviceGet</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dev</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// Get device 0</span>
+<span class="c1">// handle status</span>
+
+<span class="n">PFN_cuDeviceGetUuid</span><span class="w"> </span><span class="n">pfn_cuDeviceGetUuid</span><span class="p">;</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuGetProcAddress</span><span class="p">(</span><span class="s">"cuDeviceGetUuid"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuDeviceGetUuid</span><span class="p">,</span><span class="w"> </span><span class="n">CUDA_VERSION</span><span class="p">,</span><span class="w"> </span><span class="n">CU_GET_PROC_ADDRESS_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">CUDA_SUCCESS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pfn_cuDeviceGetUuid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// pfn_cuDeviceGetUuid points to ???</span>
+<span class="p">}</span>
+</pre></div>
+</div><p>이 예에서는 사용자가 CUDA 11.4로 컴파일하고 있다고 가정합니다. 그러면 <code class="docutils literal notranslate"><span class="pre">cuDeviceGetUuid_v2</span></code>의 함수 포인터를 가져옵니다. 그런 다음 해당 함수 포인터를 호출하면 이전 예에서 보여준 것과 동일한 <code class="docutils literal notranslate"><span class="pre">cuDeviceGetUuid</span></code>가 아니라, 새로운 _v2 함수가 호출됩니다.</p>
+</section><section id="compile-time-vs-runtime-version-usage-in-cugetprocaddress">
+<span id="implications-compile-vs-runtime-version"></span><h3><span class="section-number">4.20.4.2. </span>cuGetProcAddress에서의 컴파일 타임 vs 런타임 버전 사용<a class="headerlink" href="#compile-time-vs-runtime-version-usage-in-cugetprocaddress" title="이 제목으로의 링크">#</a></h3>
+<p>동일한 문제를 살펴보되, 작은 조정을 하나 해보겠습니다. 마지막 예제는 어떤 함수 포인터를 얻을지 결정하기 위해 CUDA_VERSION의 컴파일 타임 상수를 사용했습니다. 사용자가 <code class="docutils literal notranslate"><span class="pre">cuDriverGetVersion</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">cudaDriverGetVersion</span></code>를 사용해 드라이버 버전을 동적으로 질의하고, 이를 <code class="docutils literal notranslate"><span class="pre">cuGetProcAddress</span></code>에 전달하는 경우에는 더 많은 복잡성이 발생합니다. 예:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cudaTypedefs.h&gt;</span>
+
+<span class="n">CUuuid</span><span class="w"> </span><span class="n">uuid</span><span class="p">;</span>
+<span class="n">CUdevice</span><span class="w"> </span><span class="n">dev</span><span class="p">;</span>
+<span class="n">CUresult</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">cudaVersion</span><span class="p">;</span>
+<span class="n">CUdriverProcAddressQueryResult</span><span class="w"> </span><span class="n">driverStatus</span><span class="p">;</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuDeviceGet</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dev</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// Get device 0</span>
+<span class="c1">// handle status</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuDriverGetVersion</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cudaVersion</span><span class="p">);</span>
+<span class="c1">// handle status</span>
+
+<span class="n">PFN_cuDeviceGetUuid</span><span class="w"> </span><span class="n">pfn_cuDeviceGetUuid</span><span class="p">;</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuGetProcAddress</span><span class="p">(</span><span class="s">"cuDeviceGetUuid"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuDeviceGetUuid</span><span class="p">,</span><span class="w"> </span><span class="n">cudaVersion</span><span class="p">,</span><span class="w"> </span><span class="n">CU_GET_PROC_ADDRESS_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">CUDA_SUCCESS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pfn_cuDeviceGetUuid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// pfn_cuDeviceGetUuid points to ???</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>이 예제에서는 사용자가 CUDA 11.3으로 컴파일한다고 가정합니다. 사용자는 <code class="docutils literal notranslate"><span class="pre">cuDeviceGetUuid</span></code>(_v2 버전이 아님)를 얻는다는 알려진 동작을 바탕으로 이 애플리케이션을 디버그, 테스트 및 배포할 것입니다. CUDA는 마이너 버전 간 ABI 호환성을 보장하므로, 동일한 애플리케이션은 재컴파일 없이 드라이버가 CUDA 11.4로 업그레이드된 후에도(툴킷과 런타임을 업데이트하지 않고도) 실행될 것으로 예상됩니다. 그러나 이는 정의되지 않은 동작(undefined behavior)을 야기할 수 있는데, 이제 <code class="docutils literal notranslate"><span class="pre">PFN_cuDeviceGetUuid</span></code>에 대한 typedef는 여전히 원래 버전의 시그니처를 갖게 되지만, <code class="docutils literal notranslate"><span class="pre">cudaVersion</span></code>가 이제 11040(CUDA 11.4)이므로, <code class="docutils literal notranslate"><span class="pre">cuGetProcAddress</span></code>는 _v2 버전에 대한 함수 포인터를 반환하게 되어, 이를 호출하면 정의되지 않은 동작이 발생할 수 있다는 뜻입니다.</p>
+<p>이 경우 원래(_v2 버전이 아님) typedef는 다음과 같습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span><span class="w"> </span><span class="n">CUresult</span><span class="w"> </span><span class="p">(</span><span class="n">CUDAAPI</span><span class="w"> </span><span class="o">*</span><span class="n">PFN_cuDeviceGetUuid_v9020</span><span class="p">)(</span><span class="n">CUuuid</span><span class="w"> </span><span class="o">*</span><span class="n">uuid</span><span class="p">,</span><span class="w"> </span><span class="n">CUdevice_v1</span><span class="w"> </span><span class="n">dev</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>하지만 _v2 버전 typedef는 다음과 같습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span><span class="w"> </span><span class="n">CUresult</span><span class="w"> </span><span class="p">(</span><span class="n">CUDAAPI</span><span class="w"> </span><span class="o">*</span><span class="n">PFN_cuDeviceGetUuid_v11040</span><span class="p">)(</span><span class="n">CUuuid</span><span class="w"> </span><span class="o">*</span><span class="n">uuid</span><span class="p">,</span><span class="w"> </span><span class="n">CUdevice_v1</span><span class="w"> </span><span class="n">dev</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>따라서 이 경우 API/ABI는 동일할 것이며 런타임 API 호출은 아마도 문제를 일으키지 않을 것입니다–알 수 없는 uuid 반환 가능성만 존재합니다. <a class="reference internal" href="#implications-to-api-abi"><span class="std std-ref">API/ABI에 대한 시사점</span></a>에서 API/ABI 호환성의 더 문제가 되는 사례를 논의합니다.</p>
+</section>
+<section id="api-version-bumps-with-explicit-version-checks">
+<span id="implications-runtime-version-bumps"></span><h3><span class="section-number">4.20.4.3. </span>명시적 버전 확인을 통한 API 버전 증가<a class="headerlink" href="#api-version-bumps-with-explicit-version-checks" title="이 제목으로의 링크">#</a></h3>
+<p>위에서는 구체적인 특정 예를 보였습니다. 이제 예를 들어 드라이버 버전 전반에 걸친 호환성과 관련해 여전히 문제가 있는 이론적인 예를 사용해 보겠습니다. 예:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUresult</span><span class="w"> </span><span class="nf">cuFoo</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">bar</span><span class="p">);</span><span class="w"> </span><span class="c1">// Introduced in CUDA 11.4</span>
+<span class="n">CUresult</span><span class="w"> </span><span class="nf">cuFoo_v2</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">bar</span><span class="p">);</span><span class="w"> </span><span class="c1">// Introduced in CUDA 11.5</span>
+<span class="n">CUresult</span><span class="w"> </span><span class="nf">cuFoo_v3</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">jazz</span><span class="p">);</span><span class="w"> </span><span class="c1">// Introduced in CUDA 11.6</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="n">CUresult</span><span class="w"> </span><span class="p">(</span><span class="n">CUDAAPI</span><span class="w"> </span><span class="o">*</span><span class="n">PFN_cuFoo_v11040</span><span class="p">)(</span><span class="kt">int</span><span class="w"> </span><span class="n">bar</span><span class="p">);</span>
+<span class="k">typedef</span><span class="w"> </span><span class="n">CUresult</span><span class="w"> </span><span class="p">(</span><span class="n">CUDAAPI</span><span class="w"> </span><span class="o">*</span><span class="n">PFN_cuFoo_v11050</span><span class="p">)(</span><span class="kt">int</span><span class="w"> </span><span class="n">bar</span><span class="p">);</span>
+<span class="k">typedef</span><span class="w"> </span><span class="n">CUresult</span><span class="w"> </span><span class="p">(</span><span class="n">CUDAAPI</span><span class="w"> </span><span class="o">*</span><span class="n">PFN_cuFoo_v11060</span><span class="p">)(</span><span class="kt">int</span><span class="w"> </span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">jazz</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>이 API는 CUDA 11.4에서 처음 만들어진 이후 두 번 수정되었으며, 최신인 CUDA 11.6에서는 함수에 대한 API/ABI 인터페이스도 수정했습니다. CUDA 11.5에 대해 컴파일된 사용자 코드에서의 사용은 다음과 같습니다:</p><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cudaTypedefs.h&gt;</span>
+
+<span class="n">CUresult</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">cudaVersion</span><span class="p">;</span>
+<span class="n">CUdriverProcAddressQueryResult</span><span class="w"> </span><span class="n">driverStatus</span><span class="p">;</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuDriverGetVersion</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cudaVersion</span><span class="p">);</span>
+<span class="c1">// handle status</span>
+
+<span class="n">PFN_cuFoo_v11040</span><span class="w"> </span><span class="n">pfn_cuFoo_v11040</span><span class="p">;</span>
+<span class="n">PFN_cuFoo_v11050</span><span class="w"> </span><span class="n">pfn_cuFoo_v11050</span><span class="p">;</span>
+<span class="k">if</span><span class="p">(</span><span class="n">cudaVersion</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">11050</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// We know to get the CUDA 11.4 version</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuGetProcAddress</span><span class="p">(</span><span class="s">"cuFoo"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuFoo_v11040</span><span class="p">,</span><span class="w"> </span><span class="n">cudaVersion</span><span class="p">,</span><span class="w"> </span><span class="n">CU_GET_PROC_ADDRESS_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Handle status and validating pfn_cuFoo_v11040</span>
+<span class="p">}</span>
+<span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Assume &gt;= CUDA 11.5 version we can use the second version</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuGetProcAddress</span><span class="p">(</span><span class="s">"cuFoo"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuFoo_v11050</span><span class="p">,</span><span class="w"> </span><span class="n">cudaVersion</span><span class="p">,</span><span class="w"> </span><span class="n">CU_GET_PROC_ADDRESS_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Handle status and validating pfn_cuFoo_v11050</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>이 예에서는 CUDA 11.6의 새로운 typedef에 대한 업데이트와, 해당 새로운 typedef 및 case 처리로 애플리케이션을 재컴파일하는 작업이 없으면, 애플리케이션은 cuFoo_v3 함수 포인터를 반환받게 되며 그 함수를 어떤 방식으로든 사용하면 정의되지 않은 동작(undefined behavior)을 초래하게 됩니다. 이 예제의 요점은 <code class="docutils literal notranslate"><span class="pre">cuGetProcAddress</span></code>에 대한 명시적 버전 검사조차도 CUDA 메이저 릴리스 내의 마이너 버전 증가를 안전하게 포괄하지 못할 수 있음을 설명하는 것이었습니다.</p>
+</section>
+<section id="issues-with-runtime-api-usage">
+<span id="implications-issues-with-runtime-api"></span><h3><span class="section-number">4.20.4.4. </span>런타임 API 사용 시의 문제<a class="headerlink" href="#issues-with-runtime-api-usage" title="이 제목으로의 링크">#</a></h3>
+<p>위 예제들은 드라이버 API에 대한 함수 포인터를 얻기 위한 Driver API 사용의 문제에 초점을 맞췄습니다. 이제 <code class="docutils literal notranslate"><span class="pre">cudaApiGetDriverEntryPoint</span></code>에 대한 런타임 API 사용 시 잠재적인 문제를 논의하겠습니다.</p>
+<p>위와 유사하게 런타임 API를 사용하는 것부터 시작하겠습니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cudaTypedefs.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_runtime.h&gt;</span>
+
+<span class="n">CUresult</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="n">cudaError_t</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">driverVersion</span><span class="p">,</span><span class="w"> </span><span class="n">runtimeVersion</span><span class="p">;</span>
+<span class="n">CUdriverProcAddressQueryResult</span><span class="w"> </span><span class="n">driverStatus</span><span class="p">;</span>
+
+<span class="c1">// Ask the runtime for the function</span>
+<span class="n">PFN_cuDeviceGetUuid</span><span class="w"> </span><span class="n">pfn_cuDeviceGetUuidRuntime</span><span class="p">;</span>
+<span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaGetDriverEntryPoint</span><span class="w"> </span><span class="p">(</span><span class="s">"cuDeviceGetUuid"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuDeviceGetUuidRuntime</span><span class="p">,</span><span class="w"> </span><span class="n">cudaEnableDefault</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">cudaSuccess</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pfn_cuDeviceGetUuidRuntime</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// pfn_cuDeviceGetUuid points to ???</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>이 예제의 함수 포인터는 어떤 버전의 함수를 얻을지에 대한 제어가 없기 때문에, 위의 드라이버 전용 예제들보다 더 복잡합니다. 항상 현재 CUDA Runtime 버전에 대한 API를 얻게 됩니다. 자세한 내용은 다음 표를 참조하십시오:</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table-no-stripes table">
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head" colspan="2"><p>정적 런타임 버전 링키지</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>설치된 드라이버 버전</p></td>
+<td><p><strong>V11.3</strong></p></td>
+<td><p><strong>V11.4</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>V11.3</strong></p></td>
+<td><p>v1</p></td>
+<td><p>v1x</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>V11.4</strong></p></td>
+<td><p>v1</p></td>
+<td><p>v2</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>V11.3 =&gt; 11.3 CUDA Runtime and Toolkit (includes header files cuda.h and cudaTypedefs.h)
+V11.4 =&gt; 11.4 CUDA Runtime and Toolkit (includes header files cuda.h and cudaTypedefs.h)
+v1 =&gt; cuDeviceGetUuid
+v2 =&gt; cuDeviceGetUuid_v2
+
+x =&gt; Implies the typedef function pointer won't match the returned
+     function pointer.  In these cases, the typedef at compile time
+     using a CUDA 11.4 runtime, would match the _v2 version, but the
+     returned function pointer would be the original (non _v2) function.
+</pre></div>
+</div>
+<p>위 표에서의 문제는 더 새로운 CUDA 11.4 런타임 및 툴킷과 더 오래된 드라이버(CUDA 11.3) 조합에서 발생하며, 위에서는 v1x로 표시되어 있습니다. 이 조합에서는 드라이버가 이전 함수( _v2가 아닌)에 대한 포인터를 반환하지만, 애플리케이션에서 사용되는 typedef는 새 함수 포인터에 대한 것이 됩니다.</p>
+</section>
+<section id="issues-with-runtime-api-and-dynamic-versioning">
+<span id="implications-with-runtime-api-and-dynamic-version"></span><h3><span class="section-number">4.20.4.5. </span>런타임 API 및 동적 버전 관리의 문제<a class="headerlink" href="#issues-with-runtime-api-and-dynamic-versioning" title="이 제목으로의 링크">#</a></h3>
+<p>애플리케이션이 컴파일되는 CUDA 버전, CUDA 런타임 버전, 그리고 애플리케이션이 동적으로 링크하는 CUDA 드라이버 버전의 서로 다른 조합을 고려하면 더 많은 복잡성이 발생합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cudaTypedefs.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_runtime.h&gt;</span>
+
+<span class="n">CUresult</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="n">cudaError_t</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">driverVersion</span><span class="p">,</span><span class="w"> </span><span class="n">runtimeVersion</span><span class="p">;</span>
+<span class="n">CUdriverProcAddressQueryResult</span><span class="w"> </span><span class="n">driverStatus</span><span class="p">;</span>
+<span class="k">enum</span><span class="w"> </span><span class="nc">cudaDriverEntryPointQueryResult</span><span class="w"> </span><span class="n">runtimeStatus</span><span class="p">;</span>
+
+<span class="n">PFN_cuDeviceGetUuid</span><span class="w"> </span><span class="n">pfn_cuDeviceGetUuidDriver</span><span class="p">;</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuGetProcAddress</span><span class="p">(</span><span class="s">"cuDeviceGetUuid"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuDeviceGetUuidDriver</span><span class="p">,</span><span class="w"> </span><span class="n">CUDA_VERSION</span><span class="p">,</span><span class="w"> </span><span class="n">CU_GET_PROC_ADDRESS_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">CUDA_SUCCESS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pfn_cuDeviceGetUuidDriver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// pfn_cuDeviceGetUuidDriver points to ???</span>
+<span class="p">}</span>
+
+<span class="c1">// Ask the runtime for the function</span>
+<span class="n">PFN_cuDeviceGetUuid</span><span class="w"> </span><span class="n">pfn_cuDeviceGetUuidRuntime</span><span class="p">;</span>
+<span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaGetDriverEntryPoint</span><span class="w"> </span><span class="p">(</span><span class="s">"cuDeviceGetUuid"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuDeviceGetUuidRuntime</span><span class="p">,</span><span class="w"> </span><span class="n">cudaEnableDefault</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">runtimeStatus</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">cudaSuccess</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pfn_cuDeviceGetUuidRuntime</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// pfn_cuDeviceGetUuidRuntime points to ???</span>
+<span class="p">}</span>
+
+<span class="c1">// Ask the driver for the function based on the driver version (obtained via runtime)</span>
+<span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaDriverGetVersion</span><span class="p">(</span><span class="o">&amp;</span><span class="n">driverVersion</span><span class="p">);</span>
+<span class="n">PFN_cuDeviceGetUuid</span><span class="w"> </span><span class="n">pfn_cuDeviceGetUuidDriverDriverVer</span><span class="p">;</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuGetProcAddress</span><span class="w"> </span><span class="p">(</span><span class="s">"cuDeviceGetUuid"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn_cuDeviceGetUuidDriverDriverVer</span><span class="p">,</span><span class="w"> </span><span class="n">driverVersion</span><span class="p">,</span><span class="w"> </span><span class="n">CU_GET_PROC_ADDRESS_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">CUDA_SUCCESS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pfn_cuDeviceGetUuidDriverDriverVer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// pfn_cuDeviceGetUuidDriverDriverVer points to ???</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>다음과 같은 함수 포인터 행렬이 예상됩니다:</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table-no-stripes table">
+<tbody>
+<tr class="row-odd"><td rowspan="3"><p><strong>함수 포인터</strong></p></td>
+<td colspan="8"><p><strong>애플리케이션 컴파일/런타임 동적 링크 버전/드라이버 버전</strong></p></td>
+</tr>
+<tr class="row-even"><td colspan="8"><p><strong>(3 =&gt; CUDA 11.3 및 4 =&gt; CUDA 11.4)</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>3/3/3</strong></p></td>
+<td><p><strong>3/3/4</strong></p></td>
+<td><p><strong>3/4/3</strong></p></td>
+<td><p><strong>3/4/4</strong></p></td>
+<td><p><strong>4/3/3</strong></p></td>
+<td><p><strong>4/3/4</strong></p></td>
+<td><p><strong>4/4/3</strong></p></td>
+<td><p><strong>4/4/4</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pfn_cuDeviceGetUuidDriver</span></code></p></td>
+<td><p>t1/v1</p></td>
+<td><p>t1/v1</p></td>
+<td><p>t1/v1</p></td>
+<td><p>t1/v1</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+<td><p><strong>t2/v1</strong></p></td>
+<td><p>t2/v2</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pfn_cuDeviceGetUuidRuntime</span></code></p></td>
+<td><p>t1/v1</p></td>
+<td><p>t1/v1</p></td>
+<td><p>t1/v1</p></td>
+<td><p><strong>t1/v2</strong></p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+<td><p><strong>t2/v1</strong></p></td>
+<td><p>t2/v2</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pfn_cuDeviceGetUuidDriverDriverVer</span></code></p></td>
+<td><p>t1/v1</p></td>
+<td><p><strong>t1/v2</strong></p></td>
+<td><p>t1/v1</p></td>
+<td><p><strong>t1/v2</strong></p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+<td><p><strong>t2/v1</strong></p></td>
+<td><p>t2/v2</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tX -&gt; Typedef version used at compile time
+vX -&gt; Version returned/used at runtime
+</pre></div>
+</div>
+<p>애플리케이션이 CUDA Version 11.3에 대해 컴파일되면 원래 함수에 대한 typedef를 갖게 되지만, CUDA Version 11.4에 대해 컴파일되면 _v2 함수에 대한 typedef를 갖게 됩니다. 그 때문에, typedef가 실제로 반환/사용되는 버전과 일치하지 않는 경우의 수에 주목하십시오.</p>
+</section>
+<section id="issues-with-runtime-api-allowing-cuda-version">
+<span id="implications-with-runtime-api-by-version"></span><h3><span class="section-number">4.20.4.6. </span>CUDA 버전을 허용하는 런타임 API의 문제<a class="headerlink" href="#issues-with-runtime-api-allowing-cuda-version" title="이 제목으로의 링크">#</a></h3>
+<p>별도로 지정하지 않는 한, CUDA 런타임 API <code class="docutils literal notranslate"><span class="pre">cudaGetDriverEntryPointByVersion</span></code>는 사용자가 특정 CUDA 드라이버 버전을 요청할 수 있도록 허용하므로 드라이버 엔트리 포인트 <code class="docutils literal notranslate"><span class="pre">cuGetProcAddress</span></code>와 유사한 함의를 갖습니다.</p>
+</section>
+<section id="implications-to-api-abi">
+<span id="id8"></span><h3><span class="section-number">4.20.4.7. </span>API/ABI에 대한 함의<a class="headerlink" href="#implications-to-api-abi" title="이 제목으로의 링크">#</a></h3>
+<p>위의 <code class="docutils literal notranslate"><span class="pre">cuDeviceGetUuid</span></code>를 사용하는 예제에서, API 불일치의 함의는 미미하며, _v2가 멀티 인스턴스 GPU(MIG) 모드를 지원하기 위해 추가되었기 때문에 많은 사용자가 이를 완전히 알아차리지 못할 수도 있습니다. 따라서 MIG가 없는 시스템에서는, 사용자가 다른 API를 받고 있다는 사실조차 인지하지 못할 수 있습니다.</p><p>더 문제가 되는 것은 다음과 같이 애플리케이션 시그니처(따라서 ABI)가 변경되는 API입니다. <code class="docutils literal notranslate"><span class="pre">cuCtxCreate</span></code>. CUDA 3.2에서 도입된 _v2 버전은 현재 기본값으로 사용됩니다 <code class="docutils literal notranslate"><span class="pre">cuCtxCreate</span></code> 사용 시 <code class="docutils literal notranslate"><span class="pre">cuda.h</span></code> 하지만 이제 CUDA 11.4에서 도입된 더 새로운 버전이 있으며 (<code class="docutils literal notranslate"><span class="pre">cuCtxCreate_v3</span></code>). API 시그니처도 수정되었으며, 이제 추가 인자를 받습니다. 따라서 위의 일부 경우에서 함수 포인터에 대한 typedef가 반환된 함수 포인터와 일치하지 않으면, 눈에 띄지 않는 ABI 비호환성이 발생하여 정의되지 않은 동작으로 이어질 가능성이 있습니다.</p>
+<p>예를 들어, CUDA 11.4 드라이버가 설치된 상태에서 CUDA 11.3 툴킷을 대상으로 컴파일된 다음 코드를 가정해 보겠습니다:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">PFN_cuCtxCreate</span><span class="w"> </span><span class="n">cuUnknown</span><span class="p">;</span>
+<span class="n">CUdriverProcAddressQueryResult</span><span class="w"> </span><span class="n">driverStatus</span><span class="p">;</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuGetProcAddress</span><span class="p">(</span><span class="s">"cuCtxCreate"</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">**</span><span class="p">)</span><span class="o">&amp;</span><span class="n">cuUnknown</span><span class="p">,</span><span class="w"> </span><span class="n">cudaVersion</span><span class="p">,</span><span class="w"> </span><span class="n">CU_GET_PROC_ADDRESS_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">CUDA_SUCCESS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">cuUnknown</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuUnknown</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">dev</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div><p>이 코드를 실행할 때 <code class="docutils literal notranslate"><span class="pre">cudaVersion</span></code>이 11040 이상(즉, CUDA 11.4를 나타냄)으로 설정되어 있으면, <code class="docutils literal notranslate"><span class="pre">cuCtxCreate_v3</span></code> API의 _v3 버전에 필요한 모든 매개변수를 충분히 제공하지 않았기 때문에 정의되지 않은 동작이 발생할 수 있습니다.</p>
+</section>
+</section>
+<section id="determining-cugetprocaddress-failure-reasons">
+<span id="determining-cugetprocaddress-failure-reason"></span><h2><span class="section-number">4.20.5. </span>cuGetProcAddress 실패 원인 판단<a class="headerlink" href="#determining-cugetprocaddress-failure-reasons" title="이 제목으로의 링크">#</a></h2>
+<p>cuGetProcAddress에는 두 가지 유형의 오류가 있습니다. (1) API/사용 오류와 (2) 요청된 드라이버 API를 찾을 수 없음입니다. 첫 번째 오류 유형은 CUresult 반환 값을 통해 API에서 오류 코드를 반환합니다. 예를 들어, <code class="docutils literal notranslate"><span class="pre">pfn</span></code> 변수에 NULL을 전달하거나 유효하지 않은 <code class="docutils literal notranslate"><span class="pre">flags</span></code>를 전달하는 경우가 있습니다.</p>
+<p>두 번째 오류 유형은 <code class="docutils literal notranslate"><span class="pre">CUdriverProcAddressQueryResult</span> <span class="pre">*symbolStatus</span></code>에 인코딩되며, 드라이버가 요청된 심볼을 찾을 수 없는 잠재적 문제를 구분하는 데 도움이 될 수 있습니다. 다음 예를 살펴보십시오:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// cuDeviceGetExecAffinitySupport was introduced in release CUDA 11.4</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda.h&gt;</span>
+<span class="n">CUdriverProcAddressQueryResult</span><span class="w"> </span><span class="n">driverStatus</span><span class="p">;</span>
+<span class="n">cudaVersion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuGetProcAddress</span><span class="p">(</span><span class="s">"cuDeviceGetExecAffinitySupport"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pfn</span><span class="p">,</span><span class="w"> </span><span class="n">cudaVersion</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">driverStatus</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CUDA_SUCCESS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">status</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CU_GET_PROC_ADDRESS_VERSION_NOT_SUFFICIENT</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">driverStatus</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"We can use the new feature when you upgrade cudaVersion to 11.4, but CUDA driver is good to go!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// Indicating cudaVersion was &lt; 11.4 but run against a CUDA driver &gt;= 11.4</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CU_GET_PROC_ADDRESS_SYMBOL_NOT_FOUND</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">driverStatus</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"Please update both CUDA driver and cudaVersion to at least 11.4 to use the new feature!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// Indicating driver is &lt; 11.4 since string not found, doesn't matter what cudaVersion was</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CU_GET_PROC_ADDRESS_SUCCESS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">driverStatus</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pfn</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"You're using cudaVersion and CUDA driver &gt;= 11.4, using new feature!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">        </span><span class="n">pfn</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div><p>첫 번째 경우에서 반환 코드가 <code class="docutils literal notranslate"><span class="pre">CU_GET_PROC_ADDRESS_VERSION_NOT_SUFFICIENT</span></code>라면, CUDA 드라이버에서 <code class="docutils literal notranslate"><span class="pre">symbol</span></code> 자체는 찾았지만 제공한 <code class="docutils literal notranslate"><span class="pre">cudaVersion</span></code>보다 나중 버전에서 추가된 API임을 뜻합니다. 예제에서 <code class="docutils literal notranslate"><span class="pre">cudaVersion</span></code>를 11030 이하로 지정한 뒤 CUDA 11.4 이상 드라이버에서 실행하면 이 반환 코드가 나옵니다. 이는 <code class="docutils literal notranslate"><span class="pre">cuDeviceGetExecAffinitySupport</span></code>가 CUDA 11.4(11040)에서 추가되었기 때문입니다.</p><p>두 번째 경우에서 반환 코드가 <code class="docutils literal notranslate"><span class="pre">CU_GET_PROC_ADDRESS_SYMBOL_NOT_FOUND</span></code>라면, CUDA 드라이버에서 해당 <code class="docutils literal notranslate"><span class="pre">symbol</span></code>을 찾지 못했다는 뜻입니다. 이는 오래된 드라이버 때문에 해당 CUDA 함수가 아직 지원되지 않는 경우에도 발생할 수 있고, 단순한 오타 때문에도 발생할 수 있습니다. 예를 들어 마지막 예제와 비슷하게 사용자가 <code class="docutils literal notranslate"><span class="pre">symbol</span></code>에 <code class="docutils literal notranslate"><span class="pre">CUDeviceGetExecAffinitySupport</span></code>를 넣었다면(문자열이 대문자 <code class="docutils literal notranslate"><span class="pre">CU</span></code>로 시작함), <code class="docutils literal notranslate"><span class="pre">cuGetProcAddress</span></code>가 기대하는 문자열과 일치하지 않으므로 API를 찾을 수 없습니다. 또 다른 예로, 개발자는 새 API를 지원하는 CUDA 드라이버를 기준으로 애플리케이션을 개발했지만 실제 배포 대상은 더 오래된 CUDA 드라이버일 수 있습니다. 마지막 예제 기준으로 개발을 CUDA 11.4 이상에서 했더라도, CUDA 11.3 드라이버에서 실행하면 개발 중에는 성공하던 <code class="docutils literal notranslate"><span class="pre">cuGetProcAddress</span></code> 호출이 더 이상 성공하지 않고 <code class="docutils literal notranslate"><span class="pre">driverStatus</span></code>에 <code class="docutils literal notranslate"><span class="pre">CU_GET_PROC_ADDRESS_SYMBOL_NOT_FOUND</span></code>가 반환됩니다.</p>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="../part5.html">5. 기술 부록</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#introduction">4.20.1. 소개</a></li><li><a class="toc-link" href="#driver-function-typedefs">4.20.2. 드라이버 함수 typedef</a></li><li><a class="toc-link" href="#driver-function-retrieval">4.20.3. 드라이버 함수 가져오기</a><ul><li><a class="toc-link" href="#using-the-driver-api">4.20.3.1. 드라이버 API 사용</a></li><li><a class="toc-link" href="#using-the-runtime-api">4.20.3.2. 런타임 API 사용</a></li><li><a class="toc-link" href="#retrieve-per-thread-default-stream-versions">4.20.3.3. 스레드별 기본 스트림(per-thread default stream) 버전 가져오기</a></li><li><a class="toc-link" href="#access-new-cuda-features">4.20.3.4. 새로운 CUDA 기능에 액세스</a></li></ul></li><li><a class="toc-link" href="#potential-implications-with-cugetprocaddress">4.20.4. cuGetProcAddress 사용 시 잠재적 영향</a><ul><li><a class="toc-link" href="#implications-with-cugetprocaddress-vs-implicit-linking">4.20.4.1. cuGetProcAddress와 암시적 링킹(implicit linking)의 영향 비교</a></li><li><a class="toc-link" href="#compile-time-vs-runtime-version-usage-in-cugetprocaddress">4.20.4.2. cuGetProcAddress에서의 컴파일 타임 vs 런타임 버전 사용</a></li><li><a class="toc-link" href="#api-version-bumps-with-explicit-version-checks">4.20.4.3. 명시적 버전 확인을 통한 API 버전 증가</a></li><li><a class="toc-link" href="#issues-with-runtime-api-usage">4.20.4.4. 런타임 API 사용 시의 문제</a></li><li><a class="toc-link" href="#issues-with-runtime-api-and-dynamic-versioning">4.20.4.5. 런타임 API 및 동적 버전 관리의 문제</a></li><li><a class="toc-link" href="#issues-with-runtime-api-allowing-cuda-version">4.20.4.6. CUDA 버전을 허용하는 런타임 API의 문제</a></li><li><a class="toc-link" href="#implications-to-api-abi">4.20.4.7. API/ABI에 대한 함의</a></li></ul></li><li><a class="toc-link" href="#determining-cugetprocaddress-failure-reasons">4.20.5. cuGetProcAddress 실패 원인 판단</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

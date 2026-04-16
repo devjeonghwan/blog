@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>1.3. CUDA 플랫폼 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="NVIDIA CUDA 플랫폼은 이기종 시스템에서의 컴퓨팅을 가능하게 하기 위해 개발된 많은 중요한 기술과, 다수의 소프트웨어 및 하드웨어 구성 요소로 이루어져 있습니다. 이 장에서는 애플리케이션 개발자가 이해하는 것이 중요한 CUDA 플랫폼의 기본 개념과 구성 요소 일부를 소개합니다. 이 장은 프로그래밍 모델 과 마찬가지로 특정 프로그래밍 언어에 국한되지 않으며, CUDA 플랫폼을 사용하는 모든 것에 적용됩니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part1.html">1. CUDA 소개</a></li><li>1.3. CUDA 플랫폼</li></ul>
+          <h1 class="page-title">1.3. CUDA 플랫폼</h1>
+          <article class="doc-article">
+<section id="the-cuda-platform">
+<span id="cuda-platform"></span>
+<p>NVIDIA CUDA 플랫폼은 이기종 시스템에서의 컴퓨팅을 가능하게 하기 위해 개발된 많은 중요한 기술과, 다수의 소프트웨어 및 하드웨어 구성 요소로 이루어져 있습니다. 이 장에서는 애플리케이션 개발자가 이해하는 것이 중요한 CUDA 플랫폼의 기본 개념과 구성 요소 일부를 소개합니다. 이 장은 <a class="reference internal" href="programming-model.html"><span class="std std-ref">프로그래밍 모델</span></a>과 마찬가지로 특정 프로그래밍 언어에 국한되지 않으며, CUDA 플랫폼을 사용하는 모든 것에 적용됩니다.</p>
+<section id="compute-capability-and-streaming-multiprocessor-versions">
+<span id="cuda-platform-compute-capability-sm-version"></span><h2><span class="section-number">1.3.1. </span>컴퓨트 기능과 스트리밍 멀티프로세서 버전<a class="headerlink" href="#compute-capability-and-streaming-multiprocessor-versions" title="이 제목으로의 링크">#</a></h2>
+<p>모든 NVIDIA GPU에는 <em>컴퓨트 기능</em>(Compute Capability, CC) 번호가 있으며, 이는 해당 GPU가 지원하는 기능을 나타내고 해당 GPU의 일부 하드웨어 매개변수를 지정합니다. 이러한 사양은 <a class="reference internal" href="../05-appendices/compute-capabilities.html"><span class="std std-numref">섹션 5.1</span></a> 부록에 문서화되어 있습니다. 모든 NVIDIA GPU와 그 컴퓨트 기능 목록은 <a class="reference external" href="https://developer.nvidia.com/cuda-gpus">CUDA GPU Compute Capability 페이지</a>에서 유지 관리됩니다.</p>
+<p>컴퓨트 기능은 X.Y 형식의 주(major) 및 부(minor) 버전 번호로 표시되며, 여기서 X는 주 버전 번호이고 Y는 부 버전 번호입니다. 예를 들어 CC 12.0은 주 버전이 12이고 부 버전이 0입니다. 컴퓨트 기능은 SM의 버전 번호에 직접 대응합니다. 예를 들어 CC 12.0인 GPU 내의 SM은 SM 버전 <cite>sm_120</cite>을 갖습니다. 이 버전은 바이너리에 레이블을 지정하는 데 사용됩니다.</p>
+<p><a class="reference internal" href="../05-appendices/compute-capabilities.html"><span class="std std-numref">섹션 5.1.1</span></a>에서는 시스템 내 GPU의 컴퓨트 기능을 조회하고 확인하는 방법을 보여줍니다.</p>
+</section>
+<section id="cuda-toolkit-and-nvidia-driver">
+<span id="cuda-platform-compatibility"></span><h2><span class="section-number">1.3.2. </span>CUDA 툴킷 및 NVIDIA 드라이버<a class="headerlink" href="#cuda-toolkit-and-nvidia-driver" title="이 제목으로의 링크">#</a></h2>
+<p><em>NVIDIA 드라이버</em>는 GPU의 운영체제로 생각할 수 있습니다. NVIDIA 드라이버는 호스트 시스템의 운영체제에 설치되어야 하는 소프트웨어 구성 요소이며, 디스플레이 및 그래픽 기능을 포함한 모든 GPU 사용에 필요합니다. NVIDIA 드라이버는 CUDA 플랫폼의 기반입니다. NVIDIA 드라이버는 CUDA 외에도 GPU를 사용하는 다른 모든 방법(예: Vulkan 및 Direct3D)을 제공합니다. NVIDIA 드라이버에는 r580과 같은 버전 번호가 있습니다.</p>
+<p><em>CUDA 툴킷</em>은 GPU 컴퓨팅을 활용하는 소프트웨어를 작성, 빌드, 분석하기 위한 라이브러리, 헤더, 도구의 집합입니다. CUDA 툴킷은 NVIDIA 드라이버와는 별도의 소프트웨어 제품입니다</p>
+<p><em>CUDA 런타임</em>은 CUDA 툴킷이 제공하는 라이브러리 중 하나의 특수한 경우입니다. CUDA 런타임은 메모리 할당, GPU와 다른 GPU 또는 CPU 간 데이터 복사, 커널 런치와 같은 일반적인 작업을 처리하기 위한 API와 일부 언어 확장을 모두 제공합니다. CUDA 런타임의 API 구성 요소는 CUDA 런타임 API라고 합니다.</p>
+<p><a class="reference external" href="https://docs.nvidia.com/deploy/cuda-compatibility/index.html">CUDA 호환성</a> 문서는 서로 다른 GPU, NVIDIA 드라이버 및 CUDA 툴킷 버전 간의 호환성에 대한 전체 세부 정보를 제공합니다.</p>
+<section id="cuda-runtime-api-and-cuda-driver-api">
+<span id="cuda-platform-driver-and-runtime"></span><h3><span class="section-number">1.3.2.1. </span>CUDA 런타임 API 및 CUDA 드라이버 API<a class="headerlink" href="#cuda-runtime-api-and-cuda-driver-api" title="이 제목으로의 링크">#</a></h3>
+<p>CUDA 런타임 API는 NVIDIA 드라이버에 의해 노출되는 API인, 더 낮은 수준의 API인 <em>CUDA 드라이버 API</em> 위에 구현되어 있습니다. 이 가이드는 CUDA 런타임 API에 의해 노출되는 API에 중점을 둡니다. 원한다면 드라이버 API만 사용해서도 동일한 모든 기능을 구현할 수 있습니다. 일부 기능은 드라이버 API를 사용할 때만 사용할 수 있습니다. 애플리케이션은 어느 한 API를 사용하거나, 또는 두 API를 상호 운용 가능하게 함께 사용할 수도 있습니다. <a class="reference internal" href="../03-advanced/driver-api.html"><span class="std std-ref">CUDA 드라이버 API</span></a> 절에서는 런타임 API와 드라이버 API 간 상호 운용을 다룹니다.</p>
+<p>CUDA 런타임 API 함수에 대한 전체 API 레퍼런스는 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-runtime-api/index.html">CUDA 런타임 API 문서</a>에서 확인할 수 있습니다.</p>
+<p>CUDA 드라이버 API에 대한 전체 API 레퍼런스는 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-driver-api/index.html">CUDA 드라이버 API 문서</a>에서 확인할 수 있습니다.</p>
+</section>
+</section>
+<section id="parallel-thread-execution-ptx">
+<span id="cuda-platform-ptx"></span><h2><span class="section-number">1.3.3. </span>병렬 스레드 실행(PTX)<a class="headerlink" href="#parallel-thread-execution-ptx" title="Link to this heading">#</a></h2>
+<p>CUDA 플랫폼의 근본적이지만 때로는 보이지 않는 계층은 <em>병렬 스레드 실행</em>(PTX) 가상 명령어 집합 아키텍처(ISA)입니다. PTX는 NVIDIA GPU를 위한 고수준 어셈블리 언어입니다. PTX는 실제 GPU 하드웨어의 물리적 ISA 위에 추상화 계층을 제공합니다. 다른 플랫폼과 마찬가지로 애플리케이션은 이 어셈블리 언어로 직접 작성할 수도 있지만, 그렇게 하면 소프트웨어 개발에 불필요한 복잡성과 어려움이 추가될 수 있습니다.</p>
+<p>도메인 특화 언어와 고수준 언어용 컴파일러는 중간 표현(IR)으로 PTX 코드를 생성한 다음, NVIDIA의 오프라인 또는 JIT(Just-In-Time) 컴파일 도구를 사용하여 실행 가능한 바이너리 GPU 코드를 생성할 수 있습니다. 이를 통해 CUDA 플랫폼은 <a class="reference internal" href="../02-basics/nvcc.html"><span class="std std-ref">NVCC: NVIDIA CUDA 컴파일러</span></a>와 같은 NVIDIA 제공 도구가 지원하는 언어 외의 언어에서도 프로그래밍 가능해집니다.</p>
+<p>GPU 기능은 시간이 지남에 따라 변화하고 확장되므로 PTX 가상 ISA 사양은 버전이 매겨집니다. PTX 버전은 SM 버전과 마찬가지로 컴퓨트 기능(Compute Capability)에 대응합니다. 예를 들어, 컴퓨트 기능 8.0의 모든 기능을 지원하는 PTX는 <cite>compute_80</cite>이라고 합니다.</p>
+<p>PTX에 대한 전체 문서는 <a class="reference external" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html">PTX ISA</a>에서 확인할 수 있습니다.</p>
+</section>
+<section id="cubins-and-fatbins">
+<span id="cuda-platform-cubins-fatbins"></span><h2><span class="section-number">1.3.4. </span>Cubin 및 Fatbin<a class="headerlink" href="#cubins-and-fatbins" title="Link to this heading">#</a></h2>
+<p>CUDA 애플리케이션과 라이브러리는 일반적으로 C++ 같은 더 고수준 언어로 작성됩니다. 그 고수준 언어는 PTX로 컴파일되고, 이후 PTX는 물리적 GPU를 위한 실제 바이너리로 컴파일되는데, 이를 <em>CUDA 바이너리</em>, 줄여서 <em>cubin</em>이라고 합니다. Cubin은 <cite>sm_120</cite>처럼 특정 SM 버전에 대한 특정 바이너리 형식을 가집니다.</p>
+<p>GPU 컴퓨팅을 사용하는 실행 파일과 라이브러리 바이너리에는 CPU 코드와 GPU 코드가 모두 포함됩니다. GPU 코드는 <em>fatbin</em>이라 불리는 컨테이너 안에 저장됩니다. Fatbin은 여러 서로 다른 타깃을 위한 cubin과 PTX를 포함할 수 있습니다. 예를 들어, 애플리케이션은 여러 서로 다른 GPU 아키텍처, 즉 서로 다른 SM 버전에 대한 바이너리로 빌드될 수 있습니다. 애플리케이션이 실행되면 GPU 코드는 특정 GPU에 로드되고, fatbin에서 해당 GPU에 가장 적합한 바이너리가 사용됩니다.</p>
+<figure class="align-center" id="fatbin-graphic">
+<a class="reference internal image-reference" href="../_images/fatbin.png"><img alt="실행 파일 또는 라이브러리 내의 Fatbin 컨테이너는 여러 GPU 코드 버전을 포함할 수 있습니다" loading="lazy" src="../_images/fatbin.png" style="width: 454px;"/>
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 8 </span><span class="caption-text">실행 파일 또는 라이브러리의 바이너리에는 CPU 바이너리 코드와 GPU 코드를 위한 fatbin 컨테이너가 모두 포함됩니다. Fatbin은 cubin GPU 바이너리 코드와 PTX 가상 ISA 코드를 모두 포함할 수 있습니다. PTX 코드는 향후 타깃을 위해 JIT 컴파일될 수 있습니다.</span><a class="headerlink" href="#fatbin-graphic" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Fatbin은 또한 하나 이상의 PTX 버전의 GPU 코드를 포함할 수 있으며, 그 용도는 <a class="reference internal" href="#cuda-platform-ptx-compatibility"><span class="std std-ref">PTX 호환성</span></a>에서 설명합니다. <a class="reference internal" href="#fatbin-graphic"><span class="std std-numref">Figure 8</span></a>은 여러 버전의 GPU 코드 cubin과 함께 PTX 코드 1개 버전을 포함하는 애플리케이션 또는 라이브러리 바이너리의 예를 보여줍니다.</p>
+<section id="binary-compatibility">
+<span id="cuda-platform-compute-binary-compatibility"></span><h3><span class="section-number">1.3.4.1. </span>바이너리 호환성<a class="headerlink" href="#binary-compatibility" title="Link to this heading">#</a></h3>
+<p>NVIDIA GPU는 특정한 상황에서 바이너리 호환성을 보장합니다. 구체적으로, 컴퓨트 기능의 메이저 버전 내에서, cubin의 타깃 버전보다 마이너 컴퓨트 기능이 크거나 같은 GPU는 해당 cubin을 로드하고 실행할 수 있습니다. 예를 들어 애플리케이션에 컴퓨트 기능 8.6용으로 컴파일된 코드가 담긴 cubin이 포함되어 있다면, 그 cubin은 컴퓨트 기능 8.6 또는 8.9의 GPU에서 로드되고 실행될 수 있습니다. 하지만 컴퓨트 기능 8.0의 GPU에서는 로드될 수 없는데, GPU의 CC 마이너 버전 0이 코드의 마이너 버전 6보다 낮기 때문입니다.</p>
+<p>NVIDIA GPU는 컴퓨트 기능 메이저 버전 간에는 바이너리 호환성이 없습니다. 즉, 컴퓨트 기능 8.6용으로 컴파일된 cubin 코드는 컴퓨트 기능 9.0의 GPU에서는 로드되지 않습니다.</p>
+<p>바이너리 코드를 논의할 때, 위 예시처럼 바이너리 코드가 <cite>sm_86</cite> 같은 버전을 가진다고 흔히 말합니다. 이는 바이너리가 컴퓨트 기능 8.6을 대상으로 빌드되었다는 말과 같습니다. 이 축약 표기는 개발자가 이 바이너리 빌드 타깃을 NVIDIA CUDA 컴파일러인 <a class="reference internal" href="../02-basics/nvcc.html"><span class="std std-ref">nvcc</span></a>에 지정하는 방식이기 때문에 자주 사용됩니다.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>바이너리 호환성은 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 같은 NVIDIA 도구로 생성된 바이너리에 대해서만 보장됩니다. NVIDIA GPU용 바이너리 코드를 수동으로 편집하거나 생성하는 것은 지원되지 않습니다. 바이너리가 어떤 방식으로든 수정되면 호환성 보장은 무효가 됩니다.</p>
+</div>
+</section>
+<section id="ptx-compatibility">
+<span id="cuda-platform-ptx-compatibility"></span><h3><span class="section-number">1.3.4.2. </span>PTX 호환성<a class="headerlink" href="#ptx-compatibility" title="Link to this heading">#</a></h3>
+<p>GPU 코드는 <a class="reference internal" href="#cuda-platform-cubins-fatbins"><span class="std std-ref">Cubin 및 Fatbin</span></a>에서 다루는 바와 같이, 실행 파일에 바이너리 또는 PTX 형태로 저장될 수 있습니다. 애플리케이션이 GPU 코드의 PTX 버전을 저장하는 경우, 해당 PTX는 애플리케이션 런타임에 PTX 코드의 컴퓨트 기능과 같거나 더 높은 어떤 컴퓨트 기능에 대해서도 JIT 컴파일될 수 있습니다. 예를 들어 애플리케이션에 <cite>compute_80</cite>용 PTX가 포함되어 있다면, 그 PTX 코드는 애플리케이션 런타임에 <cite>sm_120</cite> 같은 이후 SM 버전으로 JIT 컴파일될 수 있습니다. 이를 통해 애플리케이션이나 라이브러리를 다시 빌드할 필요 없이 향후 GPU에 대한 전방 호환성이 가능해집니다.</p>
+</section>
+<section id="just-in-time-compilation">
+<span id="cuda-platform-just-in-time-compilation"></span><h3><span class="section-number">1.3.4.3. </span>JIT(Just-in-Time) 컴파일<a class="headerlink" href="#just-in-time-compilation" title="Link to this heading">#</a></h3>
+<p>애플리케이션이 런타임에 로드한 PTX 코드는 디바이스 드라이버에 의해 바이너리 코드로 컴파일됩니다. 이를 JIT(Just-In-Time) 컴파일이라고 합니다. JIT 컴파일은 애플리케이션 로드 시간을 증가시키지만, 애플리케이션이 각 새로운 디바이스 드라이버와 함께 제공되는 새로운 컴파일러 개선 사항의 이점을 누릴 수 있게 합니다. 또한 애플리케이션이 컴파일되던 시점에는 존재하지 않았던 디바이스에서도 애플리케이션이 실행될 수 있게 합니다.</p>
+<p>디바이스 드라이버가 애플리케이션을 위해 PTX 코드를 JIT 컴파일할 때, 애플리케이션의 이후 실행에서 컴파일을 반복하지 않기 위해 생성된 바이너리 코드의 사본을 자동으로 캐시합니다. 이 캐시는 컴퓨트 캐시(compute cache)라고 하며, 디바이스 드라이버가 업그레이드되면 자동으로 무효화되어, 애플리케이션이 디바이스 드라이버에 내장된 새로운 JIT 컴파일러의 개선 사항을 활용할 수 있습니다.</p>
+<p>런타임에서 PTX를 JIT 컴파일하는 방식과 시점은 CUDA 초기 버전 이후 완화되어, 일부 또는 모든 커널을 언제, 그리고 JIT 컴파일할지 여부에 대해 더 큰 유연성을 허용합니다. <a class="reference internal" href="../04-special-topics/lazy-loading.html"><span class="std std-ref">지연 로딩</span></a> 절에서는 사용 가능한 옵션과 JIT 동작을 제어하는 방법을 설명합니다. 또한 <a class="reference internal" href="../05-appendices/environment-variables.html"><span class="std std-ref">CUDA 환경 변수</span></a>에 설명된 바와 같이, JIT 컴파일 동작을 제어하는 몇 가지 환경 변수도 있습니다.</p>
+<p>CUDA C++ 디바이스 코드를 컴파일하기 위해 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>를 사용하는 대신, NVRTC를 사용하여 런타임에 CUDA C++ 디바이스 코드를 PTX로 컴파일할 수 있습니다. NVRTC는 CUDA C++를 위한 런타임 컴파일 라이브러리이며, 자세한 내용은 NVRTC 사용자 가이드에서 확인할 수 있습니다.</p>
+</section>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="programming-model.html">1.2. 프로그래밍 모델</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#compute-capability-and-streaming-multiprocessor-versions">1.3.1. 컴퓨트 기능과 스트리밍 멀티프로세서 버전</a></li><li><a class="toc-link" href="#cuda-toolkit-and-nvidia-driver">1.3.2. CUDA 툴킷 및 NVIDIA 드라이버</a><ul><li><a class="toc-link" href="#cuda-runtime-api-and-cuda-driver-api">1.3.2.1. CUDA 런타임 API 및 CUDA 드라이버 API</a></li></ul></li><li><a class="toc-link" href="#parallel-thread-execution-ptx">1.3.3. 병렬 스레드 실행(PTX)</a></li><li><a class="toc-link" href="#cubins-and-fatbins">1.3.4. Cubin 및 Fatbin</a><ul><li><a class="toc-link" href="#binary-compatibility">1.3.4.1. 바이너리 호환성</a></li><li><a class="toc-link" href="#ptx-compatibility">1.3.4.2. PTX 호환성</a></li><li><a class="toc-link" href="#just-in-time-compilation">1.3.4.3. JIT(Just-in-Time) 컴파일</a></li></ul></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

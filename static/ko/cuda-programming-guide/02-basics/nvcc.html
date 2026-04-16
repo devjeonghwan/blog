@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2.5. NVCC: NVIDIA CUDA 컴파일러 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="NVIDIA CUDA 컴파일러 nvcc 는 CUDA C/C++뿐만 아니라 PTX 코드도 컴파일하기 위한 NVIDIA의 도구체인입니다. 이 도구체인은 CUDA Toolkit 의 일부이며, 컴파일러, 링커, 그리고 PTX 및 Cubin 어셈블러를 포함한 여러 도구로 구성됩니다. 최상위 nvcc 도구는 컴파일 프로세스를 조정하여, 컴파일의 각 단계에 대해 적절한 도구를 호출합니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></li><li>2.5. NVCC: NVIDIA CUDA 컴파일러</li></ul>
+          <h1 class="page-title">2.5. NVCC: NVIDIA CUDA 컴파일러</h1>
+          <article class="doc-article">
+<section id="nvcc-the-nvidia-cuda-compiler">
+<span id="nvcc"></span>
+<p><a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">NVIDIA CUDA 컴파일러</a> <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>는 CUDA C/C++뿐만 아니라 <a class="reference external" href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html">PTX</a> 코드도 컴파일하기 위한 NVIDIA의 도구체인입니다. 이 도구체인은 <a class="reference external" href="https://developer.nvidia.com/cuda-toolkit">CUDA Toolkit</a>의 일부이며, 컴파일러, 링커, 그리고 PTX 및 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">Cubin</span></a> 어셈블러를 포함한 여러 도구로 구성됩니다. 최상위 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 도구는 컴파일 프로세스를 조정하여, 컴파일의 각 단계에 대해 적절한 도구를 호출합니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code>는 CUDA 런타임 컴파일러 <a class="reference external" href="https://docs.nvidia.com/cuda/nvrtc/index.html">nvrtc</a>에 의해 구동되는 온라인 또는 Just-in-Time(JIT) 컴파일과 대조적으로, CUDA 코드의 오프라인 컴파일을 구동합니다.</p>
+<p>이 장에서는 애플리케이션 빌드에 필요한 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>의 가장 일반적인 사용법과 세부 사항을 다룹니다. <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>에 대한 전체 내용은 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">nvcc 문서</a>에서 확인할 수 있습니다.</p>
+<section id="cuda-source-files-and-headers">
+<h2><span class="section-number">2.5.1. </span>CUDA 소스 파일 및 헤더<a class="headerlink" href="#cuda-source-files-and-headers" title="이 제목에 대한 링크">#</a></h2>
+<p>로 컴파일된 소스 파일 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 에는 CPU에서 실행되는 호스트 코드와 GPU에서 실행되는 디바이스 코드가 결합되어 있을 수 있습니다. <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 일반적인 C/C++ 소스 파일 확장자를 허용합니다 <code class="docutils literal notranslate"><span class="pre">.c</span></code>, <code class="docutils literal notranslate"><span class="pre">.cpp</span></code>, <code class="docutils literal notranslate"><span class="pre">.cc</span></code>, <code class="docutils literal notranslate"><span class="pre">.cxx</span></code> 호스트 전용 코드 및 <code class="docutils literal notranslate"><span class="pre">.cu</span></code> 디바이스 코드를 포함하거나 호스트 및 디바이스 코드가 혼합된 코드를 포함하는 파일에 사용합니다. 디바이스 코드를 포함하는 헤더는 일반적으로 <code class="docutils literal notranslate"><span class="pre">.cuh</span></code> 호스트 전용 코드 헤더와 구별하기 위한 확장자 <code class="docutils literal notranslate"><span class="pre">.h</span></code>, <code class="docutils literal notranslate"><span class="pre">.hpp</span></code>, <code class="docutils literal notranslate"><span class="pre">.hh</span></code>, <code class="docutils literal notranslate"><span class="pre">.hxx</span></code>, 등.</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>파일 확장자</p></th>
+<th class="head"><p>설명</p></th>
+<th class="head"><p>내용</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">.c</span></code></p></td>
+<td><p>C 소스 파일</p></td>
+<td><p>호스트 전용 코드</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">.cpp</span></code>, <code class="docutils literal notranslate"><span class="pre">.cc</span></code>, <code class="docutils literal notranslate"><span class="pre">.cxx</span></code></p></td>
+<td><p>C++ 소스 파일</p></td>
+<td><p>호스트 전용 코드</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">.h</span></code>, <code class="docutils literal notranslate"><span class="pre">.hpp</span></code>, <code class="docutils literal notranslate"><span class="pre">.hh</span></code>, <code class="docutils literal notranslate"><span class="pre">.hxx</span></code></p></td>
+<td><p>C/C++ 헤더 파일</p></td>
+<td><p>디바이스 코드, 호스트 코드, 호스트/디바이스 코드 혼합</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">.cu</span></code></p></td>
+<td><p>CUDA 소스 파일</p></td>
+<td><p>디바이스 코드, 호스트 코드, 호스트/디바이스 코드 혼합</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">.cuh</span></code></p></td>
+<td><p>CUDA 헤더 파일</p></td>
+<td><p>디바이스 코드, 호스트 코드, 호스트/디바이스 코드 혼합</p></td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<section id="nvcc-compilation-workflow">
+<h2><span class="section-number">2.5.2. </span>NVCC 컴파일 워크플로<a class="headerlink" href="#nvcc-compilation-workflow" title="이 제목에 대한 링크">#</a></h2>
+<p>초기 단계에서, <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>는 디바이스 코드를 호스트 코드에서 분리하고, 각각의 컴파일을 GPU 컴파일러와 호스트 컴파일러로 디스패치합니다.</p>
+<div class="line-block">
+<div class="line">호스트 코드를 컴파일하려면, CUDA 컴파일러 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>에는 호환되는 호스트 컴파일러를 사용할 수 있어야 합니다. CUDA Toolkit은 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html">Linux</a> 및 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html">Windows</a> 플랫폼에 대한 호스트 컴파일러 지원 정책을 정의합니다.</div>
+<div class="line">호스트 코드만 포함하는 파일은 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 또는 호스트 컴파일러를 직접 사용하여 빌드할 수 있습니다. 결과 오브젝트 파일은 링크 시점에 GPU 코드를 포함하는 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>의 오브젝트 파일과 결합할 수 있습니다.</div>
+</div>
+<div class="line-block">
+<div class="line">GPU 컴파일러는 C/C++ 디바이스 코드를 PTX 어셈블리 코드로 컴파일합니다. GPU 컴파일러는 컴파일 명령줄에 지정된 각 가상 머신 명령어 집합 아키텍처(예: <code class="docutils literal notranslate"><span class="pre">compute_90</span></code>)에 대해 실행됩니다.</div>
+<div class="line">그런 다음 개별 PTX 코드는 <code class="docutils literal notranslate"><span class="pre">ptxas</span></code> 도구로 전달되며, 이 도구는 대상 하드웨어 ISA에 대한 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">Cubin</span></a>을 생성합니다. 하드웨어 ISA는 해당 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">SM version</span></a>으로 식별됩니다.</div>
+<div class="line">단일 바이너리가 여러 가상 ISA와 대상 하드웨어 ISA를 지원할 수 있도록, 애플리케이션 또는 라이브러리 내에서 단일 바이너리 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">Fatbin</span></a> 컨테이너에 여러 PTX 및 Cubin 대상을 임베드할 수 있습니다.</div>
+</div><p>위에서 설명한 도구들의 호출과 조정은 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>에 의해 자동으로 수행됩니다. <code class="docutils literal notranslate"><span class="pre">-v</span></code> 옵션을 사용하면 전체 컴파일 워크플로와 도구 호출을 표시할 수 있습니다. <code class="docutils literal notranslate"><span class="pre">-keep</span></code> 옵션을 사용하면 컴파일 중 생성되는 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/">중간 파일</a>을 현재 디렉터리에 저장하거나, 대신 <code class="docutils literal notranslate"><span class="pre">--keep-dir</span></code>로 지정한 디렉터리에 저장할 수 있습니다.</p>
+<p>다음 예는 CUDA 소스 파일 <code class="docutils literal notranslate"><span class="pre">example.cu</span></code>에 대한 컴파일 워크플로를 보여줍니다:</p>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="c1">// ----- example.cu -----</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">kernel</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"Hello from kernel</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="n">kernel_launcher</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">kernel</span><span class="o">&lt;&lt;&lt;</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">cudaDeviceSynchronize</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">kernel_launcher</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 기본 컴파일 워크플로:</p>
+<figure class="align-center" id="high-level-nvcc-flow">
+<a class="reference internal image-reference" href="../_images/nvcc-flow.png"><img alt="상위 수준 nvcc 흐름" loading="lazy" src="../_images/nvcc-flow.png" style="height: 450px;"/>
+</a>
+</figure>
+<p>여러 PTX 및 Cubin 아키텍처를 사용하는 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 컴파일 워크플로:</p>
+<figure class="align-center" id="high-level-nvcc-flow-multi-archs">
+<a class="reference internal image-reference" href="../_images/nvcc-flow-multi-archs.png"><img alt="상위 수준 nvcc 흐름(여러 아키텍처)" loading="lazy" src="../_images/nvcc-flow-multi-archs.png" style="height: 450px;"/>
+</a>
+</figure>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 컴파일 워크플로에 대한 더 자세한 설명은 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/">컴파일러 문서</a>에서 확인할 수 있습니다.</p>
+</section>
+<section id="nvcc-basic-usage">
+<h2><span class="section-number">2.5.3. </span>NVCC 기본 사용법<a class="headerlink" href="#nvcc-basic-usage" title="이 제목에 대한 링크">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code>로 CUDA 소스 파일을 컴파일하는 기본 명령은 다음과 같습니다:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvcc<span class="w"> </span>&lt;source_file&gt;.cu<span class="w"> </span>-o<span class="w"> </span>&lt;output_file&gt;
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code>는 인클루드 디렉터리 <code class="docutils literal notranslate"><span class="pre">-I</span> <span class="pre">&lt;path&gt;</span></code> 및 라이브러리 경로 <code class="docutils literal notranslate"><span class="pre">-L</span> <span class="pre">&lt;path&gt;</span></code> 지정, 다른 라이브러리와의 링크 <code class="docutils literal notranslate"><span class="pre">-l&lt;library&gt;</span></code>, 매크로 정의 <code class="docutils literal notranslate"><span class="pre">-D&lt;macro&gt;=&lt;value&gt;</span></code>에 사용되는 일반적인 컴파일러 플래그를 허용합니다.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvcc<span class="w"> </span>example.cu<span class="w"> </span>-I<span class="w"> </span>path_to_include/<span class="w"> </span>-L<span class="w"> </span>path_to_library/<span class="w"> </span>-lcublas<span class="w"> </span>-o<span class="w"> </span>&lt;output_file&gt;
+</pre></div>
+</div>
+<section id="nvcc-ptx-and-cubin-generation">
+<h3><span class="section-number">2.5.3.1. </span>NVCC PTX 및 Cubin 생성<a class="headerlink" href="#nvcc-ptx-and-cubin-generation" title="이 제목에 대한 링크">#</a></h3>
+<p>기본적으로, <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>는 호환성을 극대화하기 위해 CUDA Toolkit에서 지원하는 가장 이른 GPU 아키텍처(가장 낮은 <code class="docutils literal notranslate"><span class="pre">compute_XY</span></code> 및 <code class="docutils literal notranslate"><span class="pre">sm_XY</span></code> 버전)에 대해 PTX와 Cubin을 생성합니다.</p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-arch</span></code> <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">옵션</a>은 특정 GPU 아키텍처에 대해 PTX 및 Cubin을 생성하는 데 사용할 수 있습니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-gencode</span></code> <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">옵션</a>은 여러 GPU 아키텍처에 대해 PTX 및 Cubin을 생성하는 데 사용할 수 있습니다.</p></li>
+</ul><p>지원되는 가상 및 실제 GPU 아키텍처의 전체 목록은 다음을 전달하여 얻을 수 있습니다. <code class="docutils literal notranslate"><span class="pre">--list-gpu-code</span></code> 및 <code class="docutils literal notranslate"><span class="pre">--list-gpu-arch</span></code> 각각의 플래그를 사용하거나, 다음을 참조하여 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">가상 아키텍처 목록</a> 및 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">GPU 아키텍처 목록</a> 내의 섹션 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 문서.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvcc<span class="w"> </span>--list-gpu-code<span class="w"> </span><span class="c1"># list all supported real GPU architectures</span>
+nvcc<span class="w"> </span>--list-gpu-arch<span class="w"> </span><span class="c1"># list all supported virtual GPU architectures</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvcc<span class="w"> </span>example.cu<span class="w"> </span>-arch<span class="o">=</span>compute_&lt;XY&gt;<span class="w"> </span><span class="c1"># e.g. -arch=compute_80 for NVIDIA Ampere GPUs and later</span>
+<span class="w">                                   </span><span class="c1"># PTX-only, GPU forward compatible</span>
+
+nvcc<span class="w"> </span>example.cu<span class="w"> </span>-arch<span class="o">=</span>sm_&lt;XY&gt;<span class="w">      </span><span class="c1"># e.g. -arch=sm_80 for NVIDIA Ampere GPUs and later</span>
+<span class="w">                                   </span><span class="c1"># PTX and Cubin, GPU forward compatible</span>
+
+nvcc<span class="w"> </span>example.cu<span class="w"> </span>-arch<span class="o">=</span>native<span class="w">       </span><span class="c1"># automatically detects and generates Cubin for the current GPU</span>
+<span class="w">                                   </span><span class="c1"># no PTX, no GPU forward compatibility</span>
+
+nvcc<span class="w"> </span>example.cu<span class="w"> </span>-arch<span class="o">=</span>all<span class="w">          </span><span class="c1"># generate Cubin for all supported GPU architectures</span>
+<span class="w">                                   </span><span class="c1"># also includes the latest PTX for GPU forward compatibility</span>
+
+nvcc<span class="w"> </span>example.cu<span class="w"> </span>-arch<span class="o">=</span>all-major<span class="w">    </span><span class="c1"># generate Cubin for all major supported GPU architectures, e.g. sm_80, sm_90,</span>
+<span class="w">                                   </span><span class="c1"># also includes the latest PTX for GPU forward compatibility</span>
+</pre></div>
+</div>
+<p>더 고급 사용법에서는 PTX 및 Cubin 대상을 개별적으로 지정할 수 있습니다:</p><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># generate PTX for virtual architecture compute_80 and compile it to Cubin for real architecture sm_86, keep compute_80 PTX</span>
+nvcc<span class="w"> </span>example.cu<span class="w"> </span>-arch<span class="o">=</span>compute_80<span class="w"> </span>-gpu-code<span class="o">=</span>sm_86,compute_80<span class="w"> </span><span class="c1"># (PTX and Cubin)</span>
+
+<span class="c1"># generate PTX for virtual architecture compute_80 and compile it to Cubin for real architecture sm_86, sm_89</span>
+nvcc<span class="w"> </span>example.cu<span class="w"> </span>-arch<span class="o">=</span>compute_80<span class="w"> </span>-gpu-code<span class="o">=</span>sm_86,sm_89<span class="w">    </span><span class="c1"># (no PTX)</span>
+nvcc<span class="w"> </span>example.cu<span class="w"> </span>-gencode<span class="o">=</span><span class="nv">arch</span><span class="o">=</span>compute_80,code<span class="o">=</span>sm_86,sm_89<span class="w"> </span><span class="c1"># same as above</span>
+
+<span class="c1"># (1) generate PTX for virtual architecture compute_80 and compile it to Cubin for real architecture sm_86, sm_89</span>
+<span class="c1"># (2) generate PTX for virtual architecture compute_90 and compile it to Cubin for real architecture sm_90</span>
+nvcc<span class="w"> </span>example.cu<span class="w"> </span>-gencode<span class="o">=</span><span class="nv">arch</span><span class="o">=</span>compute_80,code<span class="o">=</span>sm_86,sm_89<span class="w"> </span>-gencode<span class="o">=</span><span class="nv">arch</span><span class="o">=</span>compute_90,code<span class="o">=</span>sm_90
+</pre></div>
+</div>
+<p>GPU 코드 생성을 제어하기 위한 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 명령줄 옵션의 전체 참조는 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">nvcc 문서</a>에서 확인할 수 있습니다.</p>
+</section>
+<section id="host-code-compilation-notes">
+<h3><span class="section-number">2.5.3.2. </span>호스트 코드 컴파일 참고 사항<a class="headerlink" href="#host-code-compilation-notes" title="이 제목에 대한 링크">#</a></h3><p>디바이스 코드나 심볼을 포함하지 않는 컴파일 단위(즉, 소스 파일과 그 헤더)는 호스트 컴파일러로 직접 컴파일할 수 있습니다. 어떤 컴파일 단위든 CUDA 런타임 API 함수를 사용한다면, 애플리케이션은 CUDA 런타임 라이브러리와 링크되어야 합니다. CUDA 런타임은 정적 라이브러리와 공유 라이브러리 형태로 모두 제공되며, <code class="docutils literal notranslate"><span class="pre">libcudart_static</span></code> 그리고 <code class="docutils literal notranslate"><span class="pre">libcudart</span></code>, 각각. 기본적으로, <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 정적 CUDA 런타임 라이브러리와 링크합니다. CUDA 런타임의 공유 라이브러리 버전을 사용하려면 다음 플래그를 전달하십시오 <code class="docutils literal notranslate"><span class="pre">--cudart=shared</span></code> 로 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 컴파일 또는 링크 명령에서.</p>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 호스트 함수에 사용되는 호스트 컴파일러를 다음을 통해 지정할 수 있습니다 <code class="docutils literal notranslate"><span class="pre">-ccbin</span> <span class="pre">&lt;compiler&gt;</span></code> 인수. 환경 변수 <code class="docutils literal notranslate"><span class="pre">NVCC_CCBIN</span></code> 도 정의하여 다음에서 사용하는 호스트 컴파일러를 지정할 수 있습니다 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>. <code class="docutils literal notranslate"><span class="pre">-Xcompiler</span></code> 에 대한 인수 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 호스트 컴파일러에 인수를 그대로 전달합니다. 예를 들어, 아래 예에서는, <code class="docutils literal notranslate"><span class="pre">-O3</span></code> 인수가 다음에 의해 호스트 컴파일러에 전달됩니다 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvcc<span class="w"> </span>example.cu<span class="w"> </span>-ccbin<span class="o">=</span>clang++
+
+<span class="nb">export</span><span class="w"> </span><span class="nv">NVCC_CCBIN</span><span class="o">=</span><span class="s1">'gcc'</span>
+nvcc<span class="w"> </span>example.cu<span class="w"> </span>-Xcompiler<span class="o">=</span>-O3
+</pre></div>
+</div>
+</section>
+<section id="separate-compilation-of-gpu-code">
+<span id="nvcc-separate-compilation"></span><h3><span class="section-number">2.5.3.3. </span>GPU 코드의 분리 컴파일<a class="headerlink" href="#separate-compilation-of-gpu-code" title="이 제목에 대한 링크">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code>의 기본값은 <em>전체 프로그램 컴파일</em>이며, 이는 GPU 코드와 심볼이 이를 사용하는 컴파일 단위에 모두 존재할 것으로 예상합니다. CUDA 디바이스 함수는 다른 컴파일 단위에 정의된 디바이스 함수를 호출하거나 디바이스 변수에 액세스할 수 있지만, 서로 다른 컴파일 단위의 디바이스 코드를 링크할 수 있도록 하려면 <code class="docutils literal notranslate"><span class="pre">-rdc=true</span></code> 또는 그 별칭인 <code class="docutils literal notranslate"><span class="pre">-dc</span></code> 플래그를 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 명령줄에 지정해야 합니다. 서로 다른 컴파일 단위의 디바이스 코드와 심볼을 링크하는 기능을 <em>분리 컴파일</em>이라고 합니다.</p>
+<p>분리 컴파일은 더 유연한 코드 구성을 가능하게 하고, 컴파일 시간을 개선할 수 있으며, 더 작은 바이너리로 이어질 수 있습니다. 분리 컴파일은 전체 프로그램 컴파일에 비해 빌드 시점의 복잡성을 어느 정도 수반할 수 있습니다. 성능은 디바이스 코드 링크 사용에 의해 영향을 받을 수 있으며, 이것이 기본적으로 사용되지 않는 이유입니다.  <a class="reference internal" href="#nvcc-link-time-optimization"><span class="std std-ref">링크 타임 최적화(LTO)</span></a>는 분리 컴파일의 성능 오버헤드를 줄이는 데 도움이 될 수 있습니다.</p>
+<p>분리 컴파일에는 다음 조건이 필요합니다:</p>
+<ul class="simple">
+<li><p>한 컴파일 단위에 정의된 비-<code class="docutils literal notranslate"><span class="pre">const</span></code> 디바이스 변수는 다른 컴파일 단위에서 <code class="docutils literal notranslate"><span class="pre">extern</span></code> 키워드로 참조되어야 합니다.</p></li>
+<li><p>모든 <code class="docutils literal notranslate"><span class="pre">const</span></code> 디바이스 변수는 <code class="docutils literal notranslate"><span class="pre">extern</span></code> 키워드로 정의되고 참조되어야 합니다.</p></li>
+<li><p>모든 CUDA 소스 파일 <code class="docutils literal notranslate"><span class="pre">.cu</span></code>은 <code class="docutils literal notranslate"><span class="pre">-dc</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">-rdc=true</span></code> 플래그로 컴파일되어야 합니다.</p></li>
+</ul>
+<p>호스트 및 디바이스 함수는 기본적으로 외부 링키지를 가지며 <code class="docutils literal notranslate"><span class="pre">extern</span></code> 키워드가 필요하지 않습니다. <a class="reference external" href="https://developer.nvidia.com/blog/cuda-c-compiler-updates-impacting-elf-visibility-and-linkage/">CUDA 13부터</a> <code class="docutils literal notranslate"><span class="pre">__global__</span></code> 함수와 <code class="docutils literal notranslate"><span class="pre">__managed__</span></code>/<code class="docutils literal notranslate"><span class="pre">__device__</span></code>/<code class="docutils literal notranslate"><span class="pre">__constant__</span></code> 변수는 기본적으로 내부 링키지를 가진다는 점에 유의하십시오.</p>
+<p>다음 예제에서 <code class="docutils literal notranslate"><span class="pre">definition.cu</span></code>는 변수와 함수를 정의하고, <code class="docutils literal notranslate"><span class="pre">example.cu</span></code>는 이를 참조합니다. 두 파일은 각각 별도로 컴파일된 다음 최종 바이너리에 링크됩니다.</p>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="c1">// ----- definition.cu -----</span>
+<span class="k">extern</span><span class="w"> </span><span class="kt">__device__</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">device_variable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="kt">__device__</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">device_function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="c1">// ----- example.cu -----</span>
+<span class="k">extern</span><span class="w"> </span><span class="kt">__device__</span><span class="w"> </span><span class="kt">int</span><span class="w">  </span><span class="n">device_variable</span><span class="p">;</span>
+<span class="kt">__device__</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">device_function</span><span class="p">();</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">kernel</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">device_variable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="o">*</span><span class="n">ptr</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="n">device_function</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvcc<span class="w"> </span>-dc<span class="w"> </span>definition.cu<span class="w"> </span>-o<span class="w"> </span>definition.o
+nvcc<span class="w"> </span>-dc<span class="w"> </span>example.cu<span class="w">    </span>-o<span class="w"> </span>example.o
+nvcc<span class="w"> </span>definition.o<span class="w"> </span>example.o<span class="w"> </span>-o<span class="w"> </span>program
+</pre></div>
+</div>
+</section>
+</section>
+<section id="common-compiler-options">
+<h2><span class="section-number">2.5.4. </span>일반적인 컴파일러 옵션<a class="headerlink" href="#common-compiler-options" title="이 제목에 대한 링크">#</a></h2>
+<p>이 섹션에서는 언어 기능, 최적화, 디버깅, 프로파일링 및 빌드 측면을 다루면서, <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>와 함께 사용할 수 있는 가장 관련성 높은 컴파일러 옵션을 소개합니다. 모든 옵션에 대한 전체 설명은 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">nvcc 문서</a>에서 확인할 수 있습니다.</p>
+<section id="language-features">
+<h3><span class="section-number">2.5.4.1. </span>언어 기능<a class="headerlink" href="#language-features" title="이 제목에 대한 링크">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code>는 C++03부터 <a class="reference external" href="https://en.cppreference.com/w/cpp/compiler_support">C++20</a>까지의 C++ 핵심 언어 기능을 지원합니다. <code class="docutils literal notranslate"><span class="pre">-std</span></code> 플래그를 사용하여 사용할 언어 표준을 지정할 수 있습니다:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--std={c++03|c++11|c++14|c++17|c++20}</span></code></p></li>
+</ul>
+<p>또한, <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>는 다음 언어 확장을 지원합니다:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-restrict</span></code>: 모든 커널 포인터 매개변수가 <a class="reference internal" href="../05-appendices/cpp-language-extensions.html"><span class="std std-ref">restrict</span></a> 포인터임을 단언합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-extended-lambda</span></code>: 람다 선언에서 <code class="docutils literal notranslate"><span class="pre">__host__</span></code>, <code class="docutils literal notranslate"><span class="pre">__device__</span></code> 애너테이션을 허용합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-expt-relaxed-constexpr</span></code>: (실험적 플래그) 호스트 코드가 <code class="docutils literal notranslate"><span class="pre">__device__</span> <span class="pre">constexpr</span></code> 함수를 호출하고, 디바이스 코드가 <code class="docutils literal notranslate"><span class="pre">__host__</span> <span class="pre">constexpr</span></code> 함수를 호출할 수 있도록 허용합니다.</p></li>
+</ul>
+<p>이러한 기능에 대한 자세한 내용은 <a class="reference internal" href="../05-appendices/cpp-language-support.html"><span class="std std-ref">extended lambda</span></a> 및 <a class="reference internal" href="../05-appendices/cpp-language-support.html"><span class="std std-ref">constexpr</span></a> 섹션에서 확인할 수 있습니다.</p>
+</section>
+<section id="debugging-options">
+<h3><span class="section-number">2.5.4.2. </span>디버깅 옵션<a class="headerlink" href="#debugging-options" title="이 제목에 대한 링크">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code>는 디버그 정보를 생성하기 위해 다음 옵션을 지원합니다:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-g</span></code>: 호스트 코드에 대한 디버그 정보를 생성합니다. <code class="docutils literal notranslate"><span class="pre">gdb/lldb</span></code> 및 유사한 도구는 호스트 코드 디버깅을 위해 이러한 정보에 의존합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-G</span></code>: 디바이스 코드에 대한 디버그 정보를 생성합니다. <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-gdb/index.html">cuda-gdb</a>는 디바이스 코드 디버깅을 위해 이러한 정보에 의존합니다. 또한 이 플래그는 <code class="docutils literal notranslate"><span class="pre">__CUDACC_DEBUG__</span></code> 매크로를 정의합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-lineinfo</span></code>: 디바이스 코드에 대한 줄 번호 정보를 생성합니다. 이 옵션은 실행 성능에 영향을 주지 않으며, 커널 실행을 추적하기 위해 <a class="reference external" href="https://developer.nvidia.com/compute-sanitizer">compute-sanitizer</a> 도구와 함께 사용할 때 유용합니다.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code>는 기본적으로 GPU 코드에 대해 가장 높은 최적화 수준인 <code class="docutils literal notranslate"><span class="pre">-O3</span></code>을 사용합니다. 디버그 플래그인 <code class="docutils literal notranslate"><span class="pre">-G</span></code>는 일부 컴파일러 최적화를 방지하므로, 디버그 코드는 비디버그 코드보다 성능이 낮을 것으로 예상됩니다. 또한 런타임 단언을 비활성화하기 위해 <code class="docutils literal notranslate"><span class="pre">-DNDEBUG</span></code> 플래그를 정의할 수 있는데, 이러한 단언 역시 실행을 느리게 만들 수 있기 때문입니다.</p>
+</section>
+<section id="optimization-options">
+<span id="id1"></span><h3><span class="section-number">2.5.4.3. </span>최적화 옵션<a class="headerlink" href="#optimization-options" title="이 제목에 대한 링크">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code>는 성능 최적화를 위한 많은 옵션을 제공합니다. 이 섹션은 개발자가 유용하다고 생각할 수 있는 사용 가능한 일부 옵션에 대한 간단한 개요를 제공하고, 추가 정보에 대한 링크도 제공하는 것을 목표로 합니다. 전체 내용은 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">nvcc 문서</a>에서 확인할 수 있습니다.</p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-Xptxas</span></code> PTX 어셈블러 도구에 인수를 전달합니다 <code class="docutils literal notranslate"><span class="pre">ptxas</span></code>. The <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> 문서는 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">유용한 인수 목록</a> 에 대한 <code class="docutils literal notranslate"><span class="pre">ptxas</span></code>. 예를 들어, <code class="docutils literal notranslate"><span class="pre">-Xptxas=-maxrregcount=N</span></code> 스레드당 사용할 최대 레지스터 수를 지정합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-extra-device-vectorization</span></code>: 더 공격적인 디바이스 코드 벡터화를 활성화합니다.</p></li>
+<li><p>부동소수점 동작을 세밀하게 제어할 수 있게 해주는 추가 플래그는 <a class="reference internal" href="../05-appendices/mathematical-functions.html"><span class="std std-ref">부동소수점 연산</span></a> 섹션과 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">nvcc 문서</a>에서 다룹니다.</p></li>
+</ul>
+<p>다음 플래그는 더 고급 코드 최적화에서 유용할 수 있는 컴파일러의 출력 정보를 가져옵니다:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-res-usage</span></code>: 컴파일 후 리소스 사용량 보고서를 출력합니다. 여기에는 각 커널 함수에 대해 할당된 레지스터, 공유 메모리, 상수 메모리, 로컬 메모리의 개수가 포함됩니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-opt-info=inline</span></code>: 인라인된 함수에 대한 정보를 출력합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-Xptxas=-warn-lmem-usage</span></code>: 로컬 메모리가 사용되는 경우 경고합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-Xptxas=-warn-spills</span></code>: 레지스터가 로컬 메모리로 스필(spill)되는 경우 경고합니다.</p></li>
+</ul>
+</section><section id="link-time-optimization-lto">
+<span id="nvcc-link-time-optimization"></span><h3><span class="section-number">2.5.4.4. </span>링크 타임 최적화(LTO)<a class="headerlink" href="#link-time-optimization-lto" title="이 제목에 대한 링크">#</a></h3>
+<p><a class="reference internal" href="#nvcc-separate-compilation"><span class="std std-ref">분리 컴파일</span></a>은 파일 간 최적화 기회가 제한되기 때문에 전체 프로그램 컴파일보다 성능이 낮을 수 있습니다. 링크 타임 최적화(LTO)는 컴파일 시간이 증가하는 비용을 치르지만, 링크 시점에 각각 별도로 컴파일된 파일 전반에 걸쳐 최적화를 수행함으로써 이를 해결합니다. LTO는 분리 컴파일의 유연성을 유지하면서도 전체 프로그램 컴파일의 성능을 상당 부분 회복할 수 있습니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code>를 사용하려면 LTO를 활성화하기 위해 <code class="docutils literal notranslate"><span class="pre">-dlto</span></code> <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html">플래그</a> 또는 <code class="docutils literal notranslate"><span class="pre">lto_&lt;SM</span> <span class="pre">version&gt;</span></code> 링크 타임 최적화 대상이 필요합니다:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvcc<span class="w"> </span>-dc<span class="w"> </span>-dlto<span class="w"> </span>-arch<span class="o">=</span>sm_100<span class="w"> </span>definition.cu<span class="w"> </span>-o<span class="w"> </span>definition.o
+nvcc<span class="w"> </span>-dc<span class="w"> </span>-dlto<span class="w"> </span>-arch<span class="o">=</span>sm_100<span class="w"> </span>example.cu<span class="w">    </span>-o<span class="w"> </span>example.o
+nvcc<span class="w"> </span>-dlto<span class="w"> </span>definition.o<span class="w"> </span>example.o<span class="w"> </span>-o<span class="w"> </span>program
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvcc<span class="w"> </span>-dc<span class="w"> </span>-arch<span class="o">=</span>lto_100<span class="w"> </span>definition.cu<span class="w"> </span>-o<span class="w"> </span>definition.o
+nvcc<span class="w"> </span>-dc<span class="w"> </span>-arch<span class="o">=</span>lto_100<span class="w"> </span>example.cu<span class="w">    </span>-o<span class="w"> </span>example.o
+nvcc<span class="w"> </span>-dlto<span class="w"> </span>definition.o<span class="w"> </span>example.o<span class="w"> </span>-o<span class="w"> </span>program
+</pre></div>
+</div>
+</section>
+<section id="profiling-options">
+<h3><span class="section-number">2.5.4.5. </span>프로파일링 옵션<a class="headerlink" href="#profiling-options" title="이 제목에 대한 링크">#</a></h3>
+<p>컴파일 과정에서 추가 플래그가 필요 없이 <a class="reference external" href="https://developer.nvidia.com/nsight-compute">Nsight Compute</a> 및 <a class="reference external" href="https://developer.nvidia.com/nsight-systems">Nsight Systems</a> 도구를 사용하여 CUDA 애플리케이션을 직접 프로파일링할 수 있습니다. 그러나 <code class="docutils literal notranslate"><span class="pre">nvcc</span></code>로 생성할 수 있는 추가 정보는 소스 파일을 생성된 코드와 연관 지어 프로파일링을 돕는 데 유용할 수 있습니다:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-lineinfo</span></code>: 디바이스 코드에 대한 라인 번호 정보를 생성합니다. 이를 통해 프로파일링 도구에서 소스 코드를 볼 수 있습니다. 프로파일링 도구는 코드가 컴파일된 동일한 위치에서 원본 소스 코드를 사용할 수 있어야 합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-src-in-ptx</span></code>: PTX에 원본 소스 코드를 유지하여, 위에서 언급한 <code class="docutils literal notranslate"><span class="pre">-lineinfo</span></code>의 제한을 피합니다. <code class="docutils literal notranslate"><span class="pre">-lineinfo</span></code>이 필요합니다.</p></li>
+</ul>
+</section><section id="fatbin-compression">
+<h3><span class="section-number">2.5.4.6. </span>Fatbin 압축<a class="headerlink" href="#fatbin-compression" title="이 제목에 대한 링크">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code>는 기본적으로 애플리케이션 또는 라이브러리 바이너리에 저장된 <a class="reference internal" href="../01-introduction/cuda-platform.html"><span class="std std-ref">fatbins</span></a>를 압축합니다. Fatbin 압축은 다음 옵션을 사용하여 제어할 수 있습니다:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-no-compress</span></code>: fatbin 압축을 비활성화합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--compress-mode={default|size|speed|balance|none}</span></code>: 압축 모드를 설정합니다. <code class="docutils literal notranslate"><span class="pre">speed</span></code>는 빠른 압축 해제 시간에 중점을 두는 반면, <code class="docutils literal notranslate"><span class="pre">size</span></code>는 fatbin 크기를 줄이는 것을 목표로 합니다. <code class="docutils literal notranslate"><span class="pre">balance</span></code>는 속도와 크기 사이의 절충안을 제공합니다. 기본 모드는 <code class="docutils literal notranslate"><span class="pre">speed</span></code>입니다. <code class="docutils literal notranslate"><span class="pre">none</span></code>는 압축을 비활성화합니다.</p></li>
+</ul>
+</section>
+<section id="compiler-performance-controls">
+<h3><span class="section-number">2.5.4.7. </span>컴파일러 성능 제어<a class="headerlink" href="#compiler-performance-controls" title="이 제목에 대한 링크">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">nvcc</span></code>는 컴파일 프로세스 자체를 분석하고 가속하기 위한 옵션을 제공합니다:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">&lt;N&gt;</span></code>: 여러 GPU 아키텍처에 대해 단일 컴파일 단위의 컴파일을 병렬화하는 데 사용되는 CPU 스레드 수.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-split-compile</span> <span class="pre">&lt;N&gt;</span></code>: 최적화 단계를 병렬화하는 데 사용되는 CPU 스레드 수.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-split-compile-extended</span> <span class="pre">&lt;N&gt;</span></code>: 분할 컴파일의 더 공격적인 형태입니다. 링크 타임 최적화가 필요합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-Ofc</span> <span class="pre">&lt;N&gt;</span></code>: 디바이스 코드 컴파일 속도 수준.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-time</span> <span class="pre">&lt;filename&gt;</span></code>: 각 컴파일 단계에 소요된 시간을 포함한 쉼표로 구분된 값(CSV) 표를 생성합니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-fdevice-time-trace</span></code>: 디바이스 코드 컴파일을 위한 시간 트레이스를 생성합니다.</p></li>
+</ul>
+</section>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="../part3.html">3. 고급 CUDA</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#cuda-source-files-and-headers">2.5.1. CUDA 소스 파일 및 헤더</a></li><li><a class="toc-link" href="#nvcc-compilation-workflow">2.5.2. NVCC 컴파일 워크플로</a></li><li><a class="toc-link" href="#nvcc-basic-usage">2.5.3. NVCC 기본 사용법</a><ul><li><a class="toc-link" href="#nvcc-ptx-and-cubin-generation">2.5.3.1. NVCC PTX 및 Cubin 생성</a></li><li><a class="toc-link" href="#host-code-compilation-notes">2.5.3.2. 호스트 코드 컴파일 참고 사항</a></li><li><a class="toc-link" href="#separate-compilation-of-gpu-code">2.5.3.3. GPU 코드의 분리 컴파일</a></li></ul></li><li><a class="toc-link" href="#common-compiler-options">2.5.4. 일반적인 컴파일러 옵션</a><ul><li><a class="toc-link" href="#language-features">2.5.4.1. 언어 기능</a></li><li><a class="toc-link" href="#debugging-options">2.5.4.2. 디버깅 옵션</a></li><li><a class="toc-link" href="#optimization-options">2.5.4.3. 최적화 옵션</a></li><li><a class="toc-link" href="#link-time-optimization-lto">2.5.4.4. 링크 타임 최적화(LTO)</a></li><li><a class="toc-link" href="#profiling-options">2.5.4.5. 프로파일링 옵션</a></li><li><a class="toc-link" href="#fatbin-compression">2.5.4.6. Fatbin 압축</a></li><li><a class="toc-link" href="#compiler-performance-controls">2.5.4.7. 컴파일러 성능 제어</a></li></ul></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

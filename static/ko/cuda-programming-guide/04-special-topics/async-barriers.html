@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4.9. 비동기 배리어 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="고급 동기화 프리미티브 에서 소개된 비동기 배리어는 CUDA 동기화를 __syncthreads() 및 __syncwarp() 를 넘어 확장하여, 세밀한 제어의 비차단 조정과 통신 및 연산의 더 나은 오버랩을 가능하게 합니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="../03-advanced/feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link is-active" href="async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part4.html">4. CUDA 기능</a></li><li>4.9. 비동기 배리어</li></ul>
+          <h1 class="page-title">4.9. 비동기 배리어</h1>
+          <article class="doc-article">
+<section id="asynchronous-barriers">
+<span id="id1"></span>
+<p><a class="reference internal" href="../03-advanced/advanced-kernel-programming.html"><span class="std std-ref">고급 동기화 프리미티브</span></a>에서 소개된 비동기 배리어는 CUDA 동기화를 <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code> 및 <code class="docutils literal notranslate"><span class="pre">__syncwarp()</span></code>를 넘어 확장하여, 세밀한 제어의 비차단 조정과 통신 및 연산의 더 나은 오버랩을 가능하게 합니다.</p>
+<p>이 섹션에서는 주로 <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code> API를 통해 비동기 배리어를 사용하는 방법에 대한 세부 정보를 제공하며(해당되는 경우 <code class="docutils literal notranslate"><span class="pre">cuda::ptx</span></code> 및 프리미티브에 대한 포인터도 포함합니다).</p>
+<section id="initialization">
+<span id="asynchronous-barriers-init"></span><h2><span class="section-number">4.9.1. </span>초기화<a class="headerlink" href="#initialization" title="이 제목으로의 링크">#</a></h2>
+<p>초기화는 어떤 스레드든 배리어에 참여하기 시작하기 전에 이루어져야 합니다.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-0">
+CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-basic-init-std">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">init_barrier</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">barrier</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_block</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="o">::</span><span class="n">this_thread_block</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// A single thread initializes the total expected arrival count.</span>
+<span class="w">    </span><span class="n">init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">block</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-1">
+CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx</span></code></label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-basic-init-ptx">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">init_barrier</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="o">::</span><span class="n">this_thread_block</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// A single thread initializes the total expected arrival count.</span>
+<span class="w">    </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">block</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-2">
+CUDA C 프리미티브</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-basic-init-prim">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">init_barrier</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="o">::</span><span class="n">this_thread_block</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// A single thread initializes the total expected arrival count.</span>
+<span class="w">    </span><span class="n">__mbarrier_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">block</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>어떤 스레드든 배리어에 참여하기 전에, 배리어는 <code class="docutils literal notranslate"><span class="pre">cuda::barrier::init()</span></code> friend 함수로 초기화되어야 합니다. 이는 어떤 스레드가 배리어에 도착(arrive)하기 전에 이루어져야 합니다. 이는 스레드가 배리어에 참여하기 전에 동기화해야 하지만, 스레드가 동기화하기 위해 배리어를 생성하고 있다는 점에서 부트스트래핑 문제를 야기합니다. 이 예제에서는 참여할 스레드가 협력 그룹(cooperative group)의 일부이며, <code class="docutils literal notranslate"><span class="pre">block.sync()</span></code>를 사용해 초기화를 부트스트랩합니다. 전체 스레드 블록이 배리어에 참여하므로, <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code>도 사용할 수 있습니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">init()</span></code>의 두 번째 매개변수는 <em>예상 도착 횟수</em>로, 즉 참여하는 스레드가 <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code>를 몇 번 호출해야 참여 스레드가 <code class="docutils literal notranslate"><span class="pre">bar.wait(std::move(token))</span></code> 호출에서 언블록(unblock)되는지를 의미합니다. 이 예제와 이전 예제에서는 배리어가 스레드 블록의 스레드 수, 즉 <code class="docutils literal notranslate"><span class="pre">cooperative_groups::this_thread_block().size()</span></code>로 초기화되어, 스레드 블록 내의 모든 스레드가 배리어에 참여할 수 있습니다.</p>
+<p>비동기 배리어는 스레드가 <em>어떻게</em> 참여하는지(도착/대기 분리)와 <em>어떤</em> 스레드가 참여하는지를 지정하는 데 유연합니다. 반면, <code class="docutils literal notranslate"><span class="pre">this_thread_block.sync()</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code>는 전체 스레드 블록에 적용되며, <code class="docutils literal notranslate"><span class="pre">__syncwarp(mask)</span></code>는 워프의 지정된 부분집합에 적용됩니다. 그럼에도 사용자의 의도가 전체 스레드 블록 또는 전체 워프를 동기화하는 것이라면, 더 나은 성능을 위해 각각 <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code> 및 <code class="docutils literal notranslate"><span class="pre">__syncwarp()</span></code>를 사용할 것을 권장합니다.</p>
+</section><section id="a-barrier-s-phase-arrival-countdown-completion-and-reset">
+<span id="asynchronous-barriers-countdown-complete-reset-phase"></span><h2><span class="section-number">4.9.2. </span>배리어의 페이즈: 도착, 카운트다운, 완료 및 리셋<a class="headerlink" href="#a-barrier-s-phase-arrival-countdown-completion-and-reset" title="Link to this heading">#</a></h2>
+<p>비동기 배리어는 참여 스레드가 <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code>를 호출함에 따라 예상 도착 카운트에서 0까지 카운트다운합니다. 카운트다운이 0에 도달하면, 배리어는 현재 페이즈에 대해 완료됩니다. <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code>에 대한 마지막 호출로 인해 카운트다운이 0에 도달하면, 카운트다운은 자동으로 그리고 원자적으로 리셋됩니다. 리셋은 카운트다운을 예상 도착 카운트로 설정하고, 배리어를 다음 페이즈로 이동시킵니다.</p>
+<p><code class="docutils literal notranslate"><span class="pre">token</span></code> 클래스의 <code class="docutils literal notranslate"><span class="pre">cuda::barrier::arrival_token</span></code> 객체는 <code class="docutils literal notranslate"><span class="pre">token=bar.arrive()</span></code>에서 반환되는 것처럼, 배리어의 현재 페이즈와 연관됩니다. <code class="docutils literal notranslate"><span class="pre">bar.wait(std::move(token))</span></code>에 대한 호출은 배리어가 현재 페이즈에 있는 동안, 즉 토큰과 연관된 페이즈가 배리어의 페이즈와 일치하는 동안 호출한 스레드를 블록합니다. <code class="docutils literal notranslate"><span class="pre">bar.wait(std::move(token))</span></code>에 대한 호출 이전에 페이즈가 (카운트다운이 0에 도달하여) 진행되면 스레드는 블록되지 않습니다. 스레드가 <code class="docutils literal notranslate"><span class="pre">bar.wait(std::move(token))</span></code>에서 블록되어 있는 동안 페이즈가 진행되면 스레드는 언블록(unblock)됩니다.</p>
+<p><strong>리셋이 발생할 수 있는 경우와 발생할 수 없는 경우를 아는 것은 특히 복잡하지 않은 도착/대기 동기화 패턴에서 필수적입니다.</strong></p><ul class="simple">
+<li><p>스레드가 <code class="docutils literal notranslate"><span class="pre">token=bar.arrive()</span></code> 및 <code class="docutils literal notranslate"><span class="pre">bar.wait(std::move(token))</span></code>를 호출하는 순서는, <code class="docutils literal notranslate"><span class="pre">token=bar.arrive()</span></code>가 배리어의 현재 페이즈 동안 발생하고, <code class="docutils literal notranslate"><span class="pre">bar.wait(std::move(token))</span></code>는 동일한 페이즈 또는 다음 페이즈 동안 발생하도록 시퀀싱되어야 합니다.</p></li>
+<li><p>스레드의 호출은 <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code> 배리어의 카운터가 0이 아닐 때 발생해야 합니다. 배리어 초기화 후, 스레드가 <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code> 가 카운트다운이 0에 도달하게 하면, 에 대한 호출은 <code class="docutils literal notranslate"><span class="pre">bar.wait(std::move(token))</span></code> 배리어를 후속 호출에 다시 사용하려면 먼저 발생해야 합니다 <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bar.wait()</span></code> 반드시 오직 a를 사용하여 호출되어야 합니다 <code class="docutils literal notranslate"><span class="pre">token</span></code> 현재 페이즈 또는 바로 이전 페이즈의 object를 사용해서만 호출되어야 합니다. 그 외의 모든 값에 대해서는 <code class="docutils literal notranslate"><span class="pre">token</span></code> object에 대해서는 동작이 정의되지 않습니다.</p></li>
+</ul>
+<p>단순한 도착/대기 동기화 패턴의 경우, 이러한 사용 규칙을 준수하는 것은 간단합니다.</p>
+<section id="warp-entanglement">
+<span id="asynchronous-barriers-entanglement"></span><h3><span class="section-number">4.9.2.1. </span>워프 얽힘<a class="headerlink" href="#warp-entanglement" title="Link to this heading">#</a></h3>
+<p>워프 다이버전스(warp-divergence)는 arrive-on 연산이 배리어를 업데이트하는 횟수에 영향을 미칩니다. 호출하는 워프가 완전히 컨버지드(converged)된 경우, 배리어는 한 번 업데이트됩니다. 호출하는 워프가 완전히 다이버지드(diverged)된 경우, 32개의 개별 업데이트가 배리어에 적용됩니다.</p>
+<div class="admonition note">
+<p class="admonition-title">참고</p>
+<p>배리어 객체에 대한 업데이트를 최소화하기 위해, <code class="docutils literal notranslate"><span class="pre">arrive-on(bar)</span></code> 호출은 컨버지드된 스레드에서 사용하는 것을 권장합니다. 이러한 연산에 앞선 코드가 스레드를 다이버지시키는 경우, arrive-on 연산을 호출하기 전에 <code class="docutils literal notranslate"><span class="pre">__syncwarp</span></code>를 통해 워프를 다시 컨버지드되도록 해야 합니다.</p>
+</div>
+</section>
+</section>
+<section id="explicit-phase-tracking">
+<span id="asynchronous-barriers-explicit-phase"></span><h2><span class="section-number">4.9.3. </span>명시적 페이즈 추적<a class="headerlink" href="#explicit-phase-tracking" title="Link to this heading">#</a></h2>
+<p>비동기 배리어는 스레드 및 메모리 연산을 동기화하는 데 몇 번 사용되는지에 따라 여러 페이즈를 가질 수 있습니다. 토큰을 사용하여 배리어 페이즈 플립을 추적하는 대신, 다음을 사용하여 페이즈를 직접 추적할 수 있습니다. <code class="docutils literal notranslate"><span class="pre">mbarrier_try_wait_parity()</span></code> 다음을 통해 사용할 수 있는 함수 패밀리 <code class="docutils literal notranslate"><span class="pre">cuda::ptx</span></code> 및 프리미티브 API.</p>
+<p>가장 단순한 형태로, <code class="docutils literal notranslate"><span class="pre">cuda::ptx::mbarrier_try_wait_parity(uint64_t*</span> <span class="pre">bar,</span> <span class="pre">const</span> <span class="pre">uint32_t&amp;</span> <span class="pre">phaseParity)</span></code> 함수는 특정 패리티를 가진 페이즈를 기다립니다. <code class="docutils literal notranslate"><span class="pre">phaseParity</span></code> 피연산자는 배리어 객체의 현재 페이즈 또는 바로 이전 페이즈의 정수 패리티입니다. 짝수 페이즈의 정수 패리티는 0이고 홀수 페이즈의 정수 패리티는 1입니다. 배리어를 초기화하면 해당 페이즈의 패리티는 0입니다. 따라서 <code class="docutils literal notranslate"><span class="pre">phaseParity</span></code>의 유효한 값은 0과 1입니다. 명시적 페이즈 추적은 <a class="reference internal" href="../03-advanced/advanced-kernel-programming.html"><span class="std std-ref">비동기 메모리 연산</span></a>을 추적할 때 유용할 수 있는데, 이는 단 하나의 스레드만 배리어에 도착하여 트랜잭션 카운트를 설정하고, 다른 스레드들은 패리티 기반 페이즈 플립만 기다리도록 허용하기 때문입니다. 이는 모든 스레드가 배리어에 도착하고 토큰을 사용하는 것보다 더 효율적일 수 있습니다. 이 기능은 스레드 블록 및 클러스터 스코프에서의 공유 메모리 배리어에 대해서만 사용할 수 있습니다.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-3" name="sd-tab-set-1" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-3">
+CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-phase-std">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">compute</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">iteration</span><span class="p">);</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">split_arrive_wait</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iteration_count</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">using</span><span class="w"> </span><span class="n">barrier_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">barrier</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_block</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="n">barrier_t</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">parity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">// Initial phase parity is 0.</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="o">::</span><span class="n">this_thread_block</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Initialize barrier with expected arrival count.</span>
+<span class="w">    </span><span class="n">init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">block</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">iteration_count</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* code before arrive */</span>
+
+<span class="w">    </span><span class="c1">// This thread arrives. Arrival does not block a thread.</span>
+<span class="w">    </span><span class="c1">// Get a handle to the native barrier to use with cuda::ptx API.</span>
+<span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="n">cuda</span><span class="o">::</span><span class="n">device</span><span class="o">::</span><span class="n">barrier_native_handle</span><span class="p">(</span><span class="n">bar</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">compute</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Wait for all threads participating in the barrier to complete mbarrier_arrive().</span>
+<span class="w">    </span><span class="c1">// Get a handle to the native barrier to use with cuda::ptx API.</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_try_wait_parity</span><span class="p">(</span><span class="n">cuda</span><span class="o">::</span><span class="n">device</span><span class="o">::</span><span class="n">barrier_native_handle</span><span class="p">(</span><span class="n">bar</span><span class="p">),</span><span class="w"> </span><span class="n">parity</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="c1">// Flip parity.</span>
+<span class="w">    </span><span class="n">parity</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* code after wait */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-4" name="sd-tab-set-1" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-4">
+CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx</span></code></label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-phase-ptx">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">compute</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">iteration</span><span class="p">);</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">split_arrive_wait</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iteration_count</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">parity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">// Initial phase parity is 0.</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="o">::</span><span class="n">this_thread_block</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Initialize barrier with expected arrival count.</span>
+<span class="w">    </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">block</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">iteration_count</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* code before arrive */</span>
+
+<span class="w">    </span><span class="c1">// This thread arrives. Arrival does not block a thread.</span>
+<span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">compute</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Wait for all threads participating in the barrier to complete mbarrier_arrive().</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_try_wait_parity</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">parity</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="c1">// Flip parity.</span>
+<span class="w">    </span><span class="n">parity</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* code after wait */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-5" name="sd-tab-set-1" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-5">
+CUDA C 프리미티브</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-phase-primitives">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">compute</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">iteration</span><span class="p">);</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">split_arrive_wait</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iteration_count</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="n">__mbarrier_t</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">parity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="c1">// Initial phase parity is false.</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="o">::</span><span class="n">this_thread_block</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Initialize barrier with expected arrival count.</span>
+<span class="w">    </span><span class="n">__mbarrier_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">block</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">iteration_count</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/* code before arrive */</span>
+
+<span class="w">    </span><span class="c1">// This thread arrives. Arrival does not block a thread.</span>
+<span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">__mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">compute</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Wait for all threads participating in the barrier to complete __mbarrier_arrive().</span>
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">__mbarrier_try_wait_parity</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">parity</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="n">parity</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* code after wait */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="early-exit">
+<span id="asynchronous-barriers-early-exit"></span><h2><span class="section-number">4.9.4. </span>조기 종료<a class="headerlink" href="#early-exit" title="Link to this heading">#</a></h2>
+<p>일련의 동기화 시퀀스에 참여 중인 스레드가 해당 시퀀스에서 조기에 종료해야 하는 경우, 해당 스레드는 종료하기 전에 참여에서 명시적으로 빠져나와야 합니다. 남아 있는 참여 스레드들은 이후의 arrive 및 wait 연산을 정상적으로 진행할 수 있습니다.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-6" name="sd-tab-set-2" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-6">
+CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-exit-std">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">condition_check</span><span class="p">();</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">early_exit_kernel</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">barrier</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_block</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="o">::</span><span class="n">this_thread_block</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">block</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">condition_check</span><span class="p">())</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="n">bar</span><span class="p">.</span><span class="n">arrive_and_drop</span><span class="p">();</span>
+<span class="w">      </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// Other threads can proceed normally.</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bar</span><span class="p">.</span><span class="n">arrive</span><span class="p">();</span>
+
+<span class="w">    </span><span class="cm">/* code between arrive and wait */</span>
+
+<span class="w">    </span><span class="c1">// Wait for all threads to arrive.</span>
+<span class="w">    </span><span class="n">bar</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">token</span><span class="p">));</span>
+
+<span class="w">    </span><span class="cm">/* code after wait */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-7" name="sd-tab-set-2" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-7">
+CUDA C 프리미티브</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-exit-primitives">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">condition_check</span><span class="p">();</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">early_exit_kernel</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="n">__mbarrier_t</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="o">::</span><span class="n">this_thread_block</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">__mbarrier_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">block</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">condition_check</span><span class="p">())</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="n">__mbarrier_token_t</span><span class="w"> </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__mbarrier_arrive_and_drop</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">);</span>
+<span class="w">      </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// Other threads can proceed normally.</span>
+<span class="w">    </span><span class="n">__mbarrier_token_t</span><span class="w"> </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/* code between arrive and wait */</span>
+
+<span class="w">    </span><span class="c1">// Wait for all threads to arrive.</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">__mbarrier_try_wait</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="cm">/* code after wait */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">bar.arrive_and_drop()</span></code> 연산은 <strong>현재</strong> 페이즈에서 참여 스레드가 도착해야 하는 의무를 이행하기 위해 배리어에 도착한 다음, <strong>다음</strong> 페이즈에서 기대되는 도착 카운트를 감소시켜 이 스레드가 더 이상 배리어에 도착할 것으로 기대되지 않도록 합니다.</p>
+</section>
+<section id="completion-function">
+<span id="asynchronous-barriers-completion"></span><h2><span class="section-number">4.9.5. </span>완료 함수<a class="headerlink" href="#completion-function" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code> API는 선택적 완료 함수를 지원합니다. A <code class="docutils literal notranslate"><span class="pre">CompletionFunction</span></code> 의 <code class="docutils literal notranslate"><span class="pre">cuda::barrier&lt;Scope,</span> <span class="pre">CompletionFunction&gt;</span></code> 는 마지막 스레드 이후 각 페이즈당 한 번 실행됩니다. <em>도착합니다</em> 그리고 어떤 스레드도 다음으로부터 언블록(unblock)되기 전에 <code class="docutils literal notranslate"><span class="pre">wait</span></code>. 배리어에 도착한 스레드가 수행한 메모리 연산은 <code class="docutils literal notranslate"><span class="pre">barrier</span></code> 페이즈 동안은 다음을 실행하는 스레드에 보입니다 <code class="docutils literal notranslate"><span class="pre">CompletionFunction</span></code>, 그리고 다음 범위 내에서 수행된 모든 메모리 연산은 <code class="docutils literal notranslate"><span class="pre">CompletionFunction</span></code> 배리어에서 대기 중인 모든 스레드에 보입니다 <code class="docutils literal notranslate"><span class="pre">barrier</span></code> 배리어에서 언블록(unblock)되면 <code class="docutils literal notranslate"><span class="pre">wait</span></code>.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-8" name="sd-tab-set-3" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-8">
+CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-basic-completion-std">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;functional&gt;</span>
+<span class="n">namespace</span><span class="w"> </span><span class="n">cg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="p">;</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">divergent_compute</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="p">);</span>
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">independent_computation</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="p">);</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">psum</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">acc</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cg</span><span class="o">::</span><span class="n">this_thread_block</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">BlockSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">128</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">smem</span><span class="p">[</span><span class="n">BlockSize</span><span class="p">];</span>
+<span class="w">  </span><span class="n">assert</span><span class="p">(</span><span class="n">BlockSize</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">  </span><span class="n">assert</span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">BlockSize</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">completion_fn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">BlockSize</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">smem</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="o">*</span><span class="n">acc</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">sum</span><span class="p">;</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="cm">/* Barrier storage.</span>
+<span class="cm">     Note: the barrier is not default-constructible because</span>
+<span class="cm">           completion_fn is not default-constructible due</span>
+<span class="cm">           to the capture. */</span>
+<span class="w">  </span><span class="n">using</span><span class="w"> </span><span class="n">completion_fn_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">decltype</span><span class="p">(</span><span class="n">completion_fn</span><span class="p">);</span>
+<span class="w">  </span><span class="n">using</span><span class="w"> </span><span class="n">barrier_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">barrier</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_block</span><span class="p">,</span>
+<span class="w">                                  </span><span class="n">completion_fn_t</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">aligned_storage</span><span class="o">&lt;</span><span class="k">sizeof</span><span class="p">(</span><span class="n">barrier_t</span><span class="p">),</span>
+<span class="w">                                  </span><span class="k">alignof</span><span class="p">(</span><span class="n">barrier_t</span><span class="p">)</span><span class="o">&gt;</span>
+<span class="w">      </span><span class="n">bar_storage</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Initialize barrier.</span>
+<span class="w">  </span><span class="n">barrier_t</span><span class="w"> </span><span class="o">*</span><span class="n">bar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">barrier_t</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">bar_storage</span><span class="p">;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="o">*</span><span class="n">acc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="nb">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="n">new</span><span class="w"> </span><span class="p">(</span><span class="n">bar</span><span class="p">)</span><span class="w"> </span><span class="n">barrier_t</span><span class="p">{</span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="w"> </span><span class="n">completion_fn</span><span class="p">};</span>
+<span class="w">    </span><span class="cm">/* equivalent to: init(bar, block.size(), completion_fn); */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">block</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Main loop.</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">())</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">smem</span><span class="p">[</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="o">*</span><span class="n">acc</span><span class="p">;</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bar</span><span class="o">-&gt;</span><span class="n">arrive</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// We can do independent computation here.</span>
+<span class="w">    </span><span class="n">bar</span><span class="o">-&gt;</span><span class="n">wait</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">token</span><span class="p">));</span>
+<span class="w">    </span><span class="c1">// Shared-memory is safe to re-use in the next iteration</span>
+<span class="w">    </span><span class="c1">// since all threads are done with it, including the one</span>
+<span class="w">    </span><span class="c1">// that did the reduction.</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="tracking-asynchronous-memory-operations">
+<span id="asynchronous-barriers-tracking"></span><h2><span class="section-number">4.9.6. </span>비동기 메모리 연산 추적<a class="headerlink" href="#tracking-asynchronous-memory-operations" title="Link to this heading">#</a></h2><p>비동기 배리어는 <a class="reference internal" href="../03-advanced/advanced-kernel-programming.html"><span class="std std-ref">비동기 메모리 복사</span></a>를 추적하는 데 사용할 수 있습니다. 비동기 복사 연산이 배리어에 바인딩되면, 복사 연산은 시작 시 현재 배리어 페이즈의 기대 카운트를 자동으로 증가시키고 완료 시 감소시킵니다. 이 메커니즘은 배리어의 <code class="docutils literal notranslate"><span class="pre">wait()</span></code> 연산이 연결된 모든 비동기 메모리 복사가 완료될 때까지 블록되도록 보장하여, 여러 개의 동시 메모리 연산을 동기화하는 편리한 방법을 제공합니다.</p><p>컴퓨트 커패빌리티 9.0부터, 스레드 블록 또는 클러스터 스코프를 갖는 공유 메모리의 비동기 배리어는 비동기 메모리 연산을 <strong>명시적으로</strong> 추적할 수 있습니다. 우리는 이러한 배리어를 <em>비동기 트랜잭션 배리어</em>라고 부릅니다. 기대 도착 카운트 외에도, 배리어 object는 <strong>트랜잭션 카운트</strong>를 받을 수 있으며, 이는 비동기 트랜잭션의 완료를 추적하는 데 사용할 수 있습니다. 트랜잭션 카운트는 비동기 트랜잭션 중 아직 완료되지 않은 미완료(outstanding) 트랜잭션의 수를, 비동기 메모리 연산에서 지정한 단위(일반적으로 바이트)로 추적합니다. 현재 페이즈에서 추적할 트랜잭션 카운트는 <code class="docutils literal notranslate"><span class="pre">cuda::device::barrier_arrive_tx()</span></code>로 도착(arrival) 시 설정하거나, <code class="docutils literal notranslate"><span class="pre">cuda::device::barrier_expect_tx()</span></code>로 직접 설정할 수 있습니다. 배리어가 트랜잭션 카운트를 사용할 때에는, 모든 생산자 스레드가 arrive <em>및</em> 모든 트랜잭션 카운트의 합이 기대 값에 도달할 때까지 대기(wait) 연산에서 스레드를 블록합니다.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-9" name="sd-tab-set-4" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-9">
+CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-tx-std">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">track_kernel</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">barrier</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_block</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="o">::</span><span class="n">this_thread_block</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">block</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">device</span><span class="o">::</span><span class="n">barrier_arrive_tx</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">bar</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">cuda</span><span class="o">::</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">token</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-10" name="sd-tab-set-4" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-10">
+CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx</span></code></label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-tx-ptx">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cooperative_groups.h&gt;</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">track_kernel</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">bar</span><span class="p">;</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cooperative_groups</span><span class="o">::</span><span class="n">this_thread_block</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">block</span><span class="p">.</span><span class="n">sync</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_arrive_expect_tx</span><span class="p">(</span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">sem_release</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">scope_cluster</span><span class="p">,</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">space_shared</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_try_wait</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>이 예제에서, <code class="docutils literal notranslate"><span class="pre">cuda::device::barrier_arrive_tx()</span></code> 연산은 현재 페이즈의 페이즈 동기화 지점과 연관된 도착 토큰 object를 구성합니다. 그런 다음 도착 카운트를 1 감소시키고 기대 트랜잭션 카운트를 0 증가시킵니다. 트랜잭션 카운트 업데이트가 0이므로, 배리어는 어떤 트랜잭션도 추적하고 있지 않습니다. 이어지는 <a class="reference internal" href="async-copies.html"><span class="std std-ref">텐서 메모리 가속기(TMA) 사용</span></a> 섹션에는 비동기 메모리 연산을 추적하는 예제가 포함되어 있습니다.</p>
+</section>
+<section id="producer-consumer-pattern-using-barriers">
+<span id="asynchronous-barriers-producer-consumer"></span><h2><span class="section-number">4.9.7. </span>배리어를 사용하는 프로듀서-컨슈머 패턴<a class="headerlink" href="#producer-consumer-pattern-using-barriers" title="Link to this heading">#</a></h2>
+<p>스레드 블록은 서로 다른 스레드가 독립적인 연산을 수행할 수 있도록 공간적으로 파티셔닝할 수 있습니다. 이는 가장 일반적으로 스레드 블록 내의 서로 다른 워프에 속한 스레드를 특정 작업에 할당함으로써 수행됩니다. 이 기법을 <em>워프 특화(warp specialization)</em>라고 합니다.</p>
+<p>이 섹션은 프로듀서-컨슈머 패턴에서의 공간적 파티셔닝 예제를 보여주며, 여기서 한 스레드 부분집합이 데이터를 생성하고, 다른(서로 겹치지 않는) 스레드 부분집합이 이를 동시에 소비합니다. 프로듀서-컨슈머 공간 파티셔닝 패턴은 프로듀서와 컨슈머 사이의 데이터 버퍼를 관리하기 위해 두 개의 일방향 동기화가 필요합니다.</p>
+<div class="pst-scrollable-table-container table-frame"><table class="table-no-stripes table">
+<thead>
+<tr class="row-odd"><th class="head"><p>프로듀서</p></th>
+<th class="head"><p>컨슈머</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>버퍼가 채워질 준비가 될 때까지 대기</p></td>
+<td><p>버퍼가 채워질 준비가 되었음을 신호</p></td>
+</tr>
+<tr class="row-odd"><td><p>데이터를 생성하고 버퍼를 채움</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>버퍼가 채워졌음을 신호</p></td>
+<td><p>버퍼가 채워질 때까지 대기</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>채워진 버퍼의 데이터를 소비</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>프로듀서 스레드는 컨슈머 스레드가 버퍼가 채워질 준비가 되었음을 신호할 때까지 대기하지만, 컨슈머 스레드는 이 신호를 기다리지 않습니다. 컨슈머 스레드는 프로듀서 스레드가 버퍼가 채워졌음을 신호할 때까지 대기하지만, 프로듀서 스레드는 이 신호를 기다리지 않습니다. 프로듀서/컨슈머의 완전한 동시성을 위해 이 패턴은 (최소한) 더블 버퍼링을 가지며, 각 버퍼에는 두 개의 배리어가 필요합니다.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-11" name="sd-tab-set-5" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-11">
+CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::barrier</span></code></label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-producer-consumer-std">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/barrier&gt;</span>
+
+<span class="n">using</span><span class="w"> </span><span class="n">barrier_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">barrier</span><span class="o">&lt;</span><span class="n">cuda</span><span class="o">::</span><span class="n">thread_scope_block</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">produce</span><span class="p">(</span><span class="n">barrier_t</span><span class="w"> </span><span class="n">ready</span><span class="p">[],</span><span class="w"> </span><span class="n">barrier_t</span><span class="w"> </span><span class="n">filled</span><span class="p">[],</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ready</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">].</span><span class="n">arrive_and_wait</span><span class="p">();</span><span class="w"> </span><span class="cm">/* wait for buffer_(i%2) to be ready to be filled */</span>
+<span class="w">    </span><span class="cm">/* produce, i.e., fill in, buffer_(i%2)  */</span>
+<span class="w">    </span><span class="n">barrier_t</span><span class="o">::</span><span class="n">arrival_token</span><span class="w"> </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filled</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">].</span><span class="n">arrive</span><span class="p">();</span><span class="w"> </span><span class="cm">/* buffer_(i%2) is filled */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">consume</span><span class="p">(</span><span class="n">barrier_t</span><span class="w"> </span><span class="n">ready</span><span class="p">[],</span><span class="w"> </span><span class="n">barrier_t</span><span class="w"> </span><span class="n">filled</span><span class="p">[],</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">barrier_t</span><span class="o">::</span><span class="n">arrival_token</span><span class="w"> </span><span class="n">token1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ready</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">arrive</span><span class="p">();</span><span class="w"> </span><span class="cm">/* buffer_0 is ready for initial fill */</span>
+<span class="w">  </span><span class="n">barrier_t</span><span class="o">::</span><span class="n">arrival_token</span><span class="w"> </span><span class="n">token2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ready</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">arrive</span><span class="p">();</span><span class="w"> </span><span class="cm">/* buffer_1 is ready for initial fill */</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">filled</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">].</span><span class="n">arrive_and_wait</span><span class="p">();</span><span class="w"> </span><span class="cm">/* wait for buffer_(i%2) to be filled */</span>
+<span class="w">    </span><span class="cm">/* consume buffer_(i%2) */</span>
+<span class="w">    </span><span class="n">barrier_t</span><span class="o">::</span><span class="n">arrival_token</span><span class="w"> </span><span class="n">token3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ready</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">].</span><span class="n">arrive</span><span class="p">();</span><span class="w"> </span><span class="cm">/* buffer_(i%2) is ready to be re-filled */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">producer_consumer_pattern</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nb">warpSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">32</span><span class="p">;</span>
+
+<span class="w">  </span><span class="cm">/* Shared memory buffer declared below is of size 2 * buffer_len</span>
+<span class="cm">     so that we can alternatively work between two buffers.</span>
+<span class="cm">     buffer_0 = buffer and buffer_1 = buffer + buffer_len */</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">buffer</span><span class="p">[];</span>
+
+<span class="w">  </span><span class="cm">/* bar[0] and bar[1] track if buffers buffer_0 and buffer_1 are ready to be filled,</span>
+<span class="cm">     while bar[2] and bar[3] track if buffers buffer_0 and buffer_1 are filled-in respectively */</span>
+<span class="w">  </span><span class="cp">#pragma nv_diag_suppress static_var_with_dynamic_init</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="n">barrier_t</span><span class="w"> </span><span class="n">bar</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">init</span><span class="p">(</span><span class="n">bar</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">x</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="nf">__syncthreads</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nb">warpSize</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">produce</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">bar</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="k">else</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">consume</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">bar</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-12" name="sd-tab-set-5" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-12">
+CUDA C++ <code class="docutils literal notranslate"><span class="pre">cuda::ptx</span></code></label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-producer-consumer-ptx">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda/ptx&gt;</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">produce</span><span class="p">(</span><span class="n">barrier</span><span class="w"> </span><span class="n">ready</span><span class="p">[],</span><span class="w"> </span><span class="n">barrier</span><span class="w"> </span><span class="n">filled</span><span class="p">[],</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">token1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="n">ready</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">]);</span>
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_try_wait</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ready</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="n">token1</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="cm">/* wait for buffer_(i%2) to be ready to be filled */</span>
+<span class="w">    </span><span class="cm">/* produce, i.e., fill in, buffer_(i%2)  */</span>
+<span class="w">    </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">token2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">filled</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">]);</span><span class="w"> </span><span class="cm">/* buffer_(i%2) is filled */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">consume</span><span class="p">(</span><span class="n">barrier</span><span class="w"> </span><span class="n">ready</span><span class="p">[],</span><span class="w"> </span><span class="n">barrier</span><span class="w"> </span><span class="n">filled</span><span class="p">[],</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">token1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ready</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span><span class="w"> </span><span class="cm">/* buffer_0 is ready for initial fill */</span>
+<span class="w">  </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">token2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ready</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span><span class="w"> </span><span class="cm">/* buffer_1 is ready for initial fill */</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">token3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">filled</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">]);</span>
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_try_wait</span><span class="p">(</span><span class="o">&amp;</span><span class="n">filled</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="n">token3x</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="cm">/* wait for buffer_(i%2) to be filled */</span>
+<span class="w">    </span><span class="cm">/* consume buffer_(i%2) */</span>
+<span class="w">    </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">token4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ready</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">]);</span><span class="w"> </span><span class="cm">/* buffer_(i%2) is ready to be re-filled */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">producer_consumer_pattern</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nb">warpSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">32</span><span class="p">;</span>
+
+<span class="w">  </span><span class="cm">/* Shared memory buffer declared below is of size 2 * buffer_len</span>
+<span class="cm">     so that we can alternatively work between two buffers.</span>
+<span class="cm">     buffer_0 = buffer and buffer_1 = buffer + buffer_len */</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">buffer</span><span class="p">[];</span>
+
+<span class="w">  </span><span class="cm">/* bar[0] and bar[1] track if buffers buffer_0 and buffer_1 are ready to be filled,</span>
+<span class="cm">     while bar[2] and bar[3] track if buffers buffer_0 and buffer_1 are filled-in respectively */</span>
+<span class="w">  </span><span class="cp">#pragma nv_diag_suppress static_var_with_dynamic_init</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">bar</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cuda</span><span class="o">::</span><span class="n">ptx</span><span class="o">::</span><span class="n">mbarrier_init</span><span class="p">(</span><span class="n">bar</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">thread_rank</span><span class="p">(),</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="nf">__syncthreads</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nb">warpSize</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span><span class="w">  </span><span class="n">produce</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">bar</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="k">else</span>
+<span class="w">  </span><span class="p">{</span><span class="w">  </span><span class="n">consume</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">bar</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-13" name="sd-tab-set-5" type="radio"/>
+<label class="sd-tab-label" for="sd-tab-item-13">
+CUDA C 프리미티브</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container table-frame"><table class="table" id="table-producer-consumer-primitives">
+<tbody>
+<tr class="row-odd"><td><div class="highlight-cuda notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cuda_awbarrier_primitives.h&gt;</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">produce</span><span class="p">(</span><span class="n">__mbarrier_t</span><span class="w"> </span><span class="n">ready</span><span class="p">[],</span><span class="w"> </span><span class="n">__mbarrier_t</span><span class="w"> </span><span class="n">filled</span><span class="p">[],</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">__mbarrier_token_t</span><span class="w"> </span><span class="n">token1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ready</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">]);</span><span class="w"> </span><span class="cm">/* wait for buffer_(i%2) to be ready to be filled */</span>
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">__mbarrier_try_wait</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ready</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="n">token1</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="cm">/* produce, i.e., fill in, buffer_(i%2)  */</span>
+<span class="w">    </span><span class="n">__mbarrier_token_t</span><span class="w"> </span><span class="n">token2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__mbarrier_arrive</span><span class="p">(</span><span class="n">filled</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">]);</span><span class="w">  </span><span class="cm">/* buffer_(i%2) is filled */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">__device__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">consume</span><span class="p">(</span><span class="n">__mbarrier_t</span><span class="w"> </span><span class="n">ready</span><span class="p">[],</span><span class="w"> </span><span class="n">__mbarrier_t</span><span class="w"> </span><span class="n">filled</span><span class="p">[],</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">__mbarrier_token_t</span><span class="w"> </span><span class="n">token1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ready</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span><span class="w"> </span><span class="cm">/* buffer_0 is ready for initial fill */</span>
+<span class="w">  </span><span class="n">__mbarrier_token_t</span><span class="w"> </span><span class="n">token2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ready</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span><span class="w"> </span><span class="cm">/* buffer_1 is ready for initial fill */</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">__mbarrier_token_t</span><span class="w"> </span><span class="n">token3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">filled</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">]);</span>
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">__mbarrier_try_wait</span><span class="p">(</span><span class="o">&amp;</span><span class="n">filled</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="n">token3</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="cm">/* consume buffer_(i%2) */</span>
+<span class="w">    </span><span class="n">__mbarrier_token_t</span><span class="w"> </span><span class="n">token4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__mbarrier_arrive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ready</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">]);</span><span class="w"> </span><span class="cm">/* buffer_(i%2) is ready to be re-filled */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">producer_consumer_pattern</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nb">warpSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">32</span><span class="p">;</span>
+
+<span class="w">  </span><span class="cm">/* Shared memory buffer declared below is of size 2 * buffer_len</span>
+<span class="cm">     so that we can alternatively work between two buffers.</span>
+<span class="cm">     buffer_0 = buffer and buffer_1 = buffer + buffer_len */</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">buffer</span><span class="p">[];</span>
+
+<span class="w">  </span><span class="cm">/* bar[0] and bar[1] track if buffers buffer_0 and buffer_1 are ready to be filled,</span>
+<span class="cm">     while bar[2] and bar[3] track if buffers buffer_0 and buffer_1 are filled-in respectively */</span>
+<span class="w">  </span><span class="cp">#pragma nv_diag_suppress static_var_with_dynamic_init</span>
+<span class="w">  </span><span class="kt">__shared__</span><span class="w"> </span><span class="n">__mbarrier_t</span><span class="w"> </span><span class="n">bar</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">__mbarrier_init</span><span class="p">(</span><span class="n">bar</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="nb">blockDim</span><span class="p">.</span><span class="n">x</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="nf">__syncthreads</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nb">warpSize</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">produce</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">bar</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="k">else</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">consume</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span><span class="w"> </span><span class="n">bar</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_len</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>이 예제에서 첫 번째 워프는 프로듀서로 특화되고 나머지 워프들은 컨슈머로 특화됩니다. 모든 프로듀서 및 컨슈머 스레드는 네 개의 배리어 각각에 참여( <code class="docutils literal notranslate"><span class="pre">bar.arrive()</span></code> 또는 <code class="docutils literal notranslate"><span class="pre">bar.arrive_and_wait()</span></code> 호출)하므로 기대 도착 카운트는 <code class="docutils literal notranslate"><span class="pre">block.size()</span></code>와 같습니다.</p>
+<p>프로듀서 스레드는 컨슈머 스레드가 공유 메모리 버퍼를 채울 수 있음을 신호할 때까지 기다립니다. 배리어에서 대기하려면, 프로듀서 스레드는 먼저 해당 <code class="docutils literal notranslate"><span class="pre">ready[i%2].arrive()</span></code>에서 도착하여 토큰을 얻고, 그 다음 그 토큰으로 <code class="docutils literal notranslate"><span class="pre">ready[i%2].wait(token)</span></code>를 수행해야 합니다. 단순화를 위해 <code class="docutils literal notranslate"><span class="pre">ready[i%2].arrive_and_wait()</span></code>는 이러한 연산을 결합합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">bar</span><span class="p">.</span><span class="n">arrive_and_wait</span><span class="p">();</span>
+<span class="cm">/* is equivalent to */</span>
+<span class="n">bar</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">bar</span><span class="p">.</span><span class="n">arrive</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>프로듀서 스레드는 준비된 버퍼를 계산하고 채운 다음, 채워짐(filled) 배리어인 <code class="docutils literal notranslate"><span class="pre">filled[i%2].arrive()</span></code>에서 도착함으로써 버퍼가 채워졌음을 신호합니다. 프로듀서 스레드는 이 시점에서는 대기하지 않으며, 대신 다음 반복의 버퍼(더블 버퍼링)가 채워질 준비가 될 때까지 기다립니다.</p>
+<p>컨슈머 스레드는 두 버퍼 모두가 채워질 준비가 되었음을 신호하는 것으로 시작합니다. 컨슈머 스레드는 이 시점에서는 대기하지 않으며, 대신 이번 반복의 버퍼가 채워질 때까지 <code class="docutils literal notranslate"><span class="pre">filled[i%2].arrive_and_wait()</span></code>에서 기다립니다. 컨슈머 스레드가 버퍼를 소비한 뒤에는, 버퍼가 다시 채워질 준비가 되었음을 <code class="docutils literal notranslate"><span class="pre">ready[i%2].arrive()</span></code>로 신호하고, 그 다음 다음 반복의 버퍼가 채워질 때까지 기다립니다.</p>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="error-log-management.html">4.8. 오류 로그 관리</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="pipelines.html">4.10. 파이프라인</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#initialization">4.9.1. 초기화</a></li><li><a class="toc-link" href="#a-barrier-s-phase-arrival-countdown-completion-and-reset">4.9.2. 배리어의 페이즈: 도착, 카운트다운, 완료 및 리셋</a><ul><li><a class="toc-link" href="#warp-entanglement">4.9.2.1. 워프 얽힘</a></li></ul></li><li><a class="toc-link" href="#explicit-phase-tracking">4.9.3. 명시적 페이즈 추적</a></li><li><a class="toc-link" href="#early-exit">4.9.4. 조기 종료</a></li><li><a class="toc-link" href="#completion-function">4.9.5. 완료 함수</a></li><li><a class="toc-link" href="#tracking-asynchronous-memory-operations">4.9.6. 비동기 메모리 연산 추적</a></li><li><a class="toc-link" href="#producer-consumer-pattern-using-barriers">4.9.7. 배리어를 사용하는 프로듀서-컨슈머 패턴</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

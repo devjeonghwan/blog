@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3.1. 고급 CUDA API 및 기능 — CUDA 프로그래밍 가이드 - 한국어 번역판</title>
+  <meta name="description" content="이 섹션에서는 더 고급 CUDA API 및 기능의 사용을 다룹니다. 이러한 주제는 일반적으로 CUDA 커널 수정이 필요하지 않은 기법이나 기능을 다루지만, 호스트 측에서 GPU 작업 실행과 성능뿐 아니라 CPU 측 성능을 포함한 애플리케이션 수준의 동작에도 영향을 줄 수 있습니다.">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="../assets/vendor/pygments.css">
+  <link rel="stylesheet" href="../assets/vendor/sphinx-design.css">
+  <script>
+    window.MathJax = {
+      loader: { load: ['[tex]/color'] },
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['color'] } },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="../assets/vendor/mathjax/tex-svg.js"></script>
+  <script defer src="../assets/vendor/design-tabs.js"></script>
+  <script defer src="../assets/site.js"></script>
+
+</head>
+<body>
+  <div class="site-shell">
+    
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="문서 메뉴 열기">☰</button>
+    <a class="brand" href="../index.html">
+      <span class="brand__title">CUDA 프로그래밍 가이드 - 한국어 번역판</span>
+    </a>
+    <nav class="header-links">
+      <a href="../contents.html">목차</a>
+      <a href="../genindex.html">색인</a>
+      <a href="../notices.html">고지 사항</a>
+    </nav>
+    <button class="search-toggle" type="button" data-search-toggle aria-label="검색 열기">검색</button>
+    <form class="search-form" data-doc-search-form action="../search.html">
+      <div class="search-form__inner">
+        <input type="search" name="q" value="" placeholder="문서 전체 검색">
+        <button type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</header>
+
+    <div class="page-layout">
+      <aside class="sidebar-panel">
+        <div class="sidebar-panel__card">
+          <h2 class="sidebar-title">문서 구조</h2>
+          <nav><ul class="sidebar-tree"><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../index.html">CUDA 프로그래밍 가이드</a></summary><ul class="sidebar-leaf-list"><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part1.html">1. CUDA 소개</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/introduction.html">1.1. 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/programming-model.html">1.2. 프로그래밍 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../01-introduction/cuda-platform.html">1.3. CUDA 플랫폼</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part2.html">2. CUDA에서 GPU 프로그래밍</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../02-basics/intro-to-cuda-cpp.html">2.1. CUDA C++ 소개</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/writing-cuda-kernels.html">2.2. CUDA SIMT 커널 작성</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/asynchronous-execution.html">2.3. 비동기 실행</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/understanding-memory.html">2.4. 통합 메모리 및 시스템 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../02-basics/nvcc.html">2.5. NVCC: NVIDIA CUDA 컴파일러</a></li></ul></details></li><li class="sidebar-group"><details open><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part3.html">3. 고급 CUDA</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link is-active" href="advanced-host-programming.html">3.1. 고급 CUDA API 및 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="driver-api.html">3.3. CUDA 드라이버 API</a></li><li><a data-sidebar-close class="sidebar-link" href="multi-gpu-systems.html">3.4. 다중 GPU를 갖춘 시스템 프로그래밍</a></li><li><a data-sidebar-close class="sidebar-link" href="feature-survey.html">3.5. CUDA 기능 둘러보기</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part4.html">4. CUDA 기능</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/unified-memory.html">4.1. 통합 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cuda-graphs.html">4.2. CUDA 그래프</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/stream-ordered-memory-allocation.html">4.3. 스트림 순서 메모리 할당자</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cooperative-groups.html">4.4. 코오퍼러티브 그룹(Cooperative Groups)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/programmatic-dependent-launch.html">4.5. 프로그래밍 방식 종속 런치 및 동기화</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/green-contexts.html">4.6. 그린 컨텍스트(Green Contexts)</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/lazy-loading.html">4.7. 지연 로딩</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/error-log-management.html">4.8. 오류 로그 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-barriers.html">4.9. 비동기 배리어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/pipelines.html">4.10. 파이프라인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/async-copies.html">4.11. 비동기 데이터 복사</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/cluster-launch-control.html">4.12. 클러스터 런치 제어를 통한 워크 스틸링</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/l2-cache-control.html">4.13. L2 캐시 제어</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/memory-sync-domains.html">4.14. 메모리 동기화 도메인</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/inter-process-communication.html">4.15. 프로세스 간 통신</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/virtual-memory-management.html">4.16. 가상 메모리 관리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/extended-gpu-memory.html">4.17. 확장 GPU 메모리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/dynamic-parallelism.html">4.18. CUDA 동적 병렬 처리</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/graphics-interop.html">4.19. API와의 CUDA 상호운용성</a></li><li><a data-sidebar-close class="sidebar-link" href="../04-special-topics/driver-entry-point-access.html">4.20. 드라이버 엔트리 포인트 액세스</a></li></ul></details></li><li class="sidebar-group"><details ><summary><a data-sidebar-close class="sidebar-group__summary-link" href="../part5.html">5. 기술 부록</a></summary><ul class="sidebar-leaf-list"><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/compute-capabilities.html">5.1. 컴퓨트 기능</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/environment-variables.html">5.2. CUDA 환경 변수</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-support.html">5.3. C++ 언어 지원</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cpp-language-extensions.html">5.4. C/C++ 언어 확장</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/mathematical-functions.html">5.5. 부동소수점 연산</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/device-callable-apis.html">5.6. 디바이스에서 호출 가능한 API 및 인트린식</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-memory-model.html">5.7. CUDA C++ 메모리 모델</a></li><li><a data-sidebar-close class="sidebar-link" href="../05-appendices/cuda-cpp-execution-model.html">5.8. CUDA C++ 실행 모델</a></li></ul></details></li><li><a data-sidebar-close class="sidebar-link" href="../notices.html">6. 고지 사항</a></li></ul></details></li></ul></nav>
+        </div>
+      </aside>
+      <main class="content-panel">
+        <div class="content-panel__card">
+          <ul class="breadcrumbs"><li><a href="../index.html">홈</a></li><li><a href="../index.html">CUDA 프로그래밍 가이드</a></li><li><a href="../part3.html">3. 고급 CUDA</a></li><li>3.1. 고급 CUDA API 및 기능</li></ul>
+          <h1 class="page-title">3.1. 고급 CUDA API 및 기능</h1>
+          <article class="doc-article">
+<section id="advanced-cuda-apis-and-features">
+<span id="advanced-apis-and-features"></span>
+<p>이 섹션에서는 더 고급 CUDA API 및 기능의 사용을 다룹니다. 이러한 주제는 일반적으로 CUDA 커널 수정이 필요하지 않은 기법이나 기능을 다루지만, 호스트 측에서 GPU 작업 실행과 성능뿐 아니라 CPU 측 성능을 포함한 애플리케이션 수준의 동작에도 영향을 줄 수 있습니다.</p>
+<section id="cudalaunchkernelex">
+<span id="advanced-host-cudalaunchkernelex"></span><h2><span class="section-number">3.1.1. </span>cudaLaunchKernelEx<a class="headerlink" href="#cudalaunchkernelex" title="이 제목으로의 링크">#</a></h2>
+<p><a class="reference internal" href="../02-basics/intro-to-cuda-cpp.html"><span class="std std-ref">세 개의 꺾쇠(triple chevron) 표기법</span></a>이 처음 버전에 도입되었을 때, 커널의 <a class="reference internal" href="../05-appendices/cpp-language-extensions.html"><span class="std std-ref">커널 구성(Kernel Configuration)</span></a>에는 프로그래밍 가능한 매개변수가 네 가지뿐이었습니다:
+- 스레드 블록 차원
+- 그리드 차원
+- 동적 공유 메모리(선택 사항, 지정하지 않으면 0)
+- 스트림(지정하지 않으면 기본 스트림 사용)</p>
+<p>일부 CUDA 기능은 커널 실행과 함께 제공되는 추가 속성과 힌트의 이점을 누릴 수 있습니다. <code class="docutils literal notranslate"><span class="pre">cudaLaunchKernelEx</span></code>을 사용하면 프로그램이 <code class="docutils literal notranslate"><span class="pre">cudaLaunchConfig_t</span></code> 구조체를 통해 앞서 언급한 실행 구성 매개변수를 설정할 수 있습니다. 또한, <code class="docutils literal notranslate"><span class="pre">cudaLaunchConfig_t</span></code> 구조체를 사용하면 프로그램이 커널 실행의 다른 매개변수를 제어하거나 제안하기 위해 0개 이상의 <code class="docutils literal notranslate"><span class="pre">cudaLaunchAttributes</span></code>을 전달할 수 있습니다. 예를 들어, 이 장의 후반부에서 논의되는 <code class="docutils literal notranslate"><span class="pre">cudaLaunchAttributePreferredSharedMemoryCarveout</span></code>(<a class="reference internal" href="advanced-kernel-programming.html"><span class="std std-ref">L1/공유 메모리 균형 구성</span></a> 참조)는 <code class="docutils literal notranslate"><span class="pre">cudaLaunchKernelEx</span></code>을 사용하여 지정됩니다. 이 장의 후반부에서 논의되는 <code class="docutils literal notranslate"><span class="pre">cudaLaunchAttributeClusterDimension</span></code> 속성은 커널 실행에 대해 원하는 클러스터 크기를 지정하는 데 사용됩니다.</p>
+<p>지원되는 속성과 그 의미의 전체 목록은 <a class="reference external" href="https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html">CUDA Runtime API 참조 문서</a>에 정리되어 있습니다.</p>
+</section>
+<section id="launching-clusters">
+<h2><span class="section-number">3.1.2. </span>클러스터 실행:<a class="headerlink" href="#launching-clusters" title="이 제목으로의 링크">#</a></h2>
+<p>이전 섹션에서 소개된 <a class="reference internal" href="../01-introduction/programming-model.html"><span class="std std-ref">스레드 블록 클러스터</span></a>는 컴퓨트 기능 9.0 이상에서 사용할 수 있는 선택적 스레드 블록 조직화 수준으로, 애플리케이션이 클러스터의 스레드 블록들이 단일 GPC에서 동시에 실행됨을 보장할 수 있게 해줍니다. 이를 통해 단일 SM에 들어맞는 것보다 더 큰 스레드 그룹이 서로 데이터를 교환하고 동기화할 수 있습니다.</p>
+<p><a class="reference internal" href="../02-basics/intro-to-cuda-cpp.html"><span class="std std-numref">섹션 2.1.10.1</span></a>에서는 클러스터를 사용하는 커널을 세 개의 꺾쇠(triple chevron) 표기법으로 지정하고 실행하는 방법을 보여주었습니다. 이 섹션에서는 <code class="docutils literal notranslate"><span class="pre">__cluster_dims__</span></code> 애너테이션(annotation)을 사용하여 커널 실행에 사용해야 하는 클러스터의 차원을 지정했습니다. 세 개의 꺾쇠(triple chevron) 표기법을 사용할 때는 클러스터의 크기가 암묵적으로 결정됩니다.</p>
+<section id="launching-with-clusters-using-cudalaunchkernelex">
+<span id="advanced-host-clusters-cudalaunchkernelex"></span><h3><span class="section-number">3.1.2.1. </span>cudaLaunchKernelEx를 사용한 클러스터 실행<a class="headerlink" href="#launching-with-clusters-using-cudalaunchkernelex" title="이 제목으로의 링크">#</a></h3>
+<p><a class="reference internal" href="../02-basics/intro-to-cuda-cpp.html"><span class="std std-ref">세 개의 꺾쇠(triple chevron) 표기법으로 클러스터를 사용해 커널 실행</span></a>과 달리, 스레드 블록 클러스터의 크기는 실행(launch)마다 구성할 수 있습니다. 아래 코드 예제는 <code class="docutils literal notranslate"><span class="pre">cudaLaunchKernelEx</span></code>을 사용하여 클러스터 커널을 실행하는 방법을 보여줍니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Kernel definition</span>
+<span class="c1">// No compile time attribute attached to the kernel</span>
+<span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">cluster_kernel</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">output</span><span class="p">)</span>
+<span class="p">{</span>
+
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">output</span><span class="p">;</span>
+<span class="w">    </span><span class="n">dim3</span><span class="w"> </span><span class="nf">threadsPerBlock</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">);</span>
+<span class="w">    </span><span class="n">dim3</span><span class="w"> </span><span class="nf">numBlocks</span><span class="p">(</span><span class="n">N</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">threadsPerBlock</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">threadsPerBlock</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Kernel invocation with runtime cluster size</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cudaLaunchConfig_t</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">        </span><span class="c1">// The grid dimension is not affected by cluster launch, and is still enumerated</span>
+<span class="w">        </span><span class="c1">// using number of blocks.</span>
+<span class="w">        </span><span class="c1">// The grid dimension should be a multiple of cluster size.</span>
+<span class="w">        </span><span class="n">config</span><span class="p">.</span><span class="n">gridDim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numBlocks</span><span class="p">;</span>
+<span class="w">        </span><span class="n">config</span><span class="p">.</span><span class="n">blockDim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">threadsPerBlock</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">cudaLaunchAttribute</span><span class="w"> </span><span class="n">attribute</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">        </span><span class="n">attribute</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaLaunchAttributeClusterDimension</span><span class="p">;</span>
+<span class="w">        </span><span class="n">attribute</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">val</span><span class="p">.</span><span class="n">clusterDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="c1">// Cluster size in X-dimension</span>
+<span class="w">        </span><span class="n">attribute</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">val</span><span class="p">.</span><span class="n">clusterDim</span><span class="p">.</span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">attribute</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">val</span><span class="p">.</span><span class="n">clusterDim</span><span class="p">.</span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">config</span><span class="p">.</span><span class="n">attrs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">attribute</span><span class="p">;</span>
+<span class="w">        </span><span class="n">config</span><span class="p">.</span><span class="n">numAttrs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">cudaLaunchKernelEx</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="n">cluster_kernel</span><span class="p">,</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">output</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>스레드 블록 클러스터와 관련된 <code class="docutils literal notranslate"><span class="pre">cudaLaunchAttribute</span></code> 타입은 두 가지가 있습니다: <code class="docutils literal notranslate"><span class="pre">cudaLaunchAttributeClusterDimension</span></code> 및 <code class="docutils literal notranslate"><span class="pre">cudaLaunchAttributePreferredClusterDimension</span></code>.</p><p>attribute id <code class="docutils literal notranslate"><span class="pre">cudaLaunchAttributeClusterDimension</span></code> 클러스터를 실행하는 데 필요한 차원을 지정합니다. 이 attribute의 값은, <code class="docutils literal notranslate"><span class="pre">clusterDim</span></code>, 3차원 값입니다. 그리드의 해당 차원(x, y, z)은 지정된 클러스터 차원의 각 차원으로 나누어떨어져야 합니다. 이를 설정하는 것은  <code class="docutils literal notranslate"><span class="pre">__cluster_dims__</span></code> 에 표시된 것처럼 컴파일 시간에 커널 정의에 attribute를 설정하는 것과 유사합니다. <a class="reference internal" href="../02-basics/intro-to-cuda-cpp.html"><span class="std std-ref">세 개의 꺾쇠(triple chevron) 표기법에서 클러스터로 실행</span></a>, 하지만 동일한 커널을 서로 다른 실행(launch)으로 실행할 때 런타임에 변경할 수 있습니다.</p>
+<p>컴퓨트 성능(compute capability)이 10.0 이상인 GPU에서는, 또 다른 attribute id인 <code class="docutils literal notranslate"><span class="pre">cudaLaunchAttributePreferredClusterDimension</span></code>를 통해 애플리케이션이 클러스터에 대해 선호하는 차원(preferred dimension)을 추가로 지정할 수 있습니다. 선호 차원은 커널의 <code class="docutils literal notranslate"><span class="pre">__cluster_dims__</span></code> attribute 또는 <code class="docutils literal notranslate"><span class="pre">cudaLaunchAttributeClusterDimension</span></code> attribute에서 <code class="docutils literal notranslate"><span class="pre">cudaLaunchKernelEx</span></code>에 지정된 최소 클러스터 차원의 정수 배여야 합니다. 즉, 선호 클러스터 차원에 더해 최소 클러스터 차원도 지정해야 합니다. 그리드의 해당 차원(x, y, z)은 지정된 선호 클러스터 차원의 각 차원으로 나누어떨어져야 합니다.</p><p>모든 스레드 블록은 최소 클러스터 차원 이상인 클러스터에서 실행됩니다. 가능한 경우 선호 차원의 클러스터가 사용되지만, 모든 클러스터가 선호 차원으로 실행되는 것이 보장되지는 않습니다. 모든 스레드 블록은 최소 또는 선호 클러스터 차원 중 하나를 갖는 클러스터에서 실행됩니다. 선호 클러스터 차원을 사용하는 커널은 최소 또는 선호 클러스터 차원 어느 쪽에서도 올바르게 동작하도록 작성되어야 합니다.</p>
+</section>
+<section id="blocks-as-clusters">
+<span id="advanced-host-block-as-cluster"></span><h3><span class="section-number">3.1.2.2. </span>클러스터로서의 블록<a class="headerlink" href="#blocks-as-clusters" title="이 제목으로의 링크">#</a></h3>
+<p>커널이 <code class="docutils literal notranslate"><span class="pre">__cluster_dims__</span></code> 애너테이션(annotation)으로 정의되면, 그리드 내 클러스터 수는 암묵적이며 지정된 클러스터 크기로 나눈 그리드 크기에서 계산할 수 있습니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">__cluster_dims__</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">))</span><span class="w"> </span><span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">foo</span><span class="p">();</span>
+
+<span class="c1">// 8x8x8 clusters each with 2x2x2 thread blocks.</span>
+<span class="n">foo</span><span class="o">&lt;&lt;&lt;</span><span class="n">dim3</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">),</span><span class="w"> </span><span class="n">dim3</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>위 예제에서 커널은 16x16x16 스레드 블록의 그리드로 실행되며, 이는 8x8x8 클러스터의 그리드가 사용됨을 의미합니다.</p>
+<p>커널은 대안으로 <code class="docutils literal notranslate"><span class="pre">__block_size__</span></code> 애너테이션(annotation)을 사용할 수 있는데, 이는 커널이 정의될 때 필요한 블록 크기와 클러스터 크기를 모두 지정합니다. 이 애너테이션을 사용하면 아래와 같이 세 개의 꺾쇠(triple chevron) 실행은 스레드 블록이 아니라 클러스터 관점의 그리드 차원이 됩니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// Implementation detail of how many threads per block and blocks per cluster</span>
+<span class="c1">// is handled as an attribute of the kernel.</span>
+<span class="n">__block_size__</span><span class="p">((</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">))</span><span class="w"> </span><span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">foo</span><span class="p">();</span>
+
+<span class="c1">// 8x8x8 clusters.</span>
+<span class="n">foo</span><span class="o">&lt;&lt;&lt;</span><span class="n">dim3</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+</pre></div>
+</div><p><code class="docutils literal notranslate"><span class="pre">__block_size__</span></code> 각각 3개 요소로 이루어진 튜플(tuple)인 두 개의 필드가 필요합니다. 첫 번째 튜플은 블록 차원을 나타내고 두 번째는 클러스터 크기입니다. 두 번째 튜플은 ~로 가정됩니다. <code class="docutils literal notranslate"><span class="pre">(1,1,1)</span></code> 전달되지 않는 경우에 해당합니다. 스트림을 지정하려면 전달해야 합니다 <code class="docutils literal notranslate"><span class="pre">1</span></code> 및 <code class="docutils literal notranslate"><span class="pre">0</span></code> 내에서 두 번째 및 세 번째 인수로 <code class="docutils literal notranslate"><span class="pre">&lt;&lt;&lt;&gt;&gt;&gt;</span></code> 그리고 마지막으로 스트림입니다. 다른 값을 전달하면 정의되지 않은 동작(behavior)이 발생합니다.</p>
+<p>두 번째 튜플이 다음과 같은 경우는 불법이라는 점에 유의하세요. <code class="docutils literal notranslate"><span class="pre">__block_size__</span></code> 그리고 <code class="docutils literal notranslate"><span class="pre">__cluster_dims__</span></code> 가 동시에 지정되는 것은 불법입니다. 또한 사용하는 것도 불법입니다. <code class="docutils literal notranslate"><span class="pre">__block_size__</span></code> 비어 있는 <code class="docutils literal notranslate"><span class="pre">__cluster_dims__</span></code>. 두 번째 튜플의 경우 <code class="docutils literal notranslate"><span class="pre">__block_size__</span></code> 가 지정되면, “Blocks as Clusters”가 활성화되었음을 의미하며 컴파일러는 내부의 첫 번째 인수를 인식합니다. <code class="docutils literal notranslate"><span class="pre">&lt;&lt;&lt;&gt;&gt;&gt;</span></code> 스레드 블록 대신 클러스터의 개수로.</p>
+</section>
+</section>
+<section id="more-on-streams-and-events">
+<span id="advanced-host-streams-and-events"></span><h2><span class="section-number">3.1.3. </span>스트림 및 이벤트에 대한 추가 내용<a class="headerlink" href="#more-on-streams-and-events" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="../02-basics/asynchronous-execution.html"><span class="std std-ref">CUDA 스트림</span></a>에서는 CUDA 스트림의 기초를 소개했습니다. 기본적으로, 주어진 CUDA 스트림에 제출된 작업은 직렬화됩니다. 즉, 이전 작업이 완료될 때까지 다음 작업을 실행하기 시작할 수 없습니다. 유일한 예외는 최근에 추가된 <a class="reference internal" href="../04-special-topics/programmatic-dependent-launch.html"><span class="std std-ref">프로그래밍 방식 종속 런치 및 동기화</span></a> 기능입니다. 여러 CUDA 스트림을 갖는 것은 동시 실행을 가능하게 하는 한 가지 방법이며, 또 다른 방법은 <a class="reference internal" href="../04-special-topics/cuda-graphs.html"><span class="std std-ref">CUDA 그래프</span></a>를 사용하는 것입니다. 이 두 접근 방식은 함께 결합할 수도 있습니다.</p>
+<p>서로 다른 CUDA 스트림에 제출된 작업은 특정한 상황에서 동시 실행될 <cite>수도</cite> 있습니다. 예를 들어, 이벤트 종속성이 없고, 암묵적 동기화가 없으며, 충분한 리소스가 있는 경우 등입니다.</p><p>서로 다른 CUDA 스트림의 독립적인 작업은, 그 사이에 NULL 스트림에서 어떤 CUDA 작업이라도 제출되면(스트림이 non-blocking CUDA 스트림이 아닌 한) 동시 실행될 수 없습니다. non-blocking CUDA 스트림은 <code class="docutils literal notranslate"><span class="pre">cudaStreamCreateWithFlags()</span></code> 런타임 API를 <code class="docutils literal notranslate"><span class="pre">cudaStreamNonBlocking</span></code> 플래그와 함께 사용하여 생성한 스트림입니다. GPU 작업의 동시 실행 가능성을 높이기 위해, 사용자가 non-blocking CUDA 스트림을 생성할 것을 권장합니다.</p><p>또한 사용자는 자신의 문제에 충분한 가장 덜 일반적인 동기화 옵션을 선택하는 것이 권장됩니다.
+예를 들어, 요구 사항이 CPU가 특정 CUDA 스트림에서의 모든 작업이 완료될 때까지 기다리도록(블로킹) 하는 것이라면,
+해당 스트림에 대해 <code class="docutils literal notranslate"><span class="pre">cudaStreamSynchronize()</span></code>를 사용하는 것이 <code class="docutils literal notranslate"><span class="pre">cudaDeviceSynchronize()</span></code>를 사용하는 것보다 바람직합니다. 후자는 장치의 모든 CUDA 스트림에서의 GPU 작업이 완료될 때까지 불필요하게 기다리게 하기 때문입니다.
+그리고 요구 사항이 CPU가 블로킹 없이 기다리는 것이라면, <code class="docutils literal notranslate"><span class="pre">cudaStreamQuery()</span></code>를 사용하고 폴링 루프에서 그 반환 값을 확인하는 것이 더 바람직할 수 있습니다.</p>
+<p>유사한 동기화 효과는 CUDA 이벤트(<a class="reference internal" href="../02-basics/asynchronous-execution.html"><span class="std std-ref">CUDA Events</span></a>)로도 달성할 수 있습니다. 예를 들어, 해당 스트림에서 이벤트를 기록하고
+<code class="docutils literal notranslate"><span class="pre">cudaEventSynchronize()</span></code>를 호출하여, 해당 이벤트에 캡처된 작업이 완료될 때까지 블로킹 방식으로 기다릴 수 있습니다.
+다시 말해, 이는 <code class="docutils literal notranslate"><span class="pre">cudaDeviceSynchronize()</span></code>를 사용하는 것보다 바람직하며 더 집중된 방법입니다.
+<code class="docutils literal notranslate"><span class="pre">cudaEventQuery()</span></code>를 호출하고, 예를 들어 폴링 루프에서 그 반환 값을 확인하는 것은 블로킹이 없는 대안이 될 수 있습니다.</p>
+<p>명시적 동기화 방법의 선택은 이 작업이 애플리케이션의 크리티컬 패스에서 발생하는 경우 특히 중요합니다.
+<a class="reference internal" href="#table-streams-event-sync-summary"><span class="std std-numref">표 4</span></a>는 호스트와의 다양한 동기화 옵션에 대한 상위 수준 요약을 제공합니다
+</p>
+<div class="pst-scrollable-table-container table-frame"><table class="small table table-center" id="table-streams-event-sync-summary">
+<caption><span class="caption-number">Table 4 </span><span class="caption-text">호스트와의 명시적 동기화 옵션 요약</span><a class="headerlink" href="#table-streams-event-sync-summary" title="이 표로의 링크">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>특정
+스트림을 기다림</p></th>
+<th class="head"><p>특정
+이벤트를 기다림</p></th>
+<th class="head"><p>장치의 모든 것을
+기다림</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>블로킹 없음
+(폴링 루프가
+필요함)</p></td>
+<td><p>cudaStreamQuery()</p></td>
+<td><p>cudaEventQuery()</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>블로킹</p></td>
+<td><p>cudaStreamSynchronize()</p></td>
+<td><p>cudaEventSynchronize()</p></td>
+<td><p>cudaDeviceSynchronize()</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>CUDA 스트림 간의 동기화, 즉 의존성을 표현하기 위해서는 <a class="reference internal" href="../02-basics/asynchronous-execution.html"><span class="std std-ref">CUDA 이벤트</span></a>에 설명된 대로 타이밍이 없는 CUDA 이벤트를 사용하는 것이 권장됩니다.
+사용자는 <code class="docutils literal notranslate"><span class="pre">cudaStreamWaitEvent()</span></code>를 호출하여 특정 스트림에 향후 제출될 작업이, 이전에 기록된 이벤트(예: 다른 스트림에서)의 완료를 기다리도록 강제할 수 있습니다.
+이벤트를 기다리거나 쿼리하는 어떤 CUDA API에 대해서도, 기록되지 않은 이벤트는 항상 성공을 반환하므로 cudaEventRecord API가 이미 호출되었는지 보장하는 것은 사용자의 책임임에 유의하세요.</p>
+<p>CUDA 이벤트는 기본적으로, <code class="docutils literal notranslate"><span class="pre">cudaEventElapsedTime()</span></code> API 호출에서 사용할 수 있으므로 타이밍 정보를 담고 있습니다.
+하지만 스트림 간 의존성을 표현하는 데에만 사용되는 CUDA 이벤트에는 타이밍 정보가 필요하지 않습니다.
+이러한 경우 성능 향상을 위해 타이밍 정보를 비활성화한 상태로 이벤트를 생성하는 것이 권장됩니다. 이는 <code class="docutils literal notranslate"><span class="pre">cudaEventCreateWithFlags()</span></code> API를
+<code class="docutils literal notranslate"><span class="pre">cudaEventDisableTiming</span></code> 플래그와 함께 사용하여 가능합니다.</p>
+<section id="stream-priorities">
+<h3><span class="section-number">3.1.3.1. </span>스트림 우선순위<a class="headerlink" href="#stream-priorities" title="이 제목으로의 링크">#</a></h3>
+<p>스트림의 상대적 우선순위는 생성 시점에 <code class="docutils literal notranslate"><span class="pre">cudaStreamCreateWithPriority()</span></code>를 사용하여 지정할 수 있습니다. [가장 높은 우선순위, 가장 낮은 우선순위] 순으로 정렬된 허용 우선순위 범위는 <code class="docutils literal notranslate"><span class="pre">cudaDeviceGetStreamPriorityRange()</span></code> 함수를 사용하여 얻을 수 있습니다. 런타임에서 GPU 스케줄러는 스트림 우선순위를 활용하여 작업 실행 순서를 결정하지만, 이러한 우선순위는 보장이라기보다는 힌트로 작동합니다. 실행할 작업을 선택할 때는 더 높은 우선순위 스트림에 대기 중인 작업이 더 낮은 우선순위 스트림의 작업보다 우선합니다. 더 높은 우선순위 작업이 이미 실행 중인 더 낮은 우선순위 작업을 선점(preempt)하지는 않습니다. GPU는 작업 실행 중에 작업 큐를 재평가하지 않으며, 스트림의 우선순위를 높여도 진행 중인 작업이 중단되지는 않습니다. 스트림 우선순위는 엄격한 순서를 강제하지 않고 작업 실행에 영향을 미치므로, 사용자는 엄격한 순서 보장에 의존하지 않고도 스트림 우선순위를 활용해 작업 실행에 영향을 줄 수 있습니다.</p>
+<p>다음 코드 샘플은 현재 장치에서 허용되는 우선순위 범위를 가져오고, 사용 가능한 가장 높은 우선순위와 가장 낮은 우선순위로 두 개의 비블로킹 CUDA 스트림을 생성합니다.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// get the range of stream priorities for this device</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">leastPriority</span><span class="p">,</span><span class="w"> </span><span class="n">greatestPriority</span><span class="p">;</span>
+<span class="n">cudaDeviceGetStreamPriorityRange</span><span class="p">(</span><span class="o">&amp;</span><span class="n">leastPriority</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">greatestPriority</span><span class="p">);</span>
+
+<span class="c1">// create streams with highest and lowest available priorities</span>
+<span class="n">cudaStream_t</span><span class="w"> </span><span class="n">st_high</span><span class="p">,</span><span class="w"> </span><span class="n">st_low</span><span class="p">;</span>
+<span class="n">cudaStreamCreateWithPriority</span><span class="p">(</span><span class="o">&amp;</span><span class="n">st_high</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStreamNonBlocking</span><span class="p">,</span><span class="w"> </span><span class="n">greatestPriority</span><span class="p">));</span>
+<span class="n">cudaStreamCreateWithPriority</span><span class="p">(</span><span class="o">&amp;</span><span class="n">st_low</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStreamNonBlocking</span><span class="p">,</span><span class="w"> </span><span class="n">leastPriority</span><span class="p">);</span>
+</pre></div>
+</div>
+</section><section id="explicit-synchronization">
+<span id="advanced-host-explicit-synchronization"></span><h3><span class="section-number">3.1.3.2. </span>명시적 동기화<a class="headerlink" href="#explicit-synchronization" title="이 제목으로의 링크">#</a></h3>
+<p>앞서 설명했듯이, 스트림이 다른 스트림과 동기화할 수 있는 방법은 여러 가지가 있습니다. 다음은 서로 다른 세분화 수준에서의 일반적인 방법을 제공합니다:
+- <code class="docutils literal notranslate"><span class="pre">cudaDeviceSynchronize()</span></code>는 모든 호스트 스레드의 모든 스트림에 있는 모든 선행 명령이 완료될 때까지 기다립니다.
+- <code class="docutils literal notranslate"><span class="pre">cudaStreamSynchronize()</span></code>는 스트림을 매개변수로 받아, 해당 스트림에서 모든 선행 명령이 완료될 때까지 기다립니다. 이를 사용하면 호스트를 특정 스트림과 동기화할 수 있어, 다른 스트림은 장치에서 계속 실행할 수 있습니다.
+- <code class="docutils literal notranslate"><span class="pre">cudaStreamWaitEvent()</span></code>는 스트림과 이벤트를 매개변수로 받으며(이벤트에 대한 설명은 <a class="reference internal" href="../02-basics/asynchronous-execution.html"><span class="std std-ref">CUDA 이벤트</span></a> 참조), <code class="docutils literal notranslate"><span class="pre">cudaStreamWaitEvent()</span></code> 호출 이후 주어진 스트림에 추가된 모든 명령이 주어진 이벤트가 완료될 때까지 실행을 지연하도록 만듭니다.
+- <code class="docutils literal notranslate"><span class="pre">cudaStreamQuery()</span></code>는 애플리케이션이 스트림에서 모든 선행 명령이 완료되었는지 알 수 있는 방법을 제공합니다.</p>
+</section>
+<section id="implicit-synchronization">
+<span id="advanced-host-implicit-synchronization"></span><h3><span class="section-number">3.1.3.3. </span>암묵적 동기화<a class="headerlink" href="#implicit-synchronization" title="이 제목으로의 링크">#</a></h3>
+<p>호스트 스레드가 두 스트림의 서로 다른 두 명령 사이에 다음 작업 중 하나라도 발행하면, 이 두 명령은 동시에 실행될 수 없습니다:</p>
+<ul class="simple">
+<li><p>페이지 잠금(page-locked) 호스트 메모리 할당</p></li>
+<li><p>장치 메모리 할당</p></li>
+<li><p>장치 메모리 설정</p></li>
+<li><p>같은 장치 메모리로의 두 주소 간 메모리 복사</p></li>
+<li><p>NULL 스트림으로의 모든 CUDA 명령</p></li>
+<li><p>L1/shared 메모리 구성 간 전환</p></li>
+</ul>
+<p>종속성 검사가 필요한 작업에는, 검사 중인 실행(launch)과 같은 스트림 내의 다른 모든 명령과 해당 스트림에서 <code class="docutils literal notranslate"><span class="pre">cudaStreamQuery()</span></code>을 호출하는 모든 경우가 포함됩니다. 따라서 애플리케이션은 커널 동시 실행 가능성을 높이기 위해 다음 지침을 따라야 합니다:</p>
+<ul class="simple">
+<li><p>모든 독립적인 작업은 종속적인 작업보다 먼저 발행해야 하며,</p></li>
+<li><p>어떤 종류의 동기화든 가능한 한 오래 지연해야 합니다.</p></li>
+</ul>
+<span class="target" id="overlapping-behavior"></span></section>
+</section>
+<section id="programmatic-dependent-kernel-launch">
+<h2><span class="section-number">3.1.4. </span>프로그래밍 방식 종속 커널 실행<a class="headerlink" href="#programmatic-dependent-kernel-launch" title="이 제목으로의 링크">#</a></h2>
+<p>앞서 논의했듯이, CUDA 스트림의 의미론은 커널이 순서대로 실행된다는 것입니다. 이는 두 개의 연속된 커널이 있고 두 번째 커널이 첫 번째 커널의 결과에 의존하는 경우, 프로그래머가 두 번째 커널이 실행을 시작할 때쯤이면 종속 데이터가 사용 가능하다는 점을 안전하게 확신할 수 있도록 하기 위함입니다. 하지만 첫 번째 커널이 이후 커널이 의존하는 데이터를 이미 전역 메모리에 써 두었음에도 불구하고 여전히 더 수행할 작업이 남아 있을 수 있습니다. 마찬가지로, 종속적인 두 번째 커널도 첫 번째 커널의 데이터가 필요해지기 전까지 수행할 수 있는 독립적인 작업이 일부 있을 수 있습니다. 이런 상황에서는(하드웨어 리소스가 उपलब्ध하다는 가정 하에) 두 커널의 실행을 부분적으로 오버랩할 수 있습니다. 오버랩은 두 번째 커널의 실행 오버헤드도 함께 오버랩할 수 있습니다. 하드웨어 리소스의 가용성 외에도, 달성 가능한 오버랩의 정도는 다음과 같은 커널의 구체적인 구조에 따라 달라집니다.</p>
+<ul class="simple">
+<li><p>첫 번째 커널은 실행 중 어느 시점에 두 번째 커널이 의존하는 작업을 완료하는가?</p></li>
+<li><p>두 번째 커널은 실행 중 어느 시점에 첫 번째 커널의 데이터에 대한 작업을 시작하는가?</p></li>
+</ul>
+<p>이는 해당 커널들 자체에 매우 크게 의존하므로 완전히 자동화하기가 어렵고, 따라서 CUDA는 애플리케이션 개발자가 두 커널 사이의 동기화 지점을 지정할 수 있는 메커니즘을 제공합니다. 이는 프로그래밍 방식 종속 커널 실행(Programmatic Dependent Kernel Launch)으로 알려진 기법을 통해 이루어집니다. 아래 그림은 이 상황을 보여줍니다.</p>
+<figure class="align-center" id="figure-programmatic-dependent-launch">
+<a class="reference internal image-reference" href="../_images/pdl.png"><img alt="프로그래밍 방식 종속 커널 실행" loading="lazy" src="../_images/pdl.png" style="width: 50%;"/>
+</a>
+</figure>
+<p>PDL은 세 가지 주요 구성 요소로 이루어져 있습니다.</p>
+<ol class="lowerroman simple">
+<li><p>첫 번째 커널(소위 <em>주(primary) 커널</em>)은 이후의 종속 커널( <em>보조(secondary) 커널</em>이라고도 함)이 필요로 하는 모든 작업을 끝냈음을 나타내기 위해 특수 함수를 호출해야 합니다. 이는 함수 <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">cudaTriggerProgrammaticLaunchCompletion()</span></code>를 호출함으로써 수행됩니다.</p></li>
+<li><p>그에 따라 종속적인 보조 커널은 주 커널과 독립적인 작업 부분에 도달했으며 이제 자신이 의존하는 작업을 주 커널이 완료하기를 기다리고 있음을 나타내야 합니다. 이는 함수 <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">cudaGridDependencySynchronize()</span></code>로 수행됩니다.</p></li>
+<li><p>두 번째 커널은 특수 attribute <cite>cudaLaunchAttributeProgrammaticStreamSerialization</cite>을 사용하여 실행되어야 하며, 그 <cite>programmaticStreamSerializationAllowed</cite> 필드는 ‘1’로 설정되어야 합니다.</p></li>
+</ol>
+<p>다음 코드 스니펫은 이를 수행하는 방법의 예를 보여줍니다.</p>
+<div class="literal-block-wrapper docutils container" id="pdl-example">
+<div class="code-block-caption"><span class="caption-number">Listing 3 </span><span class="caption-text">두 개의 커널을 사용한 프로그래밍 방식 종속 커널 실행 예</span><a class="headerlink" href="#pdl-example" title="이 코드로의 링크">#</a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">primary_kernel</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Initial work that should finish before starting secondary kernel</span>
+
+<span class="w">    </span><span class="c1">// Trigger the secondary kernel</span>
+<span class="w">    </span><span class="n">cudaTriggerProgrammaticLaunchCompletion</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Work that can coincide with the secondary kernel</span>
+<span class="p">}</span>
+
+<span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">secondary_kernel</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Initialization, Independent work, etc.</span>
+
+<span class="w">    </span><span class="c1">// Will block until all primary kernels the secondary kernel is dependent on have</span>
+<span class="w">    </span><span class="c1">// completed and flushed results to global memory</span>
+<span class="w">    </span><span class="n">cudaGridDependencySynchronize</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Dependent work</span>
+<span class="p">}</span>
+
+<span class="c1">// Launch the secondary kernel with the special attribute</span>
+
+<span class="c1">// Set Up the attribute</span>
+<span class="n">cudaLaunchAttribute</span><span class="w"> </span><span class="n">attribute</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="n">attribute</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaLaunchAttributeProgrammaticStreamSerialization</span><span class="p">;</span>
+<span class="n">attribute</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">val</span><span class="p">.</span><span class="n">programmaticStreamSerializationAllowed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="c1">// Set the attribute in a kernel launch configuration</span>
+<span class="w"> </span><span class="n">cudaLaunchConfig_t</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+<span class="c1">// Base launch configuration</span>
+<span class="n">config</span><span class="p">.</span><span class="n">gridDim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grid_dim</span><span class="p">;</span>
+<span class="n">config</span><span class="p">.</span><span class="n">blockDim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">block_dim</span><span class="p">;</span>
+<span class="n">config</span><span class="p">.</span><span class="n">dynamicSmemBytes</span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">config</span><span class="p">.</span><span class="n">stream</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stream</span><span class="p">;</span>
+
+<span class="c1">// Add special attribute for PDL</span>
+<span class="n">config</span><span class="p">.</span><span class="n">attrs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">attribute</span><span class="p">;</span>
+<span class="n">config</span><span class="p">.</span><span class="n">numAttrs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="c1">// Launch primary kernel</span>
+<span class="n">primary_kernel</span><span class="o">&lt;&lt;&lt;</span><span class="n">grid_dim</span><span class="p">,</span><span class="w"> </span><span class="n">block_dim</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">stream</span><span class="o">&gt;&gt;&gt;</span><span class="p">();</span>
+
+<span class="c1">// Launch secondary (dependent) kernel using the configuration with</span>
+<span class="c1">// the attribute</span>
+<span class="n">cudaLaunchKernelEx</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="n">secondary_kernel</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="batched-memory-transfers">
+<h2><span class="section-number">3.1.5. </span>배치 메모리 전송<a class="headerlink" href="#batched-memory-transfers" title="이 제목으로의 링크">#</a></h2>
+<p>CUDA 개발에서 흔한 패턴은 배칭(batching) 기법을 사용하는 것입니다. 배칭이란 느슨하게 말해 여러 개(일반적으로 작은) 작업을 하나의(일반적으로 더 큰) 작업으로 묶는 것을 의미합니다. 배치를 구성하는 요소들이 반드시 모두 동일할 필요는 없지만, 종종 동일합니다. 이 아이디어의 한 예로 cuBLAS가 제공하는 배치 행렬 곱셈 연산이 있습니다.</p>
+<p>일반적으로 CUDA 그래프 및 PDL과 마찬가지로, 배칭의 목적은 개별 배치 작업을 각각 별도로 디스패치할 때 수반되는 오버헤드를 줄이는 것입니다. 메모리 전송 관점에서 메모리 전송을 실행(launch)하면 일부 CPU 및 드라이버 오버헤드가 발생할 수 있습니다. 또한 현재 형태의 일반 <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">cudaMemcpyAsync()</span></code> 함수는 드라이버가 전송을 최적화하는 데 필요한 충분한 정보를 반드시 제공하지는 않는데, 예를 들어 소스와 목적지에 대한 힌트와 같은 것들입니다. Tegra 플랫폼에서는 전송을 수행하기 위해 SM 또는 Copy Engine(CE)을 사용할지를 선택할 수 있습니다. 어떤 것을 사용할지는 현재 드라이버의 휴리스틱에 의해 지정됩니다. 이는 SM을 사용하면 더 빠른 전송이 가능할 수 있지만 사용 가능한 컴퓨트 성능 일부를 묶어두게 된다는 점에서 중요할 수 있습니다. 반면 CE를 사용하면 전송은 더 느릴 수 있지만, SM을 다른 작업에 사용할 수 있게 해 주므로 전체 애플리케이션 성능은 더 높아질 수 있습니다.</p>
+<p>이러한 고려 사항은 <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">cudaMemcpyBatchAsync()</span></code> 함수(및 그 관련 함수인 <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">cudaMemcpyBatch3DAsync()</span></code>)의 설계 동기가 되었습니다. 이러한 함수들은 배치 메모리 전송을 최적화할 수 있게 해줍니다. 소스 및 목적지 포인터 목록 외에도, API는 메모리 복사 attribute를 사용하여 순서(ordering)에 대한 기대치를 지정하고, 소스 및 목적지 위치에 대한 힌트뿐만 아니라 전송을 연산과 오버랩하는 것을 선호하는지 여부(현재 CE가 있는 Tegra 플랫폼에서만 지원됨)에 대한 힌트도 제공합니다.</p>
+<p>먼저 핀 고정(pinned) 호스트 메모리에서 핀 고정(pinned) 장치 메모리로 데이터를 간단히 배치 전송하는 가장 단순한 경우를 고려해 보겠습니다</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-number">Listing 4 </span><span class="caption-text">핀 고정(pinned) 호스트 메모리에서 핀 고정(pinned) 장치 메모리로의 균질(homogeneous) 배치 메모리 전송 예</span><a class="headerlink" href="#id1" title="이 코드로의 링크">#</a></div>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="w"> </span><span class="o">*&gt;</span><span class="w"> </span><span class="n">srcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="w"> </span><span class="o">*&gt;</span><span class="w"> </span><span class="n">dsts</span><span class="p">(</span><span class="n">batch_size</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="w"> </span><span class="o">*&gt;</span><span class="w"> </span><span class="n">sizes</span><span class="p">(</span><span class="n">batch_size</span><span class="p">);</span>
+
+<span class="c1">// Allocate the source and destination buffers</span>
+<span class="c1">// initialize with the stream number</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">batch_size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cudaMallocHost</span><span class="p">(</span><span class="o">&amp;</span><span class="n">srcs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">    </span><span class="n">cudaMalloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dsts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">    </span><span class="n">cudaMemsetAsync</span><span class="p">(</span><span class="n">srcs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">stream</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Setup attributes for this batch of copies</span>
+<span class="n">cudaMemcpyAttributes</span><span class="w"> </span><span class="n">attrs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="n">attrs</span><span class="p">.</span><span class="n">srcAccessOrder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaMemcpySrcAccessOrderStream</span><span class="p">;</span>
+
+<span class="c1">// All copies in the batch have same copy attributes.</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">attrsIdxs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// Index of the attributes</span>
+
+<span class="c1">// Launch the batched memory transfer</span>
+<span class="n">cudaMemcpyBatchAsync</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dsts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">srcs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">batch_size</span><span class="p">,</span>
+<span class="w">    </span><span class="o">&amp;</span><span class="n">attrs</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attrsIdxs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="cm">/*numAttrs*/</span><span class="p">,</span><span class="w"> </span><span class="k">nullptr</span><span class="w"> </span><span class="cm">/*failIdx*/</span><span class="p">,</span><span class="w"> </span><span class="n">stream</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">cudaMemcpyBatchAsync()</span></code> 함수의 처음 몇 개 매개변수는 즉각적으로 타당해 보입니다. 이는 소스 및 목적지 포인터를 담은 배열과 전송 크기를 담은 배열로 구성됩니다. 각 배열은 ``batch_size`` 요소를 가져야 합니다. 새로운 정보는 attribute에서 나옵니다. 이 함수는 attribute 배열에 대한 포인터와, 이에 대응하는 attribute 인덱스 배열이 필요합니다. 원칙적으로는 <code class="docutils literal notranslate"><span class="pre">size_t</span></code> 배열을 전달할 수도 있고, 이 배열에 실패한 전송의 인덱스를 기록할 수 있습니다. 그러나 여기에는 <code class="docutils literal notranslate"><span class="pre">nullptr</span></code>를 전달해도 안전하며, 이 경우 실패 인덱스는 단순히 기록되지 않습니다.</p>
+<p>이제 attribute를 살펴보면, 이 예에서는 전송이 균질(homogeneous)합니다. 따라서 하나의 attribute만 사용하며, 이는 모든 전송에 적용됩니다. 이는 <cite>attrIndex</cite> 매개변수로 제어됩니다. 원칙적으로 이는 배열이 될 수 있습니다. 배열의 <em>i</em>번째 요소에는 attribute 배열의 <em>i</em>번째 요소가 적용되는 첫 번째 전송의 인덱스가 들어 있습니다. 이 경우 <cite>attrIndex</cite>는 단일 요소 배열로 취급되며, 값 ‘0’은 <code class="docutils literal notranslate"><span class="pre">attribute[0]</span></code>이 인덱스 0 이상, 즉 모든 전송에 적용됨을 의미합니다.</p>
+<p>마지막으로, <code class="docutils literal notranslate"><span class="pre">srcAccessOrder</span></code> attribute를 <code class="docutils literal notranslate"><span class="pre">cudaMemcpySrcAccessOrderStream</span></code>로 설정했음을 알 수 있습니다. 이는 소스 데이터가 일반 스트림 순서로 접근됨을 의미합니다. 다시 말해 memcpy는 이러한 소스 및 목적지 포인터 중 어느 것이든 해당 데이터와 관련된 이전 커널이 완료될 때까지 블로킹됩니다.</p>
+<p>다음 예에서는 더 복잡한 이종(heterogeneous) 배치 전송의 경우를 살펴보겠습니다.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-number">Listing 5 </span><span class="caption-text">일부 수명 짧은(ephemeral) 호스트 메모리를 사용하여 핀 고정(pinned) 장치 메모리로 이종(heterogeneous) 배치 메모리 전송을 수행하는 예</span><a class="headerlink" href="#id2" title="이 코드로의 링크">#</a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="w"> </span><span class="o">*&gt;</span><span class="w"> </span><span class="n">srcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="w"> </span><span class="o">*&gt;</span><span class="w"> </span><span class="n">dsts</span><span class="p">(</span><span class="n">batch_size</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="w"> </span><span class="o">*&gt;</span><span class="w"> </span><span class="n">sizes</span><span class="p">(</span><span class="n">batch_size</span><span class="p">);</span>
+
+<span class="c1">// Allocate the src and dst buffers</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">batch_size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cudaMallocHost</span><span class="p">(</span><span class="o">&amp;</span><span class="n">srcs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">    </span><span class="n">cudaMalloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dsts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">buffer</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">batch_size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">batch_size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">srcs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">buffer</span><span class="p">[</span><span class="mi">10</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">batch_size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="n">cudaMalloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dsts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="c1">// Setup attributes for this batch of copies</span>
+<span class="n">cudaMemcpyAttributes</span><span class="w"> </span><span class="n">attrs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="n">attrs</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">srcAccessOrder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaMemcpySrcAccessOrderStream</span><span class="p">;</span>
+<span class="n">attrs</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">srcAccessOrder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaMemcpySrcAccessOrderDuringApiCall</span><span class="p">;</span>
+
+<span class="kt">size_t</span><span class="w"> </span><span class="n">attrsIdxs</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+<span class="n">attrsIdxs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">attrsIdxs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">batch_size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+
+<span class="c1">// Launch the batched memory transfer</span>
+<span class="n">cudaMemcpyBatchAsync</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dsts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">srcs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">batch_size</span><span class="p">,</span>
+<span class="w">    </span><span class="o">&amp;</span><span class="n">attrs</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attrsIdxs</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="cm">/*numAttrs*/</span><span class="p">,</span><span class="w"> </span><span class="n">nullptr</span><span class="w"> </span><span class="cm">/*failIdx*/</span><span class="p">,</span><span class="w"> </span><span class="n">stream</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p>여기에는 두 종류의 전송이 있습니다: 핀 고정(pinned) 호스트 메모리에서 핀 고정(pinned) 장치 메모리로의 <code class="docutils literal notranslate"><span class="pre">batch_size-10</span></code> 전송과, 호스트 배열에서 핀 고정(pinned) 장치 메모리로의 10개 전송입니다. 또한 <cite>buffer</cite> 배열은 호스트에 있을 뿐만 아니라 현재 스코프에서만 존재하며, 그 주소는 <em>수명 짧은 포인터(ephemeral pointer)</em>로 알려져 있습니다. 이 포인터는 API 호출이 완료된 후(비동기이므로)에는 유효하지 않을 수 있습니다. 이러한 수명 짧은 포인터로 복사를 수행하려면 attribute의 <cite>srcAccessOrder</cite>를 <cite>cudaMemcpySrcAccessOrderDuringApiCall</cite>로 설정해야 합니다.</p>
+<p>We now have two attributes, the first one applies to all transfers with indices starting at 0, and less than <code class="docutils literal notranslate"><span class="pre">batch_size-10</span></code>. The second one applies to all transfers with indices starting at <code class="docutils literal notranslate"><span class="pre">batch_size-10</span></code> and less than <code class="docutils literal notranslate"><span class="pre">batch_size</span></code>.</p>
+<p>If instead of allocating the <cite>buffer</cite> array from the stack, we had allocated it from the heap using <cite>malloc</cite> the data would not be ephemeral any more. It would be valid until the pointer was explicitly freed. In such a case the best option for how to stage the copies would depend on whether the system had hardware managed memory or coherent GPU access to host memory via address translation in which case it would be best to use stream ordering, or whether it did not in which case staging the transfers immediately would make most sense. In this situation, one should use the value <code class="docutils literal notranslate"><span class="pre">cudaMemcpyAccessOrderAny</span></code> for the <code class="docutils literal notranslate"><span class="pre">srcAccessOrder</span></code> of the attribute.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">cudaMemcpyBatchAsync</span></code> function also allows the programmer to provide hints about the source and destination locations. This is done by setting the <code class="docutils literal notranslate"><span class="pre">srcLocation</span></code> and <code class="docutils literal notranslate"><span class="pre">dstLocation</span></code> fields of the <code class="docutils literal notranslate"><span class="pre">cudaMemcpyAttributes</span></code> structure. The <code class="docutils literal notranslate"><span class="pre">srcLocation``and</span> <span class="pre">``dstLocation</span></code> fields are both of type <code class="docutils literal notranslate"><span class="pre">cudaMemLocation</span></code> which is a structure that contains the type of the location and the ID of the location. This is the same <code class="docutils literal notranslate"><span class="pre">cudaMemLocation</span></code> structure that can be used to give prefetching hints to the runtime when using <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">cudaMemPrefetchAsync()</span></code>. We illustrate how to set up the hints for a transfer from the device, to a specific NUMA node of the host in the code example below:</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-number">Listing 6 </span><span class="caption-text">Example of Setting Source and Destination Location Hints</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// Allocate the source and destination buffers</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="w"> </span><span class="o">*&gt;</span><span class="w"> </span><span class="n">srcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="w"> </span><span class="o">*&gt;</span><span class="w"> </span><span class="n">dsts</span><span class="p">(</span><span class="n">batch_size</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">void</span><span class="w"> </span><span class="o">*&gt;</span><span class="w"> </span><span class="n">sizes</span><span class="p">(</span><span class="n">batch_size</span><span class="p">);</span>
+
+<span class="c1">// cudaMemLocation structures we will use tp provide location hints</span>
+<span class="c1">// Device device_id</span>
+<span class="n">cudaMemLocation</span><span class="w"> </span><span class="n">srcLoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">cudaMemLocationTypeDevice</span><span class="p">,</span><span class="w"> </span><span class="n">dev_id</span><span class="p">};</span>
+
+<span class="c1">// Host with numa Node numa_id</span>
+<span class="n">cudaMemLocation</span><span class="w"> </span><span class="n">dstLoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">cudaMemLocationTypeHostNuma</span><span class="p">,</span><span class="w"> </span><span class="n">numa_id</span><span class="p">};</span>
+
+<span class="c1">// Allocate the src and dst buffers</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">batch_size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cudaMallocManaged</span><span class="p">(</span><span class="o">&amp;</span><span class="n">srcs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">    </span><span class="n">cudaMallocManaged</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dsts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+
+<span class="w">    </span><span class="n">cudaMemPrefetchAsync</span><span class="p">(</span><span class="n">srcs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">srcLoc</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">stream</span><span class="p">);</span>
+<span class="w">    </span><span class="n">cudaMemPrefetchAsync</span><span class="p">(</span><span class="n">dsts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">dstLoc</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">stream</span><span class="p">);</span>
+<span class="w">    </span><span class="n">cudaMemsetAsync</span><span class="p">(</span><span class="n">srcs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">stream</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Setup attributes for this batch of copies</span>
+<span class="n">cudaMemcpyAttributes</span><span class="w"> </span><span class="n">attrs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+
+<span class="c1">// These are managed memory pointers so Stream Order is appropriate</span>
+<span class="n">attrs</span><span class="p">.</span><span class="n">srcAccessOrder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaMemcpySrcAccessOrderStream</span><span class="p">;</span>
+
+<span class="c1">// Now we can specify the location hints here.</span>
+<span class="n">attrs</span><span class="p">.</span><span class="n">srcLocHint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">srcLoc</span><span class="p">;</span>
+<span class="n">attrs</span><span class="p">.</span><span class="n">dstlocHint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dstLoc</span><span class="p">;</span>
+
+<span class="c1">// All copies in the batch have same copy attributes.</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">attrsIdxs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="c1">// Launch the batched memory transfer</span>
+<span class="n">cudaMemcpyBatchAsync</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dsts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">srcs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">batch_size</span><span class="p">,</span>
+<span class="w">    </span><span class="o">&amp;</span><span class="n">attrs</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attrsIdxs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="cm">/*numAttrs*/</span><span class="p">,</span><span class="w"> </span><span class="n">nullptr</span><span class="w"> </span><span class="cm">/*failIdx*/</span><span class="p">,</span><span class="w"> </span><span class="n">stream</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p>THe last thing to cover is the flag for hinting whether we want to use SM’s or CEs for the transfers.
+The field for this is the  <code class="docutils literal notranslate"><span class="pre">cudaMemcpyAttributesflags::flags</span></code> and the possible values are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaMemcpyFlagDefault</span></code> – default behavior</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cudaMemcpyFlagPreferOverlapWithCompute</span></code> – this hints that the system should prefer to use CEs for the transfers overlapping the transfer with computations. This flag is ignored on non-Tegra platforms</p></li>
+</ul>
+<p>In summary, the main points regarding “cudaMemcpyBatchAsync” are as follows:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">cudaMemcpyBatchAsync</span></code> function (and its 3D variant) allows the programmer to specify a batch of memory transfers, allowing the amortization of transfer setup overheads.</p></li>
+<li><p>Other than the source and destination pointers and the transfer sizes, the function can take one or more memory copy attributes providing information about the kind of memory being transferred and the corresponding stream ordering behavior of the source pointers, hints about the source and destination locations, and hints as to whether to prefer to overlap the transfer with compute (if possible) or whether to use SMs for the transfer.</p></li>
+<li><p>Given the above information the runtime can attempt to optimize the transfer to the maximum degree possible..</p></li>
+</ul>
+</section>
+<section id="environment-variables">
+<h2><span class="section-number">3.1.6. </span>Environment Variables<a class="headerlink" href="#environment-variables" title="Link to this heading">#</a></h2>
+<p>CUDA provides various environment variables (see <a class="reference internal" href="../05-appendices/environment-variables.html"><span class="std std-numref">Section 5.2</span></a>), which can affect execution and performance.
+If they are not explicitly set, CUDA uses reasonable default values for them, but
+special handling may be required on a per-case basis, e.g., for debugging purposes or to get improved performance.</p>
+<p>예를 들어, 서로 다른 CUDA 스트림의 독립적인 작업이 거짓 의존성(false dependency) 때문에 직렬화될 가능성을 줄이려면 <code class="docutils literal notranslate"><span class="pre">CUDA_DEVICE_MAX_CONNECTIONS</span></code> 환경 변수 값을 높여야 할 수 있습니다. 이러한 거짓 의존성은 동일한 기반 리소스를 사용할 때 생길 수 있습니다. 우선 기본값으로 시작하고, 사용 가능한 SM 리소스 부족 같은 다른 요인으로 설명할 수 없는 CUDA 스트림 간 독립 작업의 예기치 않은 직렬화처럼 성능 문제가 있을 때만 이 환경 변수의 영향을 살펴보는 것이 좋습니다. 참고로 MPS를 사용하는 경우 이 환경 변수의 기본값은 더 낮게 설정됩니다.</p>
+<p>마찬가지로 지연 시간에 민감한 애플리케이션에서는 <code class="docutils literal notranslate"><span class="pre">CUDA_MODULE_LOADING</span></code> 환경 변수를 <code class="docutils literal notranslate"><span class="pre">EAGER</span></code>로 설정하는 편이 더 적합할 수 있습니다. 이렇게 하면 모듈 로딩에 따른 오버헤드를 모두 애플리케이션 초기화 단계로 옮겨, 실제 중요 구간 바깥에서 처리할 수 있습니다. 현재 기본 모드는 지연 모듈 로딩(lazy module loading)입니다. 이 기본 모드에서도 애플리케이션 초기화 단계에서 여러 커널에 대한 워밍업 호출을 추가해 모듈이 더 일찍 로드되도록 만들면 eager 모듈 로딩과 유사한 효과를 얻을 수 있습니다.</p>
+<p>여러 CUDA 환경 변수에 대한 자세한 내용은 <a class="reference internal" href="../05-appendices/environment-variables.html"><span class="std std-ref">CUDA 환경 변수</span></a>를 참조하십시오. 환경 변수 값은 애플리케이션을 실행하기 <em>전에</em> 설정하는 것이 좋습니다. 애플리케이션 내부에서 값을 바꾸면 효과가 없을 수 있습니다.</p>
+</section>
+</section>
+</article>
+          <div class="page-actions"><section class="page-action-card"><div class="page-action-card__eyebrow">이전 문서</div><a class="page-action-card__title" href="../part3.html">3. 고급 CUDA</a></section><section class="page-action-card"><div class="page-action-card__eyebrow">다음 문서</div><a class="page-action-card__title" href="advanced-kernel-programming.html">3.2. 고급 커널 프로그래밍</a></section></div>
+        </div>
+      </main>
+      <aside class="toc-panel">
+        <div class="toc-panel__card">
+          <h2 class="toc-title">이 페이지에서</h2>
+          <div class="toc-list"><ul><li><a class="toc-link" href="#cudalaunchkernelex">3.1.1. cudaLaunchKernelEx</a></li><li><a class="toc-link" href="#launching-clusters">3.1.2. 클러스터 실행:</a><ul><li><a class="toc-link" href="#launching-with-clusters-using-cudalaunchkernelex">3.1.2.1. cudaLaunchKernelEx를 사용한 클러스터 실행</a></li><li><a class="toc-link" href="#blocks-as-clusters">3.1.2.2. 클러스터로서의 블록</a></li></ul></li><li><a class="toc-link" href="#more-on-streams-and-events">3.1.3. 스트림 및 이벤트에 대한 추가 내용</a><ul><li><a class="toc-link" href="#stream-priorities">3.1.3.1. 스트림 우선순위</a></li><li><a class="toc-link" href="#explicit-synchronization">3.1.3.2. 명시적 동기화</a></li><li><a class="toc-link" href="#implicit-synchronization">3.1.3.3. 암묵적 동기화</a></li></ul></li><li><a class="toc-link" href="#programmatic-dependent-kernel-launch">3.1.4. 프로그래밍 방식 종속 커널 실행</a></li><li><a class="toc-link" href="#batched-memory-transfers">3.1.5. 배치 메모리 전송</a></li><li><a class="toc-link" href="#environment-variables">3.1.6. Environment Variables</a></li></ul></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>
