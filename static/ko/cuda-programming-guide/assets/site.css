@@ -462,9 +462,9 @@ html[data-theme="dark"] .theme-toggle::before {
 
 .sidebar-group > details > summary::after {
   content: "";
-  flex: 0 0 14px;
-  width: 14px;
-  height: 14px;
+  flex: 0 0 12px;
+  width: 12px;
+  height: 12px;
   background-color: var(--text-soft);
   -webkit-mask: var(--icon-chevron) center / contain no-repeat;
   mask: var(--icon-chevron) center / contain no-repeat;
@@ -625,7 +625,7 @@ html[data-theme="dark"] .theme-toggle::before {
 
 .doc-article .headerlink {
   opacity: 0;
-  margin-left: 0.45rem;
+  margin-left: 0.2rem;
   font-size: 0.85em;
   color: var(--text-soft);
   transition: opacity 160ms ease;
@@ -637,6 +637,8 @@ html[data-theme="dark"] .theme-toggle::before {
 .doc-article h4:hover .headerlink,
 .doc-article h5:hover .headerlink,
 .doc-article h6:hover .headerlink,
+.doc-article figure:hover figcaption .headerlink,
+.doc-article figcaption:hover .headerlink,
 .doc-article .headerlink:focus {
   opacity: 1;
 }
@@ -1094,12 +1096,40 @@ html[data-theme="dark"] .doc-article .admonition.error .admonition-title {
 }
 
 .doc-article aside.footnote {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 0.68rem;
+  align-items: start;
   padding: 10px 0;
+  color: var(--text-muted);
+  font-size: 0.94rem;
+}
+
+.doc-article .footnote-list aside.footnote > .label {
+  grid-column: 1;
+  margin-top: 0.08rem;
+  font-size: 0.77rem;
+  line-height: 1.35;
+  color: var(--text-soft);
+}
+
+.doc-article .footnote-list aside.footnote > :not(.label) {
+  grid-column: 2;
+}
+
+.doc-article .footnote-list aside.footnote > p {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.doc-article .footnote-list aside.footnote > .label a {
+  color: inherit;
 }
 
 .doc-article .footnote-reference {
   font-size: 0.82em;
   vertical-align: super;
+  margin-inline-start: -0.1rem;
 }
 
 .doc-article .footnote-reference .fn-bracket,
@@ -1246,9 +1276,48 @@ html[data-theme="dark"] .doc-article .admonition.error .admonition-title {
   font-size: 0.9rem;
 }
 
+.doc-article figcaption .headerlink {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .doc-article figcaption > p {
   margin-block-start: 0;
   margin-block-end: 0;
+}
+
+.doc-article figcaption .legend {
+  margin-top: 0.42rem;
+}
+
+.doc-article figcaption .legend > :first-child {
+  margin-top: 0;
+}
+
+.doc-article figcaption .legend dl,
+.doc-article figcaption .legend dl.simple {
+  display: inline-grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 0.72rem;
+  row-gap: 0.18rem;
+  margin: 0;
+  text-align: left;
+}
+
+.doc-article figcaption .legend dt {
+  grid-column: 1;
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.doc-article figcaption .legend dd {
+  grid-column: 2;
+  margin: 0;
+}
+
+.doc-article figcaption .legend dd > p {
+  margin: 0;
 }
 
 @media (max-width: 1200px) {
