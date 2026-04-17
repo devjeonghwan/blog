@@ -937,19 +937,26 @@ html[data-theme="dark"] .doc-article .highlight .w {
   border: 1px solid var(--panel-border);
   border-radius: 0;
   background: var(--table-frame-background);
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   padding: 10px;
 }
 
-.doc-article table {
-  width: 100%;
+.table-frame > table {
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   font-size: 0.94rem;
 }
 
-.doc-article table[style*="width: 120%"],
-.doc-article table[style*="width: 110%"] {
+.table-frame > table[style*="width: 120%"],
+.table-frame > table[style*="width: 110%"] {
   min-width: 110%;
+}
+
+.table-frame :not(pre) > code {
+  white-space: nowrap;
+  overflow-wrap: normal;
 }
 
 .doc-article th,
@@ -1174,14 +1181,6 @@ html[data-theme="dark"] .doc-article .admonition.error .admonition-title {
   border-top: 1px solid var(--panel-border);
 }
 
-.page-actions.is-only-next {
-  justify-content: flex-end;
-}
-
-.page-actions.is-only-previous {
-  justify-content: flex-start;
-}
-
 .page-action-card {
   flex: 1 1 260px;
   padding: 10px 0 10px 12px;
@@ -1189,11 +1188,6 @@ html[data-theme="dark"] .doc-article .admonition.error .admonition-title {
   border-left: 2px solid var(--panel-border);
   border-radius: 0;
   background: transparent;
-}
-
-.page-actions.is-only-next .page-action-card,
-.page-actions.is-only-previous .page-action-card {
-  flex: 0 1 320px;
 }
 
 .page-action-card__eyebrow {
