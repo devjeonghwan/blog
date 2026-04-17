@@ -725,6 +725,7 @@ html[data-theme="dark"] .theme-toggle::before {
   background: var(--inline-code-background);
   color: var(--inline-code-text);
   font-size: 0.94em;
+  overflow-wrap: anywhere;
 }
 
 html[data-theme="light"] .doc-article .highlight,
