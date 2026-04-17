@@ -109,11 +109,13 @@ body {
   font-family: var(--font-sans);
   line-height: 1.65;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
 }
 
 .site-shell {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -406,6 +408,7 @@ html[data-theme="dark"] .theme-toggle::before {
 .content-panel__card {
   background: var(--panel-background);
   padding: 20px 24px 18px;
+  padding-bottom: calc(18px + env(safe-area-inset-bottom));
   overflow: auto;
 }
 
@@ -1358,6 +1361,7 @@ html[data-theme="dark"] .doc-article .admonition.error .admonition-title {
     z-index: 70;
     width: min(90vw, 360px);
     height: calc(100vh - var(--header-height));
+    height: calc(100dvh - var(--header-height));
     padding: 0;
     background: var(--page-background);
     box-shadow: none;
@@ -1564,5 +1568,6 @@ html[data-theme="dark"] .doc-article .admonition.error .admonition-title {
 
   .content-panel__card {
     padding: 18px 14px 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
   }
 }
