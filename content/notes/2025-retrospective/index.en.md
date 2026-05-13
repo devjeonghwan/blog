@@ -40,7 +40,7 @@ I'll simply list up the my projects and work.
   - Introduced incremental builds with CMake
   - Added support for NVIDIA unified memory models (including Jetson)
   - Expanded SIMD support
-  - Migrated to a reference-count–based memory management model
+  - Migrated to a reference-count-based memory management model
   - Strengthened CD/CI pipelines
   - Performance optimization work
 - Development of a software anti-piracy solution
